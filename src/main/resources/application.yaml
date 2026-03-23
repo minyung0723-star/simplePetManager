@@ -1,3 +1,50 @@
 spring:
   application:
     name: simplePetManager
+  config:
+    import: ./config.yaml
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  datasource:
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    password: ${mail.password}
+    username: ${mail.username}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    port: 587 # 메일보낼 때 처음부터 암호화 처리를 해서 보내는게 아니라 정말로 메일이 가고 있을 때 암호화 처리를 진행
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    # false 가 기본값 -> 과제 true 로 교체한다음 profile_img를
+    # 자바에서 profileImg 로 교체하여 사용해보기
+    # sql _를 이용하여 단어 구분
+    # java 에서는 camelCase 케이스를 이용해서 단어 구분을 할 수 있게 설정
+    # sql 대소문자 구분 없음 _를 이용해서 주로 단어 구분
+    # java 에서는 카멜케이스를 많이 사용
+file:
+  upload:
+    path: ${upload.profile-path}
+    board-path: ${upload.board-path}
+jwt:
+  secret: ${jwt.config.secret}
+  access-expiry: 1800000
+  refresh-expiry: 1209600000
