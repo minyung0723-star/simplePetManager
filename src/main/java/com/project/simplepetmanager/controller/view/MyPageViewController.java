@@ -1,4 +1,0 @@
-package com.project.simplepetmanager.controller.view;
-
-public class MyPageViewController {
-}
