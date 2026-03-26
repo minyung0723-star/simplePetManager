@@ -37,6 +37,8 @@ public class ViewController {
     @GetMapping("/board/boardList")
     public String boardList(){return "board/boardList";}
 
+    @GetMapping("/board/boardDetail")
+    public String boardDetail(){return "board/boardDetail";}
 
 
 
