@@ -1,5 +1,5 @@
 db:
-  url: jdbc:mysql://localhost:3306/mydb
+  url: jdbc:mysql://localhost:3306/petmanager
   username: root
   password: tjee1234
 
