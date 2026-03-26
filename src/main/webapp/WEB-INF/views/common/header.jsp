@@ -30,14 +30,17 @@
     </nav>
 
     <div class="header-actions">
-        <c:choose>
-            <c:when test="${not empty loginUser}">
-                <a href="${pageContext.request.contextPath}/user/logout" class="btn-logout">로그아웃</a>
-            </c:when>
-            <c:otherwise>
-                <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
-            </c:otherwise>
-        </c:choose>
+        <div class="header-actions">
+            <c:choose>
+                <c:when test="${not empty loginUser}">
+                    <a href="${pageContext.request.contextPath}/user/logout" class="btn-logout">로그아웃</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
+                    <a href="${pageContext.request.contextPath}/user/register" class="btn-register">회원가입</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
 
 </header>

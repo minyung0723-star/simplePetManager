@@ -54,32 +54,58 @@
     font-weight: 700;
 }
 
+/* ... 기존 .header, .header-logo, .header-nav 스타일은 그대로 유지 ... */
+
 .header-actions {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
-.btn-login, .btn-logout {
+/* 1. 공통 스타일 (로그인, 로그아웃, 회원가입 모두 적용) */
+.btn-login, .btn-logout, .btn-register {
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block; /* 버튼 크기 보존 */
 }
 
+/* 2. 로그인 버튼: 테두리 강조 */
 .btn-login {
     border: 1px solid #222;
     color: #222;
+    background: #ffffff;
 }
 
 .btn-login:hover {
-    background: #222;
-    color: #fff;
+    background: #f5f5f5;
 }
 
-.btn-logout {
+/* 3. 회원가입 버튼: 배경색 강조 */
+.btn-register {
     background: #222;
-    color: #fff;
+    color: #ffffff !important; /* 글자색 강제 적용 */
+    border: 1px solid #222;
+}
+
+.btn-register:hover {
+    background: #444;
+    border-color: #444;
+}
+
+/* 4. 로그아웃 버튼: 연한 스타일 */
+.btn-logout {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #e8e8e8;
+}
+
+.btn-logout:hover {
+    background: #eeeeee;
+    color: #333;
 }
 
 /********************* footer *****************************/
@@ -152,4 +178,73 @@ footer {
     color: #888;
     margin-top: 8px;
     line-height: 1.6;
+}
+
+
+/**************************** user/login **************************************/
+/* 배경 */
+body {
+    background-color: #f5f6f8;
+}
+
+/* 전체 컨테이너 */
+.user-login-container {
+    max-width: 520px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+/* 로고 */
+.user-login-logo {
+    width: 150px;
+    margin-bottom: 25px;
+    cursor: pointer;
+}
+
+/* 카드 */
+.user-login-card {
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    background-color: white;
+}
+
+/* 입력창 */
+.user-login-input {
+    border-radius: 8px;
+    height: 50px;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+/* 버튼 */
+.user-login-btn {
+    background-color: #3b6ef5;
+    color: white;
+    height: 50px;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    border: none;
+}
+
+.user-login-btn:hover {
+    background-color: #2f5ad1;
+}
+
+/* 하단 링크 */
+.user-login-links {
+    margin-top: 18px;
+}
+
+.user-login-links a {
+    font-size: 14px;
+    color: #888;
+    text-decoration: none;
+    margin: 0 6px;
+}
+
+.user-login-links a:hover {
+    text-decoration: underline;
 }
