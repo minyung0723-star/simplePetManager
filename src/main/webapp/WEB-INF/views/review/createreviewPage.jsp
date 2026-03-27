@@ -34,5 +34,6 @@
         </form>
     </div>
 </div>
+
 <script src="${pageContext.request.contextPath}/js/design.js"></script>
 <%@include file="../common/footer.jsp"%>
