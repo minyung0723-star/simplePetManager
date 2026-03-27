@@ -42,7 +42,6 @@
 
                             <div class="mb-2">
                             <span class="star-rating">
-                                <%-- 별점 점수에 따른 동적 출력 (예시: 4점일 때) --%>
                                 <c:forEach begin="1" end="${review.rating}">★</c:forEach><c:forEach begin="${review.rating + 1}" end="5">☆</c:forEach>
                             </span>
                                 <span class="review-meta ms-2">${review.regDate}</span>

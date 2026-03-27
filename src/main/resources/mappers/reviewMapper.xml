@@ -1,9 +1,39 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="reviewMapper">
+<mapper namespace="com.project.simplepetmanager.model.mapper.ReviewMapper">
 
+    <insert id="insertReview" parameterType="com.project.simplepetmanager.model.dto.Review">
+        INSERT INTO Reviews (
+            store_id,
+            user_number,
+            category,
+            review_content,
+            rating
+        ) VALUES (
+                     #{storeId},
+                     #{userNumber},
+                     #{category},
+                     #{reviewContent},
+                     #{rating}
+                 )
+    </insert>
+
+    <select id="getReviewList" resultType="com.project.simplepetmanager.model.dto.Review">
+        SELECT
+            Reviews.review_id,
+            Reviews.store_id,
+            Reviews.user_number,
+            Reviews.category,
+            Reviews.review_content,
+            Reviews.rating,
+            Reviews.created_date,
+            Users.user_name AS nickname,
+            Users.profile_image AS profileImage
+        FROM Reviews
+                 JOIN Users ON Reviews.user_number = Users.user_number
+        WHERE Reviews.store_id = #{storeId}
+        ORDER BY Reviews.created_date DESC
+    </select>
 
 </mapper>
