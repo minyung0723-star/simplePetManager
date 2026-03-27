@@ -20,7 +20,7 @@
     <div style="width: 320px;"></div>
 </div>
 
-<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5aea5a7e9dec9b68e40f2f527f27a1fd"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=695388472b1552749308a93b8da89e82"></script>
 <script>
     var container = document.getElementById('map');
     var options = {
