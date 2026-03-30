@@ -3,15 +3,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
+    padding: 0 20px; /* 여백을 약간 줄여 공간 확보 */
     height: 64px;
     background: #ffffff;
-    border-bottom: 1px solid #e8e8e8;
-    font-family: 'Noto Sans KR', sans-serif;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    /* ✅ 창 크기에 따라 유동적으로 변하게 설정 */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .header-logo a {
@@ -28,21 +28,32 @@
     object-fit: cover;
 }
 
+
+
+/* 환영 문구: 메뉴를 밀어내지 않고 사이 공간에 위치 */
+/* 2. 환영 문구 수정 (반응형 대응) */
+.user-welcome-text {
+    font-size: 14px;
+    color: #555;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-left: 20px; /* 간격을 약간 좁힘 */
+    margin-right: 10px;
+    flex-shrink: 0; /* ✅ 공간이 부족해도 문구가 찌그러지지 않게 함 */
+}
+
 .header-nav {
     display: flex;
     align-items: center;
     gap: 4px;
-    flex: 1;
+    flex: 1; /* 남은 공간 차지 */
     justify-content: center;
+    min-width: 0; /* ✅ 내부 요소가 넘칠 때 flex박스 붕괴 방지 */
 }
 
 .header-nav a {
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    padding: 8px 16px;
-    border-radius: 8px;
+    white-space: nowrap; /* 글자 줄바꿈 방지 */
+    padding: 8px 12px;   /* 패딩을 살짝 줄임 */
 }
 
 .header-nav a:hover {

@@ -16,31 +16,82 @@
 <body>
 
 <header class="header">
-    <!-- 이미지 경로 불안정, 에러나면 반드시 살펴볼 것 -->
     <div class="header-logo">
         <a href="${pageContext.request.contextPath}/">
             <img src="${pageContext.request.contextPath}/images/petlogo.png">
         </a>
     </div>
 
-    <nav class="header-nav">
+    <div id="user-welcome" class="user-welcome-text">
+    </div>
+
+    <nav class="header-nav" id="main-nav">
         <a href="${pageContext.request.contextPath}/board/boardList">동물병원찾기</a>
         <a href="${pageContext.request.contextPath}/board/boardList">동물호텔찾기</a>
         <a href="${pageContext.request.contextPath}/board/boardList">동물약국찾기</a>
     </nav>
 
     <div class="header-actions">
-        <div class="header-actions">
-            <c:choose>
-                <c:when test="${not empty loginUser}">
-                    <a href="${pageContext.request.contextPath}/user/logout" class="btn-logout">로그아웃</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
-                    <a href="${pageContext.request.contextPath}/user/register" class="btn-register">회원가입</a>
-                </c:otherwise>
-            </c:choose>
-        </div>
+        <div id="auth-menu" class="header-actions"></div>
     </div>
-
 </header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderHeader();
+    });
+
+    function renderHeader() {
+        const authMenu = document.getElementById("auth-menu");
+        const mainNav = document.getElementById("main-nav");
+        const welcomeArea = document.getElementById("user-welcome"); // 환영 문구 영역
+
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        const userName = localStorage.getItem("userName");
+
+        if (isLoggedIn === "true") {
+            // 1. 환영 문구 표시
+            welcomeArea.textContent = userName + "님 환영합니다";
+
+            // 2. 마이페이지 메뉴 추가
+            if (!document.getElementById("nav-mypage")) {
+                const myPageLink = document.createElement("a");
+                myPageLink.href = "${pageContext.request.contextPath}/user/myPage";
+                myPageLink.id = "nav-mypage";
+                myPageLink.textContent = "마이페이지";
+                mainNav.appendChild(myPageLink);
+            }
+
+            // 3. 로그아웃 버튼
+            authMenu.innerHTML = `
+                <a href="javascript:void(0);" onclick="processLogout()" class="btn-logout">로그아웃</a>
+            `;
+        } else {
+            // 로그아웃 상태 시 초기화
+            welcomeArea.textContent = "";
+            const myPageLink = document.getElementById("nav-mypage");
+            if (myPageLink) myPageLink.remove();
+
+            authMenu.innerHTML = `
+                <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
+                <a href="${pageContext.request.contextPath}/user/register" class="btn-register">회원가입</a>
+            `;
+        }
+    }
+
+    async function processLogout() {
+        if (!confirm("로그아웃 하시겠습니까?")) return;
+
+        try {
+            const res = await fetch("${pageContext.request.contextPath}/user/logout", { method: "POST" });
+            if (res.ok) {
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("userName"); // 이름 정보도 삭제
+                alert("로그아웃 되었습니다.");
+                location.href = "${pageContext.request.contextPath}/";
+            }
+        } catch (error) {
+            console.error("Logout Error:", error);
+        }
+    }
+</script>

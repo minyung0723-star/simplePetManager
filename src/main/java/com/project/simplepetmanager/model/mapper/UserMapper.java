@@ -1,4 +1,20 @@
 package com.project.simplepetmanager.model.mapper;
 
-public class UserMapper {
+import com.project.simplepetmanager.model.dto.User;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface UserMapper {
+
+    //회원가입
+    void register(User user);
+
+    //이메일 중복체크
+    int checkEmail(String userEmail);
+
+    //로그인유저 확인
+    User login(String userEmail);
+
+    //로그인 및 사용자 조회
+    User findByUserId(String userId);
 }
