@@ -286,3 +286,32 @@ footer {
 .btn-submit:hover {
     background-color: #2266EE; /* 호버 시 약간 어둡게 */
 }
+/********************************** rating *********************************************/
+/* 1. 별을 감싸는 전체 컨테이너 */
+.star-rating-container {
+    display: inline-flex;
+    position: relative; /* 자식 요소인 fill의 기준점이 됩니다 */
+    font-size: 3rem;
+    cursor: pointer;
+    color: #ddd; /* 빈 별 색상 */
+    user-select: none;
+}
+
+/* 2. 빈 별 (배경) */
+.star-rating-empty {
+    z-index: 1;
+}
+
+/* 3. 노란색으로 채워질 별 (위에 겹쳐짐) */
+.star-rating-fill {
+    display: flex;
+    position: absolute; /* 이 설정이 있어야 빈 별 위로 올라갑니다! */
+    top: 0;
+    left: 0;
+    width: 0%; /* 기본값 */
+    height: 100%;
+    overflow: hidden; /* 영역 밖 별을 숨김 */
+    color: #ffc107; /* 노란색 별 */
+    z-index: 2; /* 빈 별보다 위에 오도록 설정 */
+    white-space: nowrap; /* 별이 아래로 떨어지지 않게 고정 */
+}

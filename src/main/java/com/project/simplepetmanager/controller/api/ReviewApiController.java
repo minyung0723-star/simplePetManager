@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController // 데이터를 반환하는 전용 컨트롤러임을 선언!
-@RequestMapping("/api/reviews") // 이 컨트롤러의 모든 주소는 /api/reviews로 시작합니다.
+@RequestMapping("/review") // 이 컨트롤러의 모든 주소는 /api/reviews로 시작합니다.
 public class ReviewApiController {
 
     @Autowired
@@ -18,12 +18,41 @@ public class ReviewApiController {
      * 1. 리뷰 등록 API (POST 방식)
      * 사용자가 입력한 데이터를 JSON 형태로 받아 DB에 저장합니다.
      */
-    @PostMapping("/insert")
-    public String insertReview(@RequestBody Review review) {
-        // @RequestBody: 화면에서 보낸 JSON 데이터를 Review 객체로 자동 변환해줍니다.
+//    @PostMapping("/insertReview")
+//    public String insertReview(Review review) {
+//        try {
+//            reviewService.registerReview(review);
+//            return "success"; // 성공 시 문자열 반환
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "fail";
+//        }
+//    }
+    @PostMapping("/insertReview")
+    public String insertReview(Review review) {
+        // 1. 병원 ID (null이거나 0이면 1번으로 고정)
+        if (review.getStoreId() == null || review.getStoreId() == 0) {
+            review.setStoreId(1);
+        }
+
+        // 2. 유저 번호 (null이면 1번으로 고정)
+        if (review.getUserNumber() == null || review.getUserNumber() == 0) {
+            review.setUserNumber(1);
+        }
+
+        // 3. 별점 (이번 에러의 원인! null이면 임시로 5점 부여)
+        if (review.getRating() == null) {
+            review.setRating(5.0);
+        }
+
+        // 4. 카테고리 (null 방지)
+        if (review.getCategory() == null) {
+            review.setCategory("병원");
+        }
+
         try {
             reviewService.registerReview(review);
-            return "success"; // 성공 시 문자열 반환
+            return "success";
         } catch (Exception e) {
             e.printStackTrace();
             return "fail";
@@ -39,4 +68,6 @@ public class ReviewApiController {
         // List를 반환하면 스프링이 알아서 JSON 배열([{}, {}]) 모양으로 바꿔서 보내줍니다.
         return reviewService.getReviewList(storeId);
     }
+
+
 }

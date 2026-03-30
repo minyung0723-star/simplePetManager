@@ -21,9 +21,9 @@
         </section>
 
         <div class="action-bar d-flex justify-content-end pb-3">
-            <a href="createreviewPage" class="btn btn-outline-primary btn-write-review shadow-sm">
+            <button type="button" onclick="checkUserLogin()" class="btn btn-outline-primary btn-write-review shadow-sm">
                 <i class="bi bi-chat-dots me-1"></i> 리뷰 작성
-            </a>
+            </button>
         </div>
 
         <div class="review-list">
@@ -73,4 +73,20 @@
         </div>
     </div>
 </div>
+<script>
+    function checkUserLogin() {
+        // [임시 변수] 나중에 실제 로그인 세션이나 정보가 들어오면 이 부분을 수정할 거예요!
+        // 지금은 false로 두면 "로그인 필요"가 뜨고, true로 바꾸면 "작성 페이지"로 이동합니다.
+        const isLogined = true;
+
+        if (!isLogined) {
+            // 1. 로그인 안 된 경우: 알림 띄우고 로그인 페이지로!
+            alert("로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다! ");
+            location.href = "/user/login"; // 나중에 만드실 로그인 페이지 주소를 여기에 적으세요.
+        } else {
+            // 2. 로그인 된 경우: 작성 페이지로 이동!
+            location.href = "createreviewPage";
+        }
+    }
+</script>
 <%@include file="../common/footer.jsp"%>
