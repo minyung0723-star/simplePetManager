@@ -3,6 +3,96 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="reviewMapper">
+<mapper namespace="com.project.simplepetmanager.model.mapper.ReviewMapper">
+
+    <!-- 리뷰 목록 (검색 + 페이지네이션) -->
+    <select id="selectReviewList" parameterType="map" resultType="map">
+        SELECT
+        r.review_number,
+        r.review_title,
+        r.review_content,
+        r.review_rating,
+        r.review_image,
+        r.image_url,
+        r.created_date,
+        r.modified_date,
+        u.user_name,
+        u.user_number
+        FROM review r
+        JOIN users u ON r.user_number = u.user_number
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (r.review_title   LIKE CONCAT('%', #{keyword}, '%')
+                OR r.review_content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY r.created_date DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countReview" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM review r
+        JOIN users u ON r.user_number = u.user_number
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (r.review_title   LIKE CONCAT('%', #{keyword}, '%')
+                OR r.review_content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 리뷰 상세 -->
+    <select id="selectReviewDetail" parameterType="int" resultType="map">
+        SELECT
+            r.review_number, r.review_title, r.review_content,
+            r.review_rating, r.review_image, r.image_url,
+            r.created_date,  r.modified_date,
+            u.user_name,     u.user_number
+        FROM review r
+                 JOIN users u ON r.user_number = u.user_number
+        WHERE r.review_number = #{reviewNumber}
+    </select>
+
+    <!-- 마이페이지용: 특정 유저가 작성한 리뷰 전체 (최신순) -->
+    <select id="selectReviewsByUserNumber" parameterType="int" resultType="map">
+        SELECT
+            r.review_number,
+            r.review_title,
+            r.review_content,
+            r.review_rating,
+            r.review_image,
+            r.image_url,
+            r.created_date,
+            r.modified_date,
+            u.user_name,
+            u.user_number
+        FROM review r
+                 JOIN users u ON r.user_number = u.user_number
+        WHERE r.user_number = #{userNumber}
+        ORDER BY r.created_date DESC
+    </select>
+
+    <!-- 리뷰 등록 -->
+    <insert id="insertReview" parameterType="map" useGeneratedKeys="true" keyProperty="reviewNumber">
+        INSERT INTO review (review_title, review_content, review_rating, review_image, image_url, user_number, created_date, modified_date)
+        VALUES (#{reviewTitle}, #{reviewContent}, #{reviewRating}, #{reviewImage}, #{imageUrl}, #{userNumber}, NOW(), NOW())
+    </insert>
+
+    <!-- 리뷰 수정 (작성자 본인만) -->
+    <update id="updateReview" parameterType="map">
+        UPDATE review
+        SET review_title   = #{reviewTitle},
+            review_content = #{reviewContent},
+            review_rating  = #{reviewRating},
+            modified_date  = NOW()
+        WHERE review_number = #{reviewNumber}
+          AND user_number   = #{userNumber}
+    </update>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview" parameterType="int">
+        DELETE FROM review WHERE review_number = #{reviewNumber}
+    </delete>
 
 </mapper>

@@ -7,26 +7,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-
 @Slf4j
 @Component
 public class CookieUtil {
-    public void add(HttpServletResponse res, String name, String value, int maxAgeSeconds){ // 쿠키 추가
+    // 쿠키 추가 (maxAgeSeconds: 초 단위)
+    public void add(HttpServletResponse res, String name, String value, int maxAgeSeconds){
         Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        cookie.setHttpOnly(true); // JS에서 접근 불가 (보안)
+        cookie.setPath("/");      // 모든 경로에서 쿠키 유효
         cookie.setMaxAge(maxAgeSeconds);
         res.addCookie(cookie);
     }
 
-    public void delete(HttpServletResponse res, String name){ // 쿠키 삭제
-        Cookie cookie = new Cookie(name,"");
-        cookie.setMaxAge(0);
+    // 쿠키 삭제
+    public void remove(HttpServletResponse res, String name){
+        Cookie cookie = new Cookie(name, "");
+        cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setMaxAge(0); // 즉시 만료
         res.addCookie(cookie);
     }
 
-    public String get(HttpServletRequest req, String name){ // 쿠키 요청해서 가져오기
+    // 쿠키 가져오기
+    public String get(HttpServletRequest req, String name){
         Cookie[] cookies = req.getCookies();
         if (cookies == null) return null;
         return Arrays.stream(cookies)

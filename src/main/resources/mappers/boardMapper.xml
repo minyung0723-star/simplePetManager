@@ -3,6 +3,114 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="boardMapper">
+<!-- namespace 가 BoardMapper 를 가리킴 (UserMapper 와 분리) -->
+<mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
+
+    <!-- 게시글 목록 (검색 + 페이지네이션) -->
+    <select id="selectBoardList" parameterType="map" resultType="map">
+        SELECT
+        b.board_number,
+        b.board_title,
+        b.board_content,
+        b.board_category,
+        b.created_date,
+        b.modified_date,
+        b.view_count,
+        u.user_name,
+        u.user_number
+        FROM board b
+        JOIN users u ON b.user_number = u.user_number
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        AND b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'content'">
+                        AND b.board_content LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'writer'">
+                        AND u.user_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (b.board_title   LIKE CONCAT('%', #{keyword}, '%')
+                        OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="category != null and category != ''">
+                AND b.board_category = #{category}
+            </if>
+        </where>
+        ORDER BY b.created_date DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countBoard" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM board b
+        JOIN users u ON b.user_number = u.user_number
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        AND b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'content'">
+                        AND b.board_content LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'writer'">
+                        AND u.user_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (b.board_title   LIKE CONCAT('%', #{keyword}, '%')
+                        OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="category != null and category != ''">
+                AND b.board_category = #{category}
+            </if>
+        </where>
+    </select>
+
+    <!-- 게시글 상세 -->
+    <select id="selectBoardDetail" parameterType="int" resultType="map">
+        SELECT
+            b.board_number,
+            b.board_title,
+            b.board_content,
+            b.board_category,
+            b.created_date,
+            b.modified_date,
+            b.view_count,
+            u.user_name,
+            u.user_number
+        FROM board b
+                 JOIN users u ON b.user_number = u.user_number
+        WHERE b.board_number = #{boardNumber}
+    </select>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertBoard" parameterType="map" useGeneratedKeys="true" keyProperty="boardNumber">
+        INSERT INTO board (board_title, board_content, board_category, user_number, created_date, modified_date, view_count)
+        VALUES (#{boardTitle}, #{boardContent}, #{boardCategory}, #{userNumber}, NOW(), NOW(), 0)
+    </insert>
+
+    <!-- 게시글 수정 (작성자 본인만) -->
+    <update id="updateBoard" parameterType="map">
+        UPDATE board
+        SET board_title    = #{boardTitle},
+            board_content  = #{boardContent},
+            board_category = #{boardCategory},
+            modified_date  = NOW()
+        WHERE board_number = #{boardNumber}
+          AND user_number  = #{userNumber}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteBoard" parameterType="int">
+        DELETE FROM board WHERE board_number = #{boardNumber}
+    </delete>
 
 </mapper>

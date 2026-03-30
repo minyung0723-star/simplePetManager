@@ -24,19 +24,19 @@ public class ViewController {
 
     @GetMapping("/user/passwordEdit")
     public String passwordEditView(){return "user/passwordEdit";}
-
+/*
     @GetMapping("/mypage/myPage")
     public String mypageView(){return "mypage/myPage";}
-
+*/
     @GetMapping ("/review/reviewPage")
     public String reviewView(){return "review/reviewPage";}
 
     @GetMapping ("/review/createreviewPage")
     public String createreviewPageView() {return "review/createreviewPage";}
-
+/*
     @GetMapping("/board/boardList")
     public String boardList(){return "board/boardList";}
-
+*/
 
 
 

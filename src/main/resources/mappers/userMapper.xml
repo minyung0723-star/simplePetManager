@@ -3,6 +3,79 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="userMapper">
+<!-- namespace 는 반드시 UserMapper 인터페이스의 풀 패키지명과 일치해야 함 -->
+<mapper namespace="com.project.simplepetmanager.model.mapper.UserMapper">
+
+    <!-- ResultMap: DB 컬럼(snake_case) → DTO 필드(camelCase) 매핑 -->
+    <resultMap id="UserResultMap" type="com.project.simplepetmanager.model.dto.User">
+        <id     property="userNumber"   column="user_number"/>
+        <result property="userId"       column="user_id"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="userName"     column="user_name"/>
+        <result property="userEmail"    column="user_email"/>
+        <result property="createdDate"  column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <result property="profileImage" column="profile_image"/>
+        <result property="imageUrl"     column="image_url"/>
+    </resultMap>
+
+    <!-- 이메일로 유저 조회 -->
+    <select id="selectUserByEmail" parameterType="String" resultMap="UserResultMap">
+        SELECT *
+        FROM users
+        WHERE user_email = #{userEmail}
+    </select>
+
+    <!-- 아이디로 유저 조회 -->
+    <select id="selectUserByUserId" parameterType="String" resultMap="UserResultMap">
+        SELECT *
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 회원번호로 유저 조회 -->
+    <select id="selectUserByUserNumber" parameterType="int" resultMap="UserResultMap">
+        SELECT *
+        FROM users
+        WHERE user_number = #{userNumber}
+    </select>
+
+    <!-- 회원가입 -->
+    <insert id="insertUser" parameterType="com.project.simplepetmanager.model.dto.User"
+            useGeneratedKeys="true" keyProperty="userNumber">
+        INSERT INTO users (user_id, user_password, user_name, user_email, created_date, modified_date)
+        VALUES (#{userId}, #{userPassword}, #{userName}, #{userEmail}, NOW(), NOW())
+    </insert>
+
+    <!-- 기본 정보 수정 (이름, 이메일) -->
+    <update id="updateUserInfo" parameterType="map">
+        UPDATE users
+        SET user_name     = #{userName},
+            user_email    = #{userEmail},
+            modified_date = NOW()
+        WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 비밀번호 변경 -->
+    <update id="updatePassword" parameterType="map">
+        UPDATE users
+        SET user_password = #{newPassword},
+            modified_date = NOW()
+        WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 프로필 이미지 경로 저장 -->
+    <update id="updateProfileImage" parameterType="map">
+        UPDATE users
+        SET image_url     = #{imageUrl},
+            modified_date = NOW()
+        WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM users
+        WHERE user_number = #{userNumber}
+    </delete>
 
 </mapper>
