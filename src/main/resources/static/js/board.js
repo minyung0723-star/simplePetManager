@@ -1,9 +1,10 @@
 /**
- * board.js  (v3 – 가게 목록 / 상세 오버레이)
+ * board.js  (v4 – 목록 페이지 디자인)
  *
- * - 왼쪽 패널 : 가게 카드 (이름·주소·전화번호·카테고리·별점)
- * - 오른쪽    : 카카오 지도 (가게 마커)
- * - 카드 클릭 : 지도 위 오버레이 (이름·주소·전화·영업시간·진료동물·리뷰 목록·리뷰쓰기)
+ * - 중앙 카드 리스트 UI
+ * - 검색 / 카테고리 필터 / 페이지네이션
+ * - 글 상세 모달 (수정·삭제 포함)
+ * - 글쓰기 / 수정 모달
  */
 
 /* =====================================================
@@ -16,9 +17,12 @@ const state = {
     totalPages:   1,
     total:        0,
     keyword:      '',
-    category:     '',          // hospital | hotel | pharmacy
+    searchType:   'all',
+    category:     '',
     myUserNumber: null,
-    currentStoreNumber: null
+    ctx:          '',          // contextPath
+    editMode:     false,
+    editNumber:   null
 };
 
 /* =====================================================
@@ -28,103 +32,35 @@ const state = {
 const CAT_LABEL = {
     hospital: '동물병원',
     hotel:    '동물호텔',
-    pharmacy: '동물약국'
-};
-
-const PANEL_TITLE = {
-    hospital: '동물병원 찾기',
-    hotel:    '동물호텔 찾기',
-    pharmacy: '동물약국 찾기'
+    pharmacy: '동물약국',
+    '자유': '자유', '질문': '질문', '정보': '정보', '자랑': '자랑'
 };
 
 /* =====================================================
-   카카오 지도
+   게시글 목록 로드
    ===================================================== */
 
-let kakaoMap    = null;
-let storeMarkers = [];
-
-function initKakaoMap() {
-    if (typeof kakao === 'undefined' || !kakao.maps) {
-        const mapEl = document.getElementById('kakao-map');
-        mapEl.style.cssText = 'background:#e8eaed;display:flex;align-items:center;justify-content:center;';
-        const msg = document.createElement('span');
-        msg.style.cssText = 'color:#999;font-size:13px;';
-        msg.textContent = '지도를 불러오는 중...';
-        mapEl.appendChild(msg);
-        return;
-    }
-
-    const container = document.getElementById('kakao-map');
-    kakaoMap = new kakao.maps.Map(container, {
-        center: new kakao.maps.LatLng(37.5665, 126.9780),
-        level: 6
-    });
-    kakaoMap.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
-}
-
-function clearMarkers() {
-    storeMarkers.forEach(function (m) { m.setMap(null); });
-    storeMarkers = [];
-}
-
-function addMarker(store) {
-    if (!kakaoMap) return;
-    const lat = store.latitude  || store.lat;
-    const lng = store.longitude || store.lng;
-    if (!lat || !lng) return;
-
-    const marker = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(lat, lng),
-        map: kakaoMap
-    });
-
-    kakao.maps.event.addListener(marker, 'click', function () {
-        openDetail(store.store_number || store.storeNumber);
-    });
-
-    storeMarkers.push(marker);
-}
-
-function panToStore(store) {
-    if (!kakaoMap) return;
-    const lat = store.latitude  || store.lat;
-    const lng = store.longitude || store.lng;
-    if (lat && lng) {
-        kakaoMap.panTo(new kakao.maps.LatLng(lat, lng));
-    }
-}
-
-/* =====================================================
-   가게 목록 로드
-   ===================================================== */
-
-async function loadStores() {
+async function loadBoard() {
     const p = new URLSearchParams({
-        keyword:  state.keyword,
-        category: state.category,
-        page:     state.page,
-        pageSize: state.pageSize
+        keyword:    state.keyword,
+        searchType: state.searchType,
+        category:   state.category,
+        page:       state.page,
+        pageSize:   state.pageSize
     });
 
     try {
-        const res  = await fetch('/store/list?' + p);
+        const res  = await fetch(state.ctx + '/board/list?' + p);
         const data = await res.json();
 
         state.totalPages = data.totalPages || 1;
         state.total      = data.total      || 0;
 
-        const list = data.list || data || [];
-        renderCards(list);
+        renderCards(data.list || []);
         renderPagination();
         updateMeta();
-
-        // 지도 마커 갱신
-        clearMarkers();
-        list.forEach(addMarker);
-
     } catch (e) {
-        console.warn('Store API error:', e.message);
+        console.warn('Board API error:', e.message);
         renderCards([]);
     }
 }
@@ -132,77 +68,90 @@ async function loadStores() {
 function goPage(p) {
     if (p < 1 || p > state.totalPages) return;
     state.page = p;
-    loadStores();
+    loadBoard();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* =====================================================
-   왼쪽 패널 카드 렌더
+   카드 렌더링
    ===================================================== */
 
 function renderCards(list) {
     const container = document.getElementById('post-list');
     container.replaceChildren();
 
-    if (!list || !list.length) {
+    if (!list.length) {
         const empty = document.createElement('div');
-        empty.className = 'post-empty';
-        empty.textContent = '검색 결과가 없습니다.';
+        empty.className = 'bl-empty';
+        empty.textContent = '게시글이 없습니다.';
         container.appendChild(empty);
         return;
     }
 
-    list.forEach(function (s) {
-        const storeNum  = s.store_number  || s.storeNumber;
-        const name      = s.store_name    || s.storeName    || '';
-        const address   = s.store_address || s.storeAddress || '';
-        const phone     = s.store_phone   || s.storePhone   || '';
-        const category  = s.store_category|| s.storeCategory|| state.category;
-        const rating    = s.avg_rating    || s.avgRating;
+    list.forEach(function (b) {
+        const boardNum  = b.board_number;
+        const title     = b.board_title    || '';
+        const category  = b.board_category || '';
+        const userName  = b.user_name      || '익명';
+        const viewCount = b.view_count     || 0;
+        const dateStr   = b.created_date   ? String(b.created_date).slice(0, 10) : '';
 
-        /* 카드 루트 */
         const card = document.createElement('div');
-        card.className  = 'post-card';
-        card.dataset.num = storeNum;
+        card.className = 'bl-post-card';
+        card.dataset.num = boardNum;
+        card.addEventListener('click', function () { openDetail(boardNum); });
 
-        /* 상단: 배지 + 별점 */
+        // 왼쪽 영역
+        const left = document.createElement('div');
+        left.className = 'bl-card-left';
+
+        // 상단 (배지 + 날짜)
         const top = document.createElement('div');
-        top.className = 'post-card-top';
+        top.className = 'bl-card-top';
 
         const badge = document.createElement('span');
-        badge.className = 'post-badge badge-' + category;
+        badge.className = 'bl-badge badge-' + category;
         badge.textContent = CAT_LABEL[category] || category;
 
-        const ratingEl = document.createElement('span');
-        ratingEl.className = 'post-rating';
-        if (rating != null) {
-            ratingEl.textContent = '★ ' + Number(rating).toFixed(1);
-        }
+        const date = document.createElement('span');
+        date.className = 'bl-date';
+        date.textContent = dateStr;
 
         top.appendChild(badge);
-        top.appendChild(ratingEl);
+        top.appendChild(date);
 
-        /* 가게 이름 */
-        const nameEl = document.createElement('div');
-        nameEl.className = 'post-title';
-        nameEl.textContent = name;
+        // 제목
+        const titleEl = document.createElement('div');
+        titleEl.className = 'bl-title';
+        titleEl.textContent = title;
 
-        /* 주소 */
-        const addrEl = document.createElement('div');
-        addrEl.className = 'post-addr';
-        addrEl.textContent = address;
+        // 하단 (작성자 + 조회수)
+        const bottom = document.createElement('div');
+        bottom.className = 'bl-card-bottom';
 
-        /* 전화번호 */
-        const phoneEl = document.createElement('div');
-        phoneEl.className = 'post-phone';
-        if (phone) phoneEl.textContent = '📞 ' + phone;
+        bottom.innerHTML =
+            '<span class="bl-writer">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+            '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+            escHtml(userName) +
+            '</span>' +
+            '<span class="bl-views">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+            '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+            viewCount +
+            '</span>';
 
-        card.appendChild(top);
-        card.appendChild(nameEl);
-        card.appendChild(addrEl);
-        if (phone) card.appendChild(phoneEl);
+        left.appendChild(top);
+        left.appendChild(titleEl);
+        left.appendChild(bottom);
 
-        card.addEventListener('click', function () { openDetail(storeNum); });
+        // 화살표
+        const arrow = document.createElement('div');
+        arrow.className = 'bl-card-arrow';
+        arrow.textContent = '›';
 
+        card.appendChild(left);
+        card.appendChild(arrow);
         container.appendChild(card);
     });
 }
@@ -242,7 +191,7 @@ function renderPagination() {
 
 function updateMeta() {
     const info = document.getElementById('result-info');
-    if (info) info.textContent = '검색 결과 ' + state.total + '건';
+    if (info) info.innerHTML = '총 <strong>' + state.total + '</strong>건';
 }
 
 /* =====================================================
@@ -251,9 +200,10 @@ function updateMeta() {
 
 function initSearch() {
     document.getElementById('btn-search').addEventListener('click', function () {
-        state.keyword = document.getElementById('search-input').value.trim();
-        state.page    = 1;
-        loadStores();
+        state.keyword    = document.getElementById('search-input').value.trim();
+        state.searchType = document.getElementById('search-type').value;
+        state.page       = 1;
+        loadBoard();
     });
 
     document.getElementById('search-input').addEventListener('keydown', function (e) {
@@ -262,168 +212,134 @@ function initSearch() {
 }
 
 /* =====================================================
-   카테고리 필터
+   카테고리 탭
    ===================================================== */
 
-function initCategoryFilter() {
-    document.querySelectorAll('.cat-chip').forEach(function (btn) {
+function initCategoryTabs() {
+    document.querySelectorAll('.bl-cat-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
-            document.querySelectorAll('.cat-chip').forEach(function (b) { b.classList.remove('active'); });
+            document.querySelectorAll('.bl-cat-tab').forEach(function (b) { b.classList.remove('active'); });
             btn.classList.add('active');
             state.category = btn.dataset.cat;
             state.page     = 1;
-
-            // 패널 타이틀 변경
-            const titleEl = document.getElementById('panel-title');
-            if (titleEl) titleEl.textContent = PANEL_TITLE[state.category] || '찾기';
-
-            loadStores();
+            loadBoard();
         });
     });
 }
 
 /* =====================================================
-   가게 상세 오버레이
+   글 상세 모달
    ===================================================== */
 
-async function openDetail(storeNumber) {
-    if (!storeNumber) return;
-    state.currentStoreNumber = storeNumber;
+async function openDetail(boardNumber) {
+    if (!boardNumber) return;
 
     try {
-        // 가게 상세 + 리뷰 목록 병렬 요청
-        const [storeRes, reviewRes] = await Promise.all([
-            fetch('/store/' + storeNumber),
-            fetch('/review/list?storeNumber=' + storeNumber)
-        ]);
-        const storeData  = await storeRes.json();
-        const reviewData = await reviewRes.json();
+        const res  = await fetch(state.ctx + '/board/' + boardNumber);
+        const data = await res.json();
 
-        const store   = storeData.store  || storeData;
-        const reviews = reviewData.list  || reviewData || [];
+        if (!data.success || !data.board) {
+            alert('게시글을 불러올 수 없습니다.');
+            return;
+        }
 
-        if (!store) { alert('가게 정보를 불러올 수 없습니다.'); return; }
-
-        // 카드 active
-        document.querySelectorAll('.post-card').forEach(function (c) { c.classList.remove('active'); });
-        const activeCard = document.querySelector('.post-card[data-num="' + storeNumber + '"]');
-        if (activeCard) activeCard.classList.add('active');
-
-        // 지도 이동
-        panToStore(store);
-
-        // ── 오버레이 채우기 ──────────────────────────────
+        const b = data.board;
 
         // 배지
-        const cat   = store.store_category || store.storeCategory || state.category;
-        const badge = document.getElementById('do-badge');
-        badge.textContent = CAT_LABEL[cat] || cat;
-        badge.className   = 'do-badge badge-' + cat;
+        const badgeEl = document.getElementById('dm-badge');
+        const cat = b.board_category || '';
+        badgeEl.textContent = CAT_LABEL[cat] || cat;
+        badgeEl.className = 'bl-badge badge-' + cat;
 
-        // 가게명
-        document.getElementById('do-title').textContent =
-            store.store_name || store.storeName || '';
+        // 제목
+        document.getElementById('dm-title').textContent = b.board_title || '';
 
-        // 주소 / 전화 / 영업시간
-        const infoList = document.getElementById('do-info-list');
-        infoList.replaceChildren();
+        // 메타 (작성자 · 날짜 · 조회수)
+        const dateStr = b.created_date ? String(b.created_date).slice(0, 16).replace('T', ' ') : '';
+        document.getElementById('dm-meta').innerHTML =
+            '<span>✍️ ' + escHtml(b.user_name || '익명') + '</span>' +
+            '<span>📅 ' + dateStr + '</span>' +
+            '<span>👁 ' + (b.view_count || 0) + '</span>';
 
-        const infoItems = [
-            { icon: '📍', value: store.store_address  || store.storeAddress  || '' },
-            { icon: '📞', value: store.store_phone    || store.storePhone    || '' },
-            { icon: '🕐', value: store.store_hours    || store.storeHours    || store.operating_hours || '' }
-        ];
-        infoItems.forEach(function (item) {
-            if (!item.value) return;
-            const row = document.createElement('div');
-            row.className = 'do-info-row';
-            row.textContent = item.icon + ' ' + item.value;
-            infoList.appendChild(row);
-        });
+        // 내용
+        document.getElementById('dm-content').textContent = b.board_content || '';
 
-        // 진료 가능 동물
-        const animalsEl = document.getElementById('do-animals');
-        animalsEl.replaceChildren();
-        const animals = store.animals || store.pet_types || store.petTypes || '';
-        if (animals) {
-            const label = document.createElement('div');
-            label.className = 'do-animals-label';
-            label.textContent = '진료 가능 동물';
-            const tags = document.createElement('div');
-            tags.className = 'do-animals-tags';
-            String(animals).split(/[,，]/).forEach(function (a) {
-                const tag = document.createElement('span');
-                tag.className = 'animal-tag';
-                tag.textContent = a.trim();
-                tags.appendChild(tag);
+        // 수정·삭제 버튼 (본인만)
+        const footer = document.getElementById('dm-footer');
+        footer.replaceChildren();
+
+        if (state.myUserNumber && Number(b.user_number) === Number(state.myUserNumber)) {
+            const editBtn = document.createElement('button');
+            editBtn.className = 'bl-btn-edit';
+            editBtn.textContent = '수정';
+            editBtn.addEventListener('click', function () {
+                location.href = state.ctx + '/review/reviewPage';
             });
-            animalsEl.appendChild(label);
-            animalsEl.appendChild(tags);
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'bl-btn-delete';
+            delBtn.textContent = '삭제';
+            delBtn.addEventListener('click', function () { deletePost(boardNumber); });
+
+            footer.appendChild(editBtn);
+            footer.appendChild(delBtn);
         }
 
-        // 리뷰 목록
-        const reviewList  = document.getElementById('do-review-list');
-        const reviewCount = document.getElementById('do-review-count');
-        reviewList.replaceChildren();
-        reviewCount.textContent = reviews.length ? reviews.length + '건' : '';
-
-        if (!reviews.length) {
-            const empty = document.createElement('div');
-            empty.className = 'review-empty';
-            empty.textContent = '아직 리뷰가 없습니다.';
-            reviewList.appendChild(empty);
-        } else {
-            reviews.slice(0, 5).forEach(function (r) {
-                const item = document.createElement('div');
-                item.className = 'review-item';
-
-                const top = document.createElement('div');
-                top.className = 'review-top';
-
-                const writer = document.createElement('span');
-                writer.className = 'review-writer';
-                writer.textContent = r.user_name || r.userName || '익명';
-
-                const stars = document.createElement('span');
-                stars.className = 'review-stars';
-                const score = Number(r.rating || r.review_rating || 0);
-                stars.textContent = '★'.repeat(score) + '☆'.repeat(5 - score);
-
-                top.appendChild(writer);
-                top.appendChild(stars);
-
-                const content = document.createElement('div');
-                content.className = 'review-content';
-                content.textContent = r.review_content || r.reviewContent || '';
-
-                item.appendChild(top);
-                item.appendChild(content);
-                reviewList.appendChild(item);
-            });
-        }
-
-        // 리뷰쓰기 버튼 – storeNumber 담아서 이동
-        document.getElementById('btn-write-review').onclick = function () {
-            location.href = '/review/write?storeNumber=' + storeNumber;
-        };
-
-        document.getElementById('detail-overlay').classList.add('open');
+        // 모달 오픈
+        document.getElementById('detail-backdrop').classList.add('open');
+        document.getElementById('detail-modal').classList.add('open');
 
     } catch (e) {
-        console.warn('Detail load error:', e.message);
-        alert('가게 정보를 불러오는 중 오류가 발생했습니다.');
+        console.warn('Detail error:', e.message);
+        alert('게시글을 불러오는 중 오류가 발생했습니다.');
+    }
+}
+
+function closeDetail() {
+    document.getElementById('detail-backdrop').classList.remove('open');
+    document.getElementById('detail-modal').classList.remove('open');
+}
+
+function initDetailClose() {
+    document.getElementById('btn-detail-close').addEventListener('click', closeDetail);
+    document.getElementById('detail-backdrop').addEventListener('click', closeDetail);
+}
+
+/* =====================================================
+   게시글 삭제
+   ===================================================== */
+
+async function deletePost(boardNumber) {
+    if (!confirm('게시글을 삭제하시겠습니까?')) return;
+
+    try {
+        const res  = await fetch(state.ctx + '/board/' + boardNumber, { method: 'DELETE' });
+        const data = await res.json();
+        alert(data.message);
+        if (data.success) {
+            closeDetail();
+            // 현재 페이지 카드가 1개였으면 이전 페이지로
+            if (state.page > 1 && document.querySelectorAll('.bl-post-card').length <= 1) {
+                state.page--;
+            }
+            loadBoard();
+        }
+    } catch (e) {
+        console.warn('Delete error:', e.message);
+        alert('서버 오류가 발생했습니다.');
     }
 }
 
 /* =====================================================
-   오버레이 닫기
+   유틸
    ===================================================== */
 
-function initCloseHandlers() {
-    document.getElementById('btn-detail-close').addEventListener('click', function () {
-        document.getElementById('detail-overlay').classList.remove('open');
-        document.querySelectorAll('.post-card').forEach(function (c) { c.classList.remove('active'); });
-    });
+function escHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 /* =====================================================
@@ -434,29 +350,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const container    = document.getElementById('board-data');
     state.myUserNumber = container.dataset.myUserNumber
         ? Number(container.dataset.myUserNumber) : null;
-    state.category     = container.dataset.category || 'hospital';
+    state.category     = container.dataset.category  || '';
+    state.ctx          = container.dataset.contextPath || '';
 
-    // 초기 패널 타이틀
-    const titleEl = document.getElementById('panel-title');
-    if (titleEl) titleEl.textContent = PANEL_TITLE[state.category] || '찾기';
+    // 검색 파라미터 URL에서 읽기
+    const params = new URLSearchParams(window.location.search);
+    state.keyword    = params.get('keyword')    || '';
+    state.searchType = params.get('searchType') || 'all';
 
-    // 초기 칩 active 동기화
-    document.querySelectorAll('.cat-chip').forEach(function (btn) {
+    // 검색 입력창 초기화
+    const inputEl = document.getElementById('search-input');
+    if (inputEl && state.keyword) inputEl.value = state.keyword;
+    const selectEl = document.getElementById('search-type');
+    if (selectEl && state.searchType) selectEl.value = state.searchType;
+
+    // 카테고리 탭 active 동기화
+    document.querySelectorAll('.bl-cat-tab').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.cat === state.category);
     });
 
     initSearch();
-    initCategoryFilter();
-    initCloseHandlers();
+    initCategoryTabs();
+    initDetailClose();
 
     // 초기 목록 로드
-    loadStores();
-
-    // 카카오 지도
-    if (typeof kakao !== 'undefined' && kakao.maps) {
-        kakao.maps.load(initKakaoMap);
-    } else {
-        window.kakaoMapReady = initKakaoMap;
-        initKakaoMap();
-    }
+    loadBoard();
 });
