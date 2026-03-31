@@ -3,6 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="boardMapper">
-
+<!-- boardMapper.xml -->
+<mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
+    <select id="getStoreList" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT * FROM stores;
+    </select>
 </mapper>

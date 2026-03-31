@@ -1,0 +1,134 @@
+ { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    /*
+    현재 웹사이트나 페이지에서 사용하고자 하는 폰트 지정
+
+    Font-family '1순위로 사용할 폰트 명칭','2순위로 사용할 폰트 명칭, 후순위를 원하는 만큼 작성 3순위까지 작성'
+    나의 컴퓨터에 설치되어 있는 폰트 ''안붙이지만, 외부에서 가져오는 폰트의 경우 '' 붙여서 작성한다.
+    폰트에서 ''를 붙여 작성하는 경우 : 단어가 2개이상이고, 공백이 포함될 때는 어디서부터 어디까지 폰트 명칭이다 ''붙임
+
+    예약어 : sans-serif
+
+    폰트는 없다고 해서 에러 -> css html은 유저들에게 보여지는 화면 중심이므로 에러 최소화 먼저
+    문제 발생하지는 않는다. 3순위까지 없으면 웹브라우저에서 사용하는 기본 폰트를 사용
+    기본 폰트 없을 때는 맑은 고딕, 고딕체 기준으로 해서 보여진다
+
+    sans-serif ->마지막 작성, 1순위 2순위에서 적용한 폰트가 모두 없을때는 기본 폰트로 사용하겠다 빠르게 표기
+    1순위 2순위 없으면 또 폰트찾고 기본폰트 적용하는데 시간 소요, 시간소모를 줄이기 위해 맨 마지막에는 없으면 기본폰트 sans-serif 작성
+    */
+    font-family:'Inter', 'Pretendard', sans-serif;
+    /*font-family: 'Pretendard', sans-serif;*/
+    background: #0f0f0f;
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── 헤더 ── */
+.header {
+    padding: 16px 24px;
+    background: #0f0f0f;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+.header-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #FEE500;
+}
+.header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+.header span { font-size: 13px; color: #666; margin-left: auto; }
+/*****************************지도 , 사이드 패널********************************/
+.map-wrap {
+    flex: 1;
+    position: relative;
+}
+.map-wrap #map {
+    width: 100%;
+    height: 100%;
+}
+
+.map-wrap .side-panel {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 260px;
+    background: rgba(15,15,15,0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 16px;
+    z-index: 5;
+}
+.map-wrap .side-panel h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+}
+.map-wrap .place-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 4px;
+}
+.map-wrap .place-item:hover  { background: #1a1a1a; }
+.map-wrap .place-item.active { background: #1a1a1a; }
+
+.place-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.place-info  { flex: 1; min-width: 0; }
+.place-name  {
+    font-size: 14px; font-weight: 600; color: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.place-desc  { font-size: 12px; color: #555; margin-top: 2px; }
+
+.custom-infowindow {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: 'Pretendard', sans-serif;
+    min-width: 160px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.custom-infowindow .iw-name  { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.custom-infowindow .iw-desc  { font-size: 12px; color: #888; }
+.custom-infowindow .iw-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+
+  .map-wrapper {
+      position: relative;   /* 👉 기준 */
+      width: 100%;
+      max-width: 1200px;
+      margin: 80px auto;
+  }
+
+
+
+
+
