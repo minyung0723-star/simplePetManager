@@ -33,5 +33,24 @@
         FROM users
         WHERE user_id = #{userId}
     </select>
+    <!-- 아이디 찾기 -->
+    <select id="findId" parameterType="map" resultType="String">
+        SELECT user_id
+        FROM users
+        WHERE user_name = #{userName} AND user_email = #{userEmail}
+    </select>
+    <!-- 비밀번호 찾기 -->
+    <select id="verifyPw" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE user_id = #{userId} AND user_email = #{userEmail}
+    </select>
+    <!-- 비밀번호 수정 -->
+    <update id="updatePassword" parameterType="map">
+        UPDATE users
+        SET user_password = #{userPassword},
+            modified_date = NOW()
+        WHERE user_id = #{userId}
+    </update>
 
 </mapper>

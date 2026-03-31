@@ -2,6 +2,7 @@ package com.project.simplepetmanager.model.mapper;
 
 import com.project.simplepetmanager.model.dto.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
@@ -17,4 +18,13 @@ public interface UserMapper {
 
     //로그인 및 사용자 조회
     User findByUserId(String userId);
+
+    // 아이디 찾기
+    String findId(@Param("userName") String userName, @Param("userEmail") String userEmail);
+
+    // 비밀번호 찾기용 사용자 검증
+    int verifyPw(@Param("userId") String userId, @Param("userEmail") String userEmail);
+
+    // 비밀번호 업데이트
+    int updatePassword(@Param("userId") String userId, @Param("userPassword") String userPassword);
 }

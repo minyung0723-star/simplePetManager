@@ -119,4 +119,63 @@ public class UserApiController {
         return ResponseEntity.ok(Map.of("message", "토큰 재발급 완료"));
     }
 
+    /**
+     * 아이디 찾기 API
+     */
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findId(@RequestBody Map<String, String> body) {
+        String userName = body.get("userName");
+        String userEmail = body.get("userEmail");
+
+        String foundId = userService.findUserId(userName, userEmail);
+
+        if (foundId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "일치하는 정보가 없습니다."));
+        }
+
+        return ResponseEntity.ok(Map.of("userId", foundId));
+    }
+
+    /**
+     * 비밀번호 찾기 전 사용자 검증 API
+     */
+    @PostMapping("/verify-for-pw")
+    public ResponseEntity<?> verifyForPw(@RequestBody Map<String, String> body) {
+        String userId = body.get("userId");
+        String userEmail = body.get("userEmail");
+
+        boolean isValid = userService.verifyUser(userId, userEmail);
+
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "정보가 일치하지 않습니다."));
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 비밀번호 재설정 API
+     */
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body) {
+        String userId = body.get("userId");
+        String userPassword = body.get("userPassword");
+
+        if (userId == null || userPassword == null || userPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "유효하지 않은 요청입니다."));
+        }
+
+        boolean isUpdated = userService.updatePassword(userId, userPassword);
+
+        if (!isUpdated) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "비밀번호 변경 중 오류가 발생했습니다."));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "비밀번호가 변경되었습니다."));
+    }
+
 }

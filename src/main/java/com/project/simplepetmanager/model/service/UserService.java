@@ -92,4 +92,31 @@ public class UserService {
         // (수업 코드에서는 리프레시를 다시 만들었지만, 보통은 액세스를 새로 만듭니다.)
         return jwtUtil.createAccessToken(email);
     }
+
+    /**
+     * 이름과 이메일로 아이디 조회
+     */
+    public String findUserId(String userName, String userEmail) {
+        return userMapper.findId(userName, userEmail);
+    }
+
+    /**
+     * 아이디와 이메일 일치 여부 확인
+     */
+    public boolean verifyUser(String userId, String userEmail) {
+        return userMapper.verifyPw(userId, userEmail) > 0;
+    }
+
+    /**
+     * 비밀번호 재설정 (암호화 처리 포함)
+     */
+    public boolean updatePassword(String userId, String newPassword) {
+        // 1. 새 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        // 2. DB 업데이트 실행 (영향을 받은 행의 수가 1이면 성공)
+        int result = userMapper.updatePassword(userId, encodedPassword);
+
+        return result > 0;
+    }
 }

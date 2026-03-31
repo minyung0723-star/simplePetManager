@@ -9,19 +9,13 @@
 
     <style>
         body { background-color: #f5f6f8; }
-
-        /* 탭 스타일 */
         .find-nav-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 25px; }
         .find-nav-link {
             flex: 1; text-align: center; padding: 15px; cursor: pointer;
             color: #888; font-weight: bold; transition: 0.3s;
         }
         .find-nav-link.active { color: #3b6ef5; border-bottom: 2px solid #3b6ef5; }
-
-        /* 이메일 입력 그룹 */
         .email-group { display: flex; gap: 5px; align-items: center; }
-
-        /* 아이디 찾기 결과 박스 */
         .found-id-box {
             background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px;
             padding: 25px; font-size: 20px; font-weight: bold; margin: 20px 0;
@@ -35,7 +29,7 @@
 <div class="user-login-container">
     <img src="${pageContext.request.contextPath}/images/petlogo.png"
          class="user-login-logo"
-         onclick="location.href='${pageContext.request.contextPath}/'">
+         onclick="location.href='${pageContext.request.contextPath}/'" style="cursor:pointer;">
 
     <div class="user-login-card">
         <div class="find-nav-tabs">
@@ -89,7 +83,7 @@
             <p class="text-muted">비밀번호를 잊으셨다면 '비밀번호 찾기'를 눌러 주세요.</p>
 
             <div class="found-id-box">
-                <img src="${pageContext.request.contextPath}/images/user_icon.png" class="user-icon" alt="user">
+                <img src="${pageContext.request.contextPath}/images/user.png" class="user-icon" alt="user">
                 <span id="displayUserId"></span>
             </div>
 
@@ -107,7 +101,6 @@
 </div>
 
 <script>
-    // 1. 페이지 로드 시 탭 결정 (URL의 mode 파라미터 확인)
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
@@ -115,71 +108,100 @@
         else switchTab('id');
     };
 
-    // 2. 탭 전환 함수
     function switchTab(type) {
         const isId = (type === 'id');
-        // 탭 스타일 변경
         document.getElementById('tabFindId').classList.toggle('active', isId);
         document.getElementById('tabFindPw').classList.toggle('active', !isId);
-        // 섹션 표시 변경
         document.getElementById('sectionFindId').classList.toggle('d-none', !isId);
         document.getElementById('sectionFindPw').classList.toggle('d-none', isId);
-        // 결과창은 무조건 숨김
         document.getElementById('sectionIdResult').classList.add('d-none');
     }
 
-    // 3. 직접입력 토글 함수
     function toggleDirectInput(select, inputId) {
         const directInput = document.getElementById(inputId);
-        if (select.value === "") directInput.classList.remove('d-none');
-        else directInput.classList.add('d-none');
-    }
-
-    // 4. 아이디 찾기 로직
-    async function processFindId() {
-        const name = document.getElementById("idName").value.trim();
-        const prefix = document.getElementById("idEmailPrefix").value.trim();
-        const domain = document.getElementById("idEmailDomain").value || document.getElementById("idDirect").value;
-        const email = prefix + "@" + domain;
-
-        if (!name || !prefix || !domain) { alert("모든 정보를 입력해주세요."); return; }
-
-        const res = await fetch("${pageContext.request.contextPath}/user/find-id", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ userName: name, userEmail: email }),
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            document.getElementById("sectionFindId").classList.add("d-none");
-            document.getElementById("sectionIdResult").classList.remove("d-none");
-            document.getElementById("displayUserId").textContent = data.userId;
+        if (select.value === "") {
+            directInput.classList.remove('d-none');
+            directInput.focus();
         } else {
-            alert("일치하는 정보가 없습니다.");
+            directInput.classList.add('d-none');
+            directInput.value = ""; // 직접 입력값 초기화
         }
     }
 
-    // 5. 비밀번호 찾기 로직 (일치 시 passwordEdit로 이동)
+    // 아이디 찾기 로직
+    async function processFindId() {
+        const name = document.getElementById("idName").value.trim();
+        const prefix = document.getElementById("idEmailPrefix").value.trim();
+        const domainSelect = document.getElementById("idEmailDomain").value;
+        const domainDirect = document.getElementById("idDirect").value.trim();
+
+        // 도메인 결정 로직 수정
+        const domain = (domainSelect === "") ? domainDirect : domainSelect;
+        const email = prefix + "@" + domain;
+
+        console.log("아이디 찾기 요청 데이터:", { userName: name, userEmail: email });
+
+        if (!name || !prefix || !domain) {
+            alert("모든 정보를 입력해주세요.");
+            return;
+        }
+
+        try {
+            const res = await fetch("${pageContext.request.contextPath}/user/find-id", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ userName: name, userEmail: email }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById("sectionFindId").classList.add("d-none");
+                document.getElementById("sectionIdResult").classList.remove("d-none");
+                document.getElementById("displayUserId").textContent = data.userId;
+            } else {
+                const errorData = await res.json();
+                alert(errorData.message || "일치하는 정보가 없습니다.");
+            }
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            alert("서버 통신 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 비밀번호 찾기 로직
     async function processFindPw() {
         const userId = document.getElementById("pwUserId").value.trim();
         const prefix = document.getElementById("pwEmailPrefix").value.trim();
-        const domain = document.getElementById("pwEmailDomain").value || document.getElementById("pwDirect").value;
+        const domainSelect = document.getElementById("pwEmailDomain").value;
+        const domainDirect = document.getElementById("pwDirect").value.trim();
+
+        const domain = (domainSelect === "") ? domainDirect : domainSelect;
         const email = prefix + "@" + domain;
 
-        if (!userId || !prefix || !domain) { alert("모든 정보를 입력해주세요."); return; }
+        console.log("비번 검증 요청 데이터:", { userId: userId, userEmail: email });
 
-        const res = await fetch("${pageContext.request.contextPath}/user/verify-for-pw", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ userId: userId, userEmail: email }),
-        });
+        if (!userId || !prefix || !domain) {
+            alert("모든 정보를 입력해주세요.");
+            return;
+        }
 
-        if (res.ok) {
-            // 성공 시 비밀번호 수정 페이지로 이동하며 아이디를 전달
-            location.href = "${pageContext.request.contextPath}/user/passwordEdit?userId=" + userId;
-        } else {
-            alert("아이디 또는 이메일 정보가 일치하지 않습니다.");
+        try {
+            const res = await fetch("${pageContext.request.contextPath}/user/verify-for-pw", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ userId: userId, userEmail: email }),
+            });
+
+            if (res.ok) {
+                // 검증 성공 시 userId를 쿼리 스트링으로 전달하여 수정 페이지 이동
+                location.href = "${pageContext.request.contextPath}/user/passwordEdit?userId=" + encodeURIComponent(userId);
+            } else {
+                const errorData = await res.json();
+                alert(errorData.message || "아이디 또는 이메일 정보가 일치하지 않습니다.");
+            }
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            alert("서버 통신 중 오류가 발생했습니다.");
         }
     }
 </script>
