@@ -1,67 +1,61 @@
 
+/* 1. 헤더 전체 레이아웃 */
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 20px; /* 여백을 약간 줄여 공간 확보 */
+    justify-content: space-between; /* 양 끝 배치 */
+    padding: 0 40px;
     height: 64px;
     background: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    /* ✅ 창 크기에 따라 유동적으로 변하게 설정 */
-    width: 100%;
-    box-sizing: border-box;
 }
 
-.header-logo a {
+/* 2. 왼쪽 영역 (로고 + 환영문구) */
+.header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    text-decoration: none;
+    gap: 15px; /* 로고와 문구 사이 간격 */
+    flex: 1;   /* 왼쪽 공간 확보 */
 }
 
-.header-logo img {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-
-
-/* 환영 문구: 메뉴를 밀어내지 않고 사이 공간에 위치 */
-/* 2. 환영 문구 수정 (반응형 대응) */
 .user-welcome-text {
     font-size: 14px;
-    color: #555;
-    font-weight: bold;
+    color: #333;
+    font-weight: 500;
     white-space: nowrap;
-    margin-left: 20px; /* 간격을 약간 좁힘 */
-    margin-right: 10px;
-    flex-shrink: 0; /* ✅ 공간이 부족해도 문구가 찌그러지지 않게 함 */
 }
 
+/* 중앙 네비게이션 영역 */
 .header-nav {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex: 1; /* 남은 공간 차지 */
     justify-content: center;
-    min-width: 0; /* ✅ 내부 요소가 넘칠 때 flex박스 붕괴 방지 */
+    /* 메뉴 사이의 간격 (이미지처럼 촘촘하게 모으려면 30~40px 권장) */
+    gap: 35px;
+    flex: 2; /* 왼쪽/오른쪽 영역보다 넓게 잡아 중앙 배치 보장 */
 }
 
 .header-nav a {
-    white-space: nowrap; /* 글자 줄바꿈 방지 */
-    padding: 8px 12px;   /* 패딩을 살짝 줄임 */
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600; /* 조금 더 선명하게 */
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
+/* 마우스 올렸을 때 밑줄 효과 (선택사항) */
 .header-nav a:hover {
-    background: #f5f5f5;
+    color: #3b6ef5;
 }
 
+/* 현재 활성화된 메뉴 강조 (필요 시) */
 .header-nav a.active {
-    background: #f0f0f0;
+    color: #3b6ef5;
     font-weight: 700;
 }
 
@@ -71,6 +65,36 @@
     display: flex;
     gap: 8px;
     align-items: center;
+}
+
+/* 1. 로고 전체 감싸는 링크 (정렬용) */
+.header-logo a {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 로고와 텍스트(만약 있다면) 사이 간격 */
+    text-decoration: none;
+}
+
+/* 2. 로고 이미지 (크기 고정 및 둥글게) */
+.header-logo img {
+    /* ✅ 크기를 44px로 명확히 고정합니다. */
+    width: 44px;
+    height: 44px;
+
+    /* ✅ 이미지가 찌그러지지 않고 비율을 유지하며 꽉 차게 합니다. */
+    object-fit: cover;
+
+    /* ✅ 이미지 3번처럼 둥글게 만듭니다. (선택사항) */
+    border-radius: 50%;
+
+    /* 부드러운 호버 효과를 위한 설정 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 3. 로고에 마우스 올렸을 때 효과 (선택사항, 생동감 부여) */
+.header-logo a:hover img {
+    transform: scale(1.05); /* 살짝 커짐 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 그림자 추가 */
 }
 
 /* 1. 공통 스타일 (로그인, 로그아웃, 회원가입 모두 적용) */
@@ -258,4 +282,28 @@ body {
 
 .user-login-links a:hover {
     text-decoration: underline;
+}
+
+/* 회원가입 이메일/인증번호 그룹 레이아웃 */
+.auth-group {
+    display: flex;
+    gap: 10px;        /* 입력창과 버튼 사이 간격 */
+    align-items: center;
+    margin-bottom: 12px; /* 기존 입력창들과 동일한 하단 여백 */
+}
+
+/* 그룹 내 입력창 조절 */
+.auth-group .user-login-input {
+    flex: 3;          /* 입력창 너비 비율 */
+    margin-bottom: 0; /* 그룹 내에서는 하단 여백 제거 (정렬 위해) */
+}
+
+/* 그룹 내 버튼 조절 */
+.auth-group .btn-auth {
+    flex: 1;          /* 버튼 너비 비율 */
+    height: 50px;     /* 입력창 높이와 통일 */
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap; /* 글자 줄바꿈 방지 */
+    border-radius: 8px;
 }

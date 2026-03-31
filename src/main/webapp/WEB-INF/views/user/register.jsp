@@ -27,17 +27,17 @@
 
         <input type="text" id="userName" class="form-control user-login-input" placeholder="이름">
 
-        <div class="d-flex">
+        <div class="auth-group">
             <input type="email" id="userEmail" class="form-control user-login-input" placeholder="이메일">
-            <button type="button" class="btn btn-outline-secondary ms-2" style="height: 50px;" onclick="requestEmailAuth()">인증</button>
+            <button type="button" class="btn btn-outline-secondary btn-auth" onclick="requestEmailAuth()">인증번호요청</button>
         </div>
 
-        <div class="d-flex mt-2">
+        <div class="auth-group">
             <input type="text" id="emailCode" class="form-control user-login-input" placeholder="인증번호 입력">
-            <button type="button" class="btn btn-outline-success ms-2" style="height: 50px;" onclick="verifyEmailCode()">확인</button>
+            <button type="button" class="btn btn-outline-success btn-auth" onclick="verifyEmailCode()">확인</button>
         </div>
 
-        <div id="emailStatusMsg" class="small mt-2 d-none"></div>
+        <div id="emailStatusMsg" class="small mt-1 mb-3 d-none text-start" style="padding-left: 5px;"></div>
 
         <button type="button" class="user-login-btn mt-4" onclick="handleRegister()">회원가입</button>
 
