@@ -45,15 +45,11 @@
         });
     });
 
-    async function loadReviews() {
-        /* [나중에 수정/제거 대상] 현재는 팀원 기능 미완성으로 storeId를 1로 고정함 */
+    const loadReviews = async () => {
         const storeId = 1;
 
         try {
-            // 1. 서버에 데이터를 요청하고 응답이 올 때까지 기다립니다.
             const response = await fetch(`/review/list?storeId=${storeId}`);
-
-            // 2. 응답받은 데이터를 JSON 형태로 파싱할 때까지 기다립니다.
             const data = await response.json();
 
             const container = document.getElementById("review-container");
@@ -61,43 +57,20 @@
 
             container.innerHTML = "";
 
-            // 데이터가 없을 때의 처리 (방어 코드)
-            if (data.length === 0) {
-                container.innerHTML = '<div class="text-center py-5 text-muted">등록된 리뷰가 없습니다.</div>';
-                return;
-            }
-
-            // 3. 받아온 데이터를 화면에 그립니다.
             data.forEach(review => {
                 const reviewHtml = `
             <article class="review-card mb-3 p-3 border-bottom">
-                <div class="d-flex">
-                    <div class="flex-grow-1">
-                        <div class="mb-1 d-flex align-items-center">
-                            <span class="fw-bold me-2">유저 \${review.userNumber}</span>
-                        </div>
-                        <div class="mb-2">
-                            <span class="star-rating text-warning">
-                                \${generateStars(review.rating)}
-                            </span>
-                            <span class="ms-2 small text-muted">\${review.rating}점</span>
-                        </div>
-                        <p class="review-content">
-                            \${review.reviewContent}
-                        </p>
-                    </div>
-                </div>
-            </article>
+                </article>
             `;
                 container.innerHTML += reviewHtml;
             });
         } catch (error) {
-            // 네트워크 에러나 JSON 파싱 에러 등을 여기서 한꺼번에 처리합니다.
             console.error("리뷰 로딩 에러:", error);
         }
-        }
+    };
 
-    function generateStars(rating) {
+
+    const generateStars = (rating) => {
         let stars = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= rating) {
@@ -109,7 +82,8 @@
             }
         }
         return stars;
-    }
+    };
+
 
     // 별점 마우스 이동 로직
     const container = document.getElementById('star-rating-container');
@@ -155,50 +129,44 @@
         fill.style.width = percentage + "%";
     }
 
-    async function submitReview() {
-        // 1. 값 가져오기 및 유효성 검사
+
+    const submitReview = async () => {
         const content = document.getElementById('reviewContent').value;
         const rating = document.getElementById('rating-value').value;
 
-        // 별점 체크 (0.5점 이상 조건)
         if (rating == 0 || rating == "0.0") {
-            alert("별점을 선택해 주세요!");
+            alert("별점을 선택해 주세요! ");
             return;
         }
 
-        // 내용 체크 (공백 제외 1자 이상)
         if (content.trim().length < 1) {
-            alert("리뷰 내용을 작성해 주세요!");
+            alert("리뷰 내용을 작성해 주세요! ✍");
             document.getElementById('reviewContent').focus();
             return;
         }
 
-        // 2. 서버 전송 준비
         const form = document.getElementById('reviewForm');
         const formData = new FormData(form);
 
         try {
-            // [수업시간 복습!] await를 써서 서버 응답이 올 때까지 기다립니다.
             const response = await fetch('insertReview', {
                 method: 'POST',
                 body: formData
             });
 
-            // 텍스트 데이터를 읽어올 때까지 또 기다립니다.
             const data = await response.text();
 
             if (data === "success") {
-                alert("리뷰가 성공적으로 완료되었습니다.");
-                location.href = "reviewPage"; // 목록으로 이동
+                alert("리뷰가 성공적으로 완료되었습니다. ");
+                location.href = "reviewPage";
             } else {
-                alert("등록 중 오류가 발생했습니다. 다시 시도해 주세요.");
+                alert("등록 중 오류가 발생했습니다.");
             }
         } catch (error) {
-            // 네트워크 장애 등 서버 통신 자체가 실패했을 때 실행됩니다.
             console.error('Error:', error);
             alert("서버 통신 오류가 발생했습니다.");
         }
-    }
+    };
 
 </script>
 <script src="${pageContext.request.contextPath}/js/design.js"></script>
