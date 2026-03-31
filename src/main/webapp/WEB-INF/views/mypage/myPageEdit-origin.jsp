@@ -76,38 +76,5 @@
 
 <script src="${pageContext.request.contextPath}/js/mypage-edit.js"></script>
 
-<%-- 페이지 로드 시 /mypage/info 로 현재 유저 정보를 가져와 폼 초기값 설정 --%>
-<script>
-(function () {
-    fetch('${pageContext.request.contextPath}/mypage/info')
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (!data.success) return;
-
-            // 이름 / 이메일 필드 채우기
-            var nameEl  = document.getElementById('user-name');
-            var emailEl = document.getElementById('user-email');
-            if (nameEl)  nameEl.value  = data.userName  || '';
-            if (emailEl) emailEl.value = data.userEmail || '';
-
-            // 프로필 아바타: 이미지 있으면 img, 없으면 이니셜
-            var avatarEl  = document.getElementById('profile-avatar');
-            var initialEl = document.getElementById('profile-initial');
-            if (data.imageUrl) {
-                var img = document.createElement('img');
-                img.src = data.imageUrl;
-                img.alt = '프로필 사진';
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
-                avatarEl.replaceChildren(img);
-            } else {
-                if (initialEl) initialEl.textContent = (data.userName || '?').charAt(0);
-            }
-        })
-        .catch(function (e) {
-            console.warn('프로필 로드 실패:', e.message);
-        });
-})();
-</script>
-
 </body>
 </html>

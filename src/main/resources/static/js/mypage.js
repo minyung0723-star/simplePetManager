@@ -1,6 +1,6 @@
 /**
  * mypage.js
- * 마이페이지 메인 (myPage.jsp) 전용 스크립트
+ * 마이페이지 메인 (myPage-origin.jsp) 전용 스크립트
  *
  * 프로필/리뷰 렌더링은 MyPageViewController → JSTL 서버사이드에서 처리
  * 이 파일은 탈퇴 모달 이벤트만 담당

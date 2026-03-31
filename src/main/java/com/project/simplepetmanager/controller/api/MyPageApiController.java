@@ -32,22 +32,46 @@ public class MyPageApiController {
     /**
      * 내 정보 조회
      * GET /mypage/info
+     * /
+     @GetMapping("/info")
+     public ResponseEntity<Map<String, Object>> getMyInfo(HttpServletRequest request) {
+     Map<String, Object> result = new HashMap<>();
+     User user = getLoginUser(request);
+
+     if (user == null) {
+     result.put("success", false);
+     result.put("message", "로그인이 필요합니다.");
+     return ResponseEntity.ok(result);
+     }
+
+     result.put("success",    true);
+     result.put("userName",   user.getUserName());
+     result.put("userEmail",  user.getUserEmail());
+     result.put("imageUrl",   user.getImageUrl());
+     return ResponseEntity.ok(result);
+     }
+     */
+    /**
+     * 내 정보 조회 (목업 포함)
+     * GET /mypage/info
+     *
+     * TODO: DB 연동 완료 후 목업 블록 제거
      */
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getMyInfo(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         User user = getLoginUser(request);
 
-        if (user == null) {
-            result.put("success", false);
-            result.put("message", "로그인이 필요합니다.");
-            return ResponseEntity.ok(result);
-        }
+        // 목업: 토큰 없어도 임시 데이터 반환
+        // TODO: DB 연동 후 user == null 이면 로그인 필요 응답으로 변경
+        String userName  = (user != null && user.getUserName()  != null) ? user.getUserName()  : "홍길동";
+        String userEmail = (user != null && user.getUserEmail() != null) ? user.getUserEmail() : "hong@petmanager.com";
+        String imageUrl  = (user != null) ? user.getImageUrl() : null;
 
-        result.put("success",    true);
-        result.put("userName",   user.getUserName());
-        result.put("userEmail",  user.getUserEmail());
-        result.put("imageUrl",   user.getImageUrl());
+        result.put("success",   true);
+        result.put("userName",  userName);
+        result.put("userEmail", userEmail);
+        result.put("imageUrl",  imageUrl);
         return ResponseEntity.ok(result);
     }
 

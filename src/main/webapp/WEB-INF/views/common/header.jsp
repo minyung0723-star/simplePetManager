@@ -22,14 +22,13 @@
         <a href="${pageContext.request.contextPath}/board/boardList?category=hospital">동물병원찾기</a>
         <a href="${pageContext.request.contextPath}/board/boardList?category=hotel">동물호텔찾기</a>
         <a href="${pageContext.request.contextPath}/board/boardList?category=pharmacy">동물약국찾기</a>
-        <a href="${pageContext.request.contextPath}/board/boardList">커뮤니티</a>
         <a href="${pageContext.request.contextPath}/review/reviewPage">리뷰</a>
     </nav>
 
     <div class="header-actions">
         <%-- 로그인 상태는 JWT 쿠키 기반이므로 JS에서 판단. JSTL 세션 방식 사용 안 함 --%>
             <%-- /mypage/myPage → /myPage 로 수정 --%>
-            <a href="${pageContext.request.contextPath}/myPage" class="btn-login" id="header-mypage-btn" ...>마이페이지</a><button class="btn-logout" id="header-logout-btn" style="display:none;">로그아웃</button>
+            <a href="${pageContext.request.contextPath}/mypage/myPage" class="btn-login" id="header-mypage-btn" ...>마이페이지</a><button class="btn-logout" id="header-logout-btn" style="display:none;">로그아웃</button>
         <a href="${pageContext.request.contextPath}/user/login" class="btn-login" id="header-login-btn" style="display:none;">로그인</a>
     </div>
 </header>

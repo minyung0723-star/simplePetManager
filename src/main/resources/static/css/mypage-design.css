@@ -1,6 +1,6 @@
 /* =====================================================
    mypage-design.css
-   마이페이지(myPage.jsp, myPageEdit.jsp) 전용 스타일
+   마이페이지(myPage-origin.jsp, myPageEdit-origin.jsp) 전용 스타일
    공통 헤더/푸터 스타일은 header_design.css 에 있음
    ===================================================== */
 
@@ -8,7 +8,7 @@
 body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222; }
 
 /* =====================================================
-   마이페이지 메인 (myPage.jsp)
+   마이페이지 메인 (myPage-origin.jsp)
    컨테이너명: mypage-container
    ===================================================== */
 
@@ -196,7 +196,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
 .mypage-modal-box .btn-danger:hover { background: #c53030; }
 
 /* =====================================================
-   회원정보 수정 (myPageEdit.jsp)
+   회원정보 수정 (myPageEdit-origin.jsp)
    컨테이너명: mypage-edit-container
    ===================================================== */
 

@@ -32,7 +32,6 @@
             </div>
             <div class="profile-name">${user.userName}</div>
             <div class="profile-email">${user.userEmail}</div>
-            <div class="profile-review-count">리뷰 ${fn:length(myReviews)}개</div>
         </div>
 
         <!-- 작성한 리뷰 (오른쪽) -->
@@ -41,12 +40,7 @@
 
             <c:choose>
                 <c:when test="${empty myReviews}">
-                    <div class="review-empty">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        </svg>
-                        <p>아직 작성한 리뷰가 없습니다.</p>
-                    </div>
+                    <div class="review-empty">작성한 리뷰가 없습니다.</div>
                 </c:when>
                 <c:otherwise>
                     <c:forEach var="review" items="${myReviews}">
@@ -54,20 +48,18 @@
                             <div class="review-item-header">
                                 <div class="review-place">
                                     <span class="review-badge
-                                        <c:choose>
-                                            <c:when test='${fn:containsIgnoreCase(review.review_category, "호텔")}'>hotel</c:when>
-                                            <c:when test='${fn:containsIgnoreCase(review.review_category, "약국")}'>pharmacy</c:when>
-                                            <c:otherwise>hospital</c:otherwise>
-                                        </c:choose>
+                                        <c:if test='${fn:containsIgnoreCase(review.review_category, "호텔")}'>hotel</c:if>
+                                        <c:if test='${fn:containsIgnoreCase(review.review_category, "약국")}'>pharmacy</c:if>
                                     ">${review.review_category}</span>
                                     <span class="review-shop-name">${review.shop_name}</span>
                                 </div>
                                 <span class="review-stars">
-                                    <c:forEach begin="1" end="${review.review_rating}" var="i">★</c:forEach><c:forEach begin="${review.review_rating + 1}" end="5" var="j">☆</c:forEach>
+                                    <c:forEach begin="1" end="${review.review_rating}">★</c:forEach>
+                                    <c:forEach begin="${review.review_rating + 1}" end="5">☆</c:forEach>
                                 </span>
                             </div>
                             <div class="review-content">${review.review_content}</div>
-                            <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
+                            <div class="review-date">${fn:substring(review.created_date, 0, 10)}</div>
                         </div>
                     </c:forEach>
                 </c:otherwise>
