@@ -72,9 +72,8 @@
     });
 
 
-    // 이메일 인증 요청
+    // 이메일 인증 요청 함수
     async function requestEmailAuth() {
-
         const email = document.getElementById("userEmail").value.trim();
 
         if (!email) {
@@ -82,38 +81,62 @@
             return;
         }
 
-        // 실제 이메일 API 연결 필요
-        console.log("인증 요청 이메일 :", email);
+        try {
+            const res = await fetch("${pageContext.request.contextPath}/user/email-auth", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userEmail: email })
+            });
 
-        alert("인증번호가 이메일로 전송되었습니다. (테스트용 번호 : 1234)");
-
+            if (res.ok) {
+                alert("인증번호가 이메일로 전송되었습니다. 5분 안에 입력해주세요.");
+            } else {
+                const data = await res.json();
+                alert(data.message || "발송 실패. 이메일 주소를 확인해주세요.");
+            }
+        } catch (e) {
+            console.error("Error:", e);
+            alert("서버 통신 오류가 발생했습니다.");
+        }
     }
 
-
-    // 인증번호 확인
-    function verifyEmailCode() {
-
+    // 인증번호 확인 함수
+    async function verifyEmailCode() {
+        const email = document.getElementById("userEmail").value.trim();
         const code = document.getElementById("emailCode").value.trim();
         const msg = document.getElementById("emailStatusMsg");
 
-        msg.classList.remove("d-none");
-
-        if (code === "1234") {
-
-            isEmailVerified = true;
-
-            msg.className = "text-success small mt-2";
-            msg.textContent = "이메일 인증이 완료되었습니다.";
-
-        } else {
-
-            isEmailVerified = false;
-
-            msg.className = "text-danger small mt-2";
-            msg.textContent = "인증번호가 일치하지 않습니다.";
-
+        if (!code) {
+            alert("인증번호를 입력해주세요.");
+            return;
         }
 
+        try {
+            const res = await fetch("${pageContext.request.contextPath}/user/email-verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userEmail: email, emailCode: code })
+            });
+
+            msg.classList.remove("d-none");
+
+            if (res.ok) {
+                isEmailVerified = true; // 인증 완료 상태로 변경
+                msg.className = "text-success small mt-1 mb-3 text-start";
+                msg.textContent = "이메일 인증이 완료되었습니다.";
+
+                //  인증 후 이메일과 번호 수정 방지
+                document.getElementById("userEmail").readOnly = true;
+                document.getElementById("emailCode").readOnly = true;
+            } else {
+                isEmailVerified = false;
+                msg.className = "text-danger small mt-1 mb-3 text-start";
+                msg.textContent = "인증번호가 일치하지 않거나 만료되었습니다.";
+            }
+        } catch (e) {
+            console.error("Error:", e);
+            alert("서버 통신 오류가 발생했습니다.");
+        }
     }
 
 

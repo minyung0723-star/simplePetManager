@@ -1,5 +1,6 @@
 package com.project.simplepetmanager.model.service;
 
+import com.project.simplepetmanager.common.EmailCodeService;
 import com.project.simplepetmanager.common.JwtUtil;
 import com.project.simplepetmanager.model.dto.User;
 import com.project.simplepetmanager.model.mapper.UserMapper;
