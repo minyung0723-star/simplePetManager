@@ -134,57 +134,75 @@
 
     // 2. 리뷰 목록 로드 함수 (핵심!)
     const loadReviews = async () => {
-        const container = document.getElementById("review-container");
-        const storeId = 1; // [임시] 나중에 동적으로 바꿀 부분
+        const storeId = 1;
 
         try {
-            // 서버의 API 컨트롤러에 데이터를 요청합니다.
             const response = await fetch(`/review/list?storeId=\${storeId}`);
+            const data = await response.json();
 
-            if (!response.ok) throw new Error("데이터를 가져오지 못했습니다.");
+            const container = document.getElementById("review-container");
+            const countElement = document.querySelector(".review-total-count");
 
-            const reviews = await response.json(); // JSON 데이터를 자바스크립트 배열로 변환
+            if (!container) return;
 
-            // 컨테이너 비우기
+            // 1. 개수 표시 (예: 리뷰(5))
+            if (countElement) {
+                countElement.innerText = `리뷰(${data.length})`;
+            }
+
             container.innerHTML = "";
 
-            if (reviews.length === 0) {
-                container.innerHTML = `<div class="text-center py-5 text-muted border-top">등록된 리뷰가 없습니다. 첫 리뷰를 작성해 보세요!</div>`;
+            // 2.(데이터가 없을 때)
+            if (data.length === 0) {
+                container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="bi bi-chat-left-dots text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted" style="font-weight: 500;">
+                        등록된 리뷰가 없습니다! <br>
+                        <span class="text-primary" style="cursor:pointer;" onclick="location.href='createreviewPage'">
+                           첫 번째 리뷰를 작성해보세요! ✍
+                        </span>
+                    </p>
+                </div>`;
                 return;
             }
 
-            // 데이터 개수만큼 반복하며 HTML 생성 (백틱 활용!)
-            reviews.forEach(review => {
-                // 날짜 예쁘게 만들기 (2026-03-31T16:00 -> 2026.03.31)
+            // 3. 데이터가 있을 때 (목록 뿌리기)
+            let html = "";
+            data.forEach(review => {
+                // 별점 아이콘 생성
+                const stars = generateStars(review.rating);
+                // 날짜 포맷팅 (T 이후 시간 제거)
                 const formattedDate = review.createdDate ? review.createdDate.split('T')[0] : '날짜 없음';
 
-                const reviewHtml = `
-                    <article class="review-card border-bottom p-3 mb-3">
-                        <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                                <img src="\${review.profileImage || '/resources/images/default-profile.png'}"
-                                     class="review-profile-img"
-                                     alt="유저 프로필">
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="mb-1 d-flex align-items-center">
-                                    <span class="fw-bold me-2">\${review.nickname || '익명'}</span>
-                                    </div>
-                                <div class="mb-2">
-                                    <span class="text-warning">\${generateStars(review.rating)}</span>
-                                    <span class="ms-2 small text-muted">\${formattedDate}</span>
-                                </div>
-                                <p class="review-content">\${review.reviewContent || '내용이 없습니다.'}</p>
-                            </div>
-                        </div>
-                    </article>
-                    `;
-                container.innerHTML += reviewHtml;
+                // JSP 내에서 JS 변수를 쓸 때는 \${} 형태를 권장합니다.
+                html += `
+        <article class="review-card border-bottom p-3 mb-3">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0 me-3">
+                    <img src="\${review.profileImage || '/resources/images/default-profile.png'}"
+                         class="review-profile-img" alt="프로필">
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="user-name">\${review.nickname || '익명'}</strong>
+                        <span class="review-meta text-muted small">\${formattedDate}</span>
+                    </div>
+                    <div class="star-rating mb-2">
+                        \${stars}
+                    </div>
+                    <p class="review-content mb-0">
+                        \${review.reviewContent || '내용이 없는 리뷰입니다.'}
+                    </p>
+                </div>
+            </div>
+        </article>
+    `;
             });
+            container.innerHTML = html;
 
         } catch (error) {
-            console.error("리뷰 로드 에러:", error);
-            container.innerHTML = `<div class="text-center py-5 text-danger">리뷰를 불러오는 중 오류가 발생했습니다.</div>`;
+            console.error("리뷰 로딩 에러:", error);
         }
     };
 
