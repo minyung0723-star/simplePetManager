@@ -2,17 +2,18 @@ package com.project.simplepetmanager.controller.api;
 
 import com.project.simplepetmanager.model.dto.Review;
 import com.project.simplepetmanager.model.service.ReviewService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController // 데이터를 반환하는 전용 컨트롤러임을 선언!
 @RequestMapping("/review") // 이 컨트롤러의 모든 주소는 /api/reviews로 시작합니다.
+@RequiredArgsConstructor
 public class ReviewApiController {
-
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
     /**
      * 1. 리뷰 등록 API (POST 방식)
@@ -69,5 +70,20 @@ public class ReviewApiController {
         return reviewService.getReviewList(storeId);
     }
 
+    @PostMapping("review/bookmark/toggle")
+    public String toggleBookmark(@RequestParam Map<String, Object> params) {
+        try {
+            int storeId = (int) params.get("storeId");
+            System.out.println("즐겨찾기 요청 온 병원 ID: " + storeId);
 
+            // TODO: 실제 DB에 즐겨찾기 저장/삭제 로직을 서비스에서 호출하세요!
+            // boolean isSuccess = reviewService.toggleBookmark(storeId);
+
+            return "success"; // 일단 테스트를 위해 성공 문자열 반환!
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        }
+
+    }
 }

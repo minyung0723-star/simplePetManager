@@ -2,7 +2,7 @@
 <%@include file="../common/header.jsp"%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container mt-4">
-    <div class="review-wrapper">
+    <div class="review-wrapper px-4">
         <section class="hospital-header d-flex justify-content-between align-items-start mb-4">
             <div>
                 <h2 class="fw-bold mb-1">${hospitalName}병원</h2>
@@ -91,25 +91,29 @@
             location.href = "createreviewPage";
         }
     };
-
+    //===============  즐겨찾기버튼  ===============//
     const toggleBookmark = async () => {
         const btn = document.getElementById('bookmarkBtn');
-        const icon = btn.querySelector('i');
+        const storeId=1; //임시 아이디
 
-        // [임시 데이터] 나중에 실제 병원 ID로 바뀔 부분입니다.
-        const hospitalId = 1;
-
-        // 1. UI 먼저 반응하기 (사용자 경험을 위해!)
-        const isActive = btn.classList.toggle('active');
-
-        if (isActive) {
-            btn.style.backgroundColor = '#6750A4'; // 즐겨찾기 활성화 (노란색)
-            btn.style.color = 'white';
-        } else {
-            btn.style.backgroundColor = 'transparent'; // 해제
-            btn.style.color = '#6c757d';
+        try{
+            const response = await fetch('review/bookmark/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type':'application-json'
+                },
+                body: JSON.stringify({storeId: storeId})
+            });
+            if (response.ok) {
+                const result = await response.text();
+                if (result === "success") {
+                    btn.classList().toggle('active');
+                    // 여기서 버튼 색깔 바꾸는 로직을 실행!
+                }
+            }
+        }catch (error) {
+            console.error("북마크 실패:", error);
+            alert("잠시 후 다시 시도해 주세요!");
         }
-
     };
 
     // 1 별점 나오게 하기!
@@ -120,13 +124,13 @@
         for (let i = 1; i <= 5; i++) {
             if (i <= rating) {
                 // 꽉 찬 별
-                starsHtml += '<i class="bi bi-star-fill star-filled"></i>';
+                starsHtml += `<i class="bi bi-star-fill star-filled"></i>`;
             } else if (i - 0.5 <= rating) {
                 // 반 별
-                starsHtml += '<i class="bi bi-star-half star-filled"></i>';
+                starsHtml += `<i class="bi bi-star-half star-filled"></i>`;
             } else {
                 // 빈 별
-                starsHtml += '<i class="bi bi-star"></i>';
+                starsHtml += `<i class="bi bi-star"></i>`;
             }
         }
         return starsHtml;
@@ -173,7 +177,7 @@
                 // 별점 아이콘 생성
                 const stars = generateStars(review.rating);
                 // 날짜 포맷팅 (T 이후 시간 제거)
-                const formattedDate = review.createdDate ? review.createdDate.split('T')[0] : '날짜 없음';
+                const formattedDate = review.createdDate?.split('T')[0]??'날짜 없음';
 
                 // JSP 내에서 JS 변수를 쓸 때는 \${} 형태를 권장합니다.
                 html += `

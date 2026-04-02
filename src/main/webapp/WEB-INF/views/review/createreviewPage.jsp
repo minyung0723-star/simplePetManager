@@ -34,88 +34,17 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        loadReviews();
+    document.addEventListener("DOMContentLoaded",()=> {
 
         // 글자 수 세기 기능 추가
         const textarea = document.getElementById('reviewContent');
         const charCount = document.getElementById('charCount');
-        textarea.addEventListener('input', () => {
-            charCount.innerText = textarea.value.length;
-        });
-    });
-
-    const loadReviews = async () => {
-        const storeId = 1; // 나중에 실제 storeId를 동적으로 받게 수정하세요!
-
-        try {
-            const response = await fetch(`/review/list?storeId=${storeId}`);
-            const data = await response.json();
-
-            const container = document.getElementById("review-container");
-            const countElement = document.querySelector(".review-total-count"); // 개수 표시할 곳
-
-            if (!container) return;
-
-            // 1. 리뷰 개수 업데이트 (HTML에 .review-total-count 요소가 있어야 함)
-            if (countElement) {
-                countElement.innerText = `리뷰(${data.length})`;
-            }
-
-            // 2. 초기화
-            container.innerHTML = "";
-
-            // 3. 리뷰가 하나도 없을 때 (Empty State)
-            if (data.length === 0) {
-                container.innerHTML = `
-                <div class="text-center py-5">
-                    <i class="bi bi-chat-left-dots text-muted" style="font-size: 3rem;"></i>
-                    <p class="mt-3 text-muted">아직 작성된 리뷰가 없네요.<br>첫 번째 리뷰의 주인공이 되어보세요! ✨</p>
-                </div>`;
-                return;
-            }
-
-            // 4. 리뷰가 있을 때 (목록 생성)
-            let html = "";
-            data.forEach(review => {
-                // 어제 우리가 만든 별점 생성 함수 호출!
-                const stars = generateStars(review.rating);
-
-                html += `
-                <article class="review-card mb-3 p-3 border-bottom">
-                    <div class="d-flex align-items-start">
-                        <img src="${review.profileImage || '/resources/images/default-profile.png'}"
-                             class="review-profile-img me-3" alt="프로필">
-
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong class="user-name">${review.nickname || '익명 테스터'}</strong>
-                                <span class="review-meta text-muted small">${review.createdDate}</span>
-                            </div>
-
-                            <div class="star-rating mb-2">
-                                ${stars}
-                            </div>
-
-                            <p class="review-content mb-0">
-                                ${review.reviewContent || '내용이 없는 리뷰입니다.'}
-                            </p>
-                        </div>
-                    </div>
-                </article>
-            `;
-            });
-            container.innerHTML = html;
-
-        } catch (error) {
-            console.error("리뷰 로딩 에러:", error);
-            const container = document.getElementById("review-container");
-            if(container) {
-                container.innerHTML = "<p class='text-center py-5 text-danger'>리뷰를 불러오는 중 오류가 발생했습니다.</p>";
-            }
+        if (textarea) {
+            textarea.addEventListener('input',(event)=>{
+                    charCount.innerText= `\${event.target.value.length}`;
+            })
         }
-    };
-
+    });
 
     // 별점 마우스 이동 로직
     const container = document.getElementById('star-rating-container');
@@ -146,7 +75,7 @@
         const score = Math.ceil(((x / rect.width) * 5) * 2) / 2;
 
         ratingValue.value = score;
-        ratingDisplay.innerText = score.toFixed(1) + " 점";
+        ratingDisplay.innerText = `\${score.toFixed(1)} 점`;
     });
 
     // 마우스를 떼면 마지막으로 클릭(확정)한 값으로 복구
@@ -156,7 +85,7 @@
     });
 
     // 핵심 함수: 숫자에 따라 CSS 너비를 조절함
-    function renderStars(score) {
+    const renderStars=(score)=> {
         const percentage = (score / 5) * 100;
         fill.style.width = percentage + "%";
     }

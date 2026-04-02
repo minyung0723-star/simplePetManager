@@ -2,16 +2,18 @@ package com.project.simplepetmanager.model.service;
 
 import com.project.simplepetmanager.model.dto.Review;
 import com.project.simplepetmanager.model.mapper.ReviewMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
 
-    @Autowired
-    private ReviewMapper reviewMapper; // 외부에서 함부로 조작 못하게 private으로 선언!
+
+    private final ReviewMapper reviewMapper; // 외부에서 함부로 조작 못하게 private으로 선언!
 
     /**
      * 새로운 리뷰를 등록하는 기능 (public: 컨트롤러가 호출 가능)

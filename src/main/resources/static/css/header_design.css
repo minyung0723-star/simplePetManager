@@ -328,3 +328,19 @@ footer {
 .star-filled {
     color: #ffc107; /* 부트스트랩 warning 색상 */
 }
+/* ===================================================================
+                             bookmark-btn
+====================================================================== */
+/* 기본 상태 */
+.bookmark-btn {
+    background-color: transparent;
+    color: #6c757d;
+    transition: all 0.3s; /* 부드럽게 바뀌게! */
+}
+
+/* 활성화 상태 (active 클래스가 붙었을 때) */
+.bookmark-btn.active {
+    background-color: #6750A4 !important;
+    color: white !important;
+    border-color: #6750A4 !important;
+}
