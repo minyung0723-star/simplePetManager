@@ -238,10 +238,10 @@ body {
 
 /* 카드 */
 .user-login-card {
+    padding: 35px; /* 기존 30px보다 조금 더 여유있게 수정 */
     border-radius: 14px;
-    padding: 35px;
+    background: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    background-color: white;
 }
 
 /* 입력창 */
@@ -306,4 +306,105 @@ body {
     font-weight: 600;
     white-space: nowrap; /* 글자 줄바꿈 방지 */
     border-radius: 8px;
+}
+
+/* 1. 알림창 스타일 (추가) */
+.login-alert {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+
+/* =========================================
+   ID/PW 찾기 페이지 전용 스타일 (findUser.jsp)
+   ========================================= */
+
+/* 탭 메뉴 레이아웃 */
+.find-nav-tabs {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 25px;
+}
+
+.find-nav-link {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    cursor: pointer;
+    color: #888;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.find-nav-link.active {
+    color: #3b6ef5;
+    border-bottom: 2px solid #3b6ef5;
+}
+
+/* 이메일 입력 그룹 보정 */
+.find-email-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.find-email-group .user-login-input {
+    margin-bottom: 0; /* 그룹 내 여백 제거 */
+}
+
+/* 결과 박스 (아이디 표시) */
+.found-result-box {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.found-user-icon {
+    width: 30px;
+    height: 30px;
+    opacity: 0.4;
+}
+
+/* 직접 입력 필드 간격 */
+.find-direct-input {
+    margin-top: 10px;
+}
+
+/* =========================================
+   비밀번호 재설정 페이지 전용 스타일 (passwordEdit.jsp)
+   ========================================= */
+
+/* 비밀번호 일치 여부 메시지 */
+.pw-edit-msg {
+    font-size: 13px;
+    margin-top: -8px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* 상태 색상 (부트스트랩 미사용 대비) */
+.text-status-success {
+    color: #28a745 !important;
+}
+
+.text-status-danger {
+    color: #dc3545 !important;
+}
+
+/* 읽기 전용 필드 스타일 (아이디 표시용) */
+.user-login-input[readonly] {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    color: #666;
+    cursor: default;
 }

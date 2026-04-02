@@ -42,25 +42,27 @@
         <button type="button" class="user-login-btn mt-4" onclick="handleRegister()">회원가입</button>
 
         <div class="user-login-links">
-            <a href="${pageContext.request.contextPath}/user/login">이미 계정이 있으신가요? 로그인</a>
+            <a href="${pageContext.request.contextPath}/login">이미 계정이 있으신가요? 로그인</a>
         </div>
     </div>
 </div>
 
 <script>
-
-    // 이메일 인증 여부 저장
+    // 1. 이메일 인증 여부 상태 관리
     let isEmailVerified = false;
 
-    // 비밀번호 일치 확인
-    document.getElementById("userPasswordCheck").addEventListener("input", () => {
-
+    // 2. 비밀번호 일치 확인 (실시간 피드백 개선)
+    const checkPasswordMatch = () => {
         const pw = document.getElementById("userPassword").value;
         const pwCheck = document.getElementById("userPasswordCheck").value;
         const msg = document.getElementById("pwMatchMsg");
 
-        msg.classList.remove("d-none");
+        if (!pwCheck) {
+            msg.classList.add("d-none");
+            return;
+        }
 
+        msg.classList.remove("d-none");
         if (pw !== pwCheck) {
             msg.className = "text-danger small mb-2";
             msg.textContent = "비밀번호가 일치하지 않습니다.";
@@ -68,12 +70,14 @@
             msg.className = "text-success small mb-2";
             msg.textContent = "비밀번호가 일치합니다.";
         }
+    };
 
-    });
+    // 두 입력창 모두에 이벤트 리스너 등록
+    document.getElementById("userPassword").addEventListener("input", checkPasswordMatch);
+    document.getElementById("userPasswordCheck").addEventListener("input", checkPasswordMatch);
 
-
-    // 이메일 인증 요청 함수
-    async function requestEmailAuth() {
+    // 3. 이메일 인증번호 발송 요청
+    const requestEmailAuth = async () => {
         const email = document.getElementById("userEmail").value.trim();
 
         if (!email) {
@@ -82,7 +86,7 @@
         }
 
         try {
-            const res = await fetch("${pageContext.request.contextPath}/user/email-auth", {
+            const res = await fetch("${pageContext.request.contextPath}/api/email-auth", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userEmail: email })
@@ -95,13 +99,13 @@
                 alert(data.message || "발송 실패. 이메일 주소를 확인해주세요.");
             }
         } catch (e) {
-            console.error("Error:", e);
+            console.error("이메일 인증 요청 에러:", e);
             alert("서버 통신 오류가 발생했습니다.");
         }
-    }
+    };
 
-    // 인증번호 확인 함수
-    async function verifyEmailCode() {
+    // 4. 인증번호 확인
+    const verifyEmailCode = async () => {
         const email = document.getElementById("userEmail").value.trim();
         const code = document.getElementById("emailCode").value.trim();
         const msg = document.getElementById("emailStatusMsg");
@@ -112,7 +116,7 @@
         }
 
         try {
-            const res = await fetch("${pageContext.request.contextPath}/user/email-verify", {
+            const res = await fetch("${pageContext.request.contextPath}/api/email-verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userEmail: email, emailCode: code })
@@ -121,11 +125,9 @@
             msg.classList.remove("d-none");
 
             if (res.ok) {
-                isEmailVerified = true; // 인증 완료 상태로 변경
+                isEmailVerified = true;
                 msg.className = "text-success small mt-1 mb-3 text-start";
                 msg.textContent = "이메일 인증이 완료되었습니다.";
-
-                //  인증 후 이메일과 번호 수정 방지
                 document.getElementById("userEmail").readOnly = true;
                 document.getElementById("emailCode").readOnly = true;
             } else {
@@ -134,90 +136,54 @@
                 msg.textContent = "인증번호가 일치하지 않거나 만료되었습니다.";
             }
         } catch (e) {
-            console.error("Error:", e);
+            console.error("인증번호 확인 에러:", e);
             alert("서버 통신 오류가 발생했습니다.");
         }
-    }
+    };
 
-
-    // 회원가입 처리
-    async function handleRegister() {
-
+    // 5. 최종 회원가입 처리
+    const handleRegister = async () => {
         const userId = document.getElementById("userId").value.trim();
         const userPassword = document.getElementById("userPassword").value.trim();
         const userPasswordCheck = document.getElementById("userPasswordCheck").value.trim();
         const userName = document.getElementById("userName").value.trim();
         const userEmail = document.getElementById("userEmail").value.trim();
 
-
-        // 필수 입력 체크
         if (!userId || !userPassword || !userName || !userEmail) {
             alert("모든 필수 정보를 입력해 주세요.");
             return;
         }
 
-
-        // 비밀번호 확인
         if (userPassword !== userPasswordCheck) {
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
 
-
-        // 이메일 인증 여부
         if (!isEmailVerified) {
             alert("이메일 인증을 완료해 주세요.");
             return;
         }
 
-
         try {
 
-            const res = await fetch("${pageContext.request.contextPath}/user/register", {
-
+            const res = await fetch("${pageContext.request.contextPath}/api/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    userId,
-                    userPassword,
-                    userName,
-                    userEmail
-                })
-
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, userPassword, userName, userEmail })
             });
 
-
             if (res.ok) {
-
-                window.location.href =
-                    "${pageContext.request.contextPath}/user/login?success";
-
+                // 성공 시 로그인 페이지로 이동 (?success 파라미터는 login.jsp에서 체크함)
+                window.location.href = "${pageContext.request.contextPath}/login?success";
             } else {
-
                 const data = await res.json();
-
-                const el = document.getElementById("alertBox");
-
-                el.classList.remove("d-none");
-                el.className = "alert alert-danger";
-
-                el.textContent =
-                    data.message || "회원가입에 실패했습니다.";
-
+                alert(data.message || "회원가입 실패");
             }
-
         } catch (error) {
-
             console.error("회원가입 요청 에러:", error);
-
             alert("서버 통신 중 오류가 발생했습니다.");
-
         }
-
     }
-
 </script>
 
 </body>

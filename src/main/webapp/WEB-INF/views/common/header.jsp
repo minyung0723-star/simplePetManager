@@ -44,12 +44,14 @@
     function renderHeader() {
         const authMenu = document.getElementById("auth-menu");
         const mainNav = document.getElementById("main-nav");
-        const welcomeArea = document.getElementById("user-welcome"); // 환영 문구 영역
+        const welcomeArea = document.getElementById("user-welcome");
+
+        if (!authMenu || !mainNav || !welcomeArea) return;
 
         const isLoggedIn = localStorage.getItem("isLoggedIn");
         const userName = localStorage.getItem("userName");
 
-        if (isLoggedIn === "true") {
+        if (isLoggedIn === "true" && userName) {
             // 1. 환영 문구 표시
             welcomeArea.textContent = userName + "님 환영합니다";
 
@@ -63,19 +65,16 @@
             }
 
             // 3. 로그아웃 버튼
-            authMenu.innerHTML = `
-                <a href="javascript:void(0);" onclick="processLogout()" class="btn-logout">로그아웃</a>
-            `;
+            authMenu.innerHTML = '<a href="javascript:void(0);" onclick="processLogout()" class="btn-logout">로그아웃</a>';
         } else {
             // 로그아웃 상태 시 초기화
             welcomeArea.textContent = "";
             const myPageLink = document.getElementById("nav-mypage");
             if (myPageLink) myPageLink.remove();
 
-            authMenu.innerHTML = `
-                <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
-                <a href="${pageContext.request.contextPath}/user/register" class="btn-register">회원가입</a>
-            `;
+            authMenu.innerHTML =
+                '<a href="${pageContext.request.contextPath}/login" class="btn-login">로그인</a>' +
+                '<a href="${pageContext.request.contextPath}/register" class="btn-register">회원가입</a>';
         }
     }
 
@@ -83,15 +82,26 @@
         if (!confirm("로그아웃 하시겠습니까?")) return;
 
         try {
-            const res = await fetch("${pageContext.request.contextPath}/user/logout", { method: "POST" });
+
+            const res = await fetch("${pageContext.request.contextPath}/api/logout", {
+                method: "POST"
+            });
+
             if (res.ok) {
+                // localStorage 데이터 삭제
                 localStorage.removeItem("isLoggedIn");
-                localStorage.removeItem("userName"); // 이름 정보도 삭제
+                localStorage.removeItem("userName");
+
                 alert("로그아웃 되었습니다.");
+
+                // 메인 페이지로 이동하며 새로고침
                 location.href = "${pageContext.request.contextPath}/";
+            } else {
+                alert("로그아웃 처리 중 서버 오류가 발생했습니다.");
             }
         } catch (error) {
             console.error("Logout Error:", error);
+            alert("서버와 통신할 수 없습니다.");
         }
     }
 </script>

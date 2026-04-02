@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserApiController {
 
     private final UserService userService;
@@ -30,7 +29,7 @@ public class UserApiController {
      * 회원가입
      * register.jsp에서 fetch로 호출
      */
-    @PostMapping("/register")
+    @PostMapping("/api/register")
     public ResponseEntity<?> register(@RequestBody User user){
 
         userService.register(user);
@@ -44,7 +43,7 @@ public class UserApiController {
      * 인증 성공 시 Access Token과 Refresh Token을 생성하며,
      * 보안을 위해 두 토큰 모두 HttpOnly 쿠키에 저장하여 클라이언트에 전달합니다.
      */
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body,
                                    HttpServletResponse response) {
         String userId = body.get("userId");
@@ -79,7 +78,7 @@ public class UserApiController {
      * 서버 측 보관함(Map 또는 Redis)에서 해당 유저의 리프레시 토큰을 제거합니다.
      * 브라우저에 저장된 액세스 토큰과 리프레시 토큰 쿠키를 삭제하여 세션을 종료합니다.
      */
-    @PostMapping("/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<?> logout(@AuthenticationPrincipal String email, HttpServletResponse response) {
         // 서버 메모리에서 리프레시 토큰 삭제
         userService.logout(email);
@@ -97,7 +96,7 @@ public class UserApiController {
      * 리프레시 토큰이 유효하다면 사용자가 다시 로그인할 필요 없이
      * 새로운 액세스 토큰을 발급하여 흐름을 유지합니다.
      */
-    @PostMapping("/token/refresh")
+    @PostMapping("/api/token/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         // 쿠키에서 리프레시 토큰 추출
         String refreshToken = cookieUtil.get(request, "refresh_token");
@@ -124,7 +123,7 @@ public class UserApiController {
     /**
      * 아이디 찾기
      */
-    @PostMapping("/find-id")
+    @PostMapping("/api/find-id")
     public ResponseEntity<?> findId(@RequestBody Map<String, String> body) {
         String userName = body.get("userName");
         String userEmail = body.get("userEmail");
@@ -142,7 +141,7 @@ public class UserApiController {
     /**
      * 비밀번호 찾기 전 사용자 검증
      */
-    @PostMapping("/verify-for-pw")
+    @PostMapping("/api/verify-for-pw")
     public ResponseEntity<?> verifyForPw(@RequestBody Map<String, String> body) {
         String userId = body.get("userId");
         String userEmail = body.get("userEmail");
@@ -160,7 +159,7 @@ public class UserApiController {
     /**
      * 비밀번호 재설정
      */
-    @PostMapping("/update-password")
+    @PostMapping("/api/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body) {
         String userId = body.get("userId");
         String userPassword = body.get("userPassword");
@@ -183,7 +182,7 @@ public class UserApiController {
     /**
      * 이메일 인증번호 발송
      */
-    @PostMapping("/email-auth")
+    @PostMapping("/api/email-auth")
     public ResponseEntity<?> sendEmailCode(@RequestBody Map<String, String> body) {
         String email = body.get("userEmail");
         // 서비스의 영문 메서드 호출
@@ -194,7 +193,7 @@ public class UserApiController {
     /**
      * 이메일 인증번호 검증
      */
-    @PostMapping("/email-verify")
+    @PostMapping("/api/email-verify")
     public ResponseEntity<?> verifyEmailCode(@RequestBody Map<String, String> body) {
         String email = body.get("userEmail");
         String code = body.get("emailCode");
