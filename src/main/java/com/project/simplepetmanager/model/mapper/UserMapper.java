@@ -20,11 +20,11 @@ public interface UserMapper {
     User findByUserId(String userId);
 
     // 아이디 찾기
-    String findId(@Param("userName") String userName, @Param("userEmail") String userEmail);
+    String findId(String userName, String userEmail);
 
     // 비밀번호 찾기용 사용자 검증
-    int verifyPw(@Param("userId") String userId, @Param("userEmail") String userEmail);
+    int verifyPw(String userId, String userEmail);
 
     // 비밀번호 업데이트
-    int updatePassword(@Param("userId") String userId, @Param("userPassword") String userPassword);
+    int updatePassword (String userId, String userPassword);
 }

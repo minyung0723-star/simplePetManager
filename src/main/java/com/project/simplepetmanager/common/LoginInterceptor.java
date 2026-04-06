@@ -29,6 +29,16 @@ public class LoginInterceptor implements HandlerInterceptor {
 
             if (loginUser != null) {
                 request.setAttribute("loginUser", loginUser);
+
+                // [추가된 로직] 로그인 상태인데 접근하면 안 되는 주소들 체크
+                String uri = request.getRequestURI();
+                if (uri.contains("/login") || uri.contains("/register") ||
+                        uri.contains("/findUser") || uri.contains("/passwordEdit")) {
+
+                    // 메인 페이지로 돌려보내고 메시지 전달 (선택사항)
+                    response.sendRedirect(request.getContextPath() + "/?LoggedIn=true");
+                    return false; // 컨트롤러 실행 중단
+                }
             }
         }
         return true;

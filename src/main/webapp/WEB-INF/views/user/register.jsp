@@ -6,17 +6,23 @@
     <title>회원가입</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
+    <style>
+        /* 추가적인 스타일 조정이 필요하다면 여기에 작성하세요 */
+        .user-login-input { margin-bottom: 15px; }
+        .auth-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-auth { white-space: nowrap; }
+    </style>
 </head>
 <body>
 
 <div class="user-login-container">
     <img src="${pageContext.request.contextPath}/images/petlogo.png"
-         class="user-login-logo"
-         onclick="location.href='${pageContext.request.contextPath}/'">
+         class="user-login-logo" id="logoBtn" alt="Logo" style="cursor:pointer;">
 
     <div class="user-login-card">
-        <h4 class="mb-3 fw-bold">회원가입</h4>
-        <div id="alertBox" class="d-none mb-3"></div>
+        <h4 class="mb-4 fw-bold">회원가입</h4>
+
+        <div id="alertBox" class="alert alert-danger d-none mb-3"></div>
 
         <input type="text" id="userId" class="form-control user-login-input" placeholder="아이디">
 
@@ -28,163 +34,31 @@
         <input type="text" id="userName" class="form-control user-login-input" placeholder="이름">
 
         <div class="auth-group">
-            <input type="email" id="userEmail" class="form-control user-login-input" placeholder="이메일">
-            <button type="button" class="btn btn-outline-secondary btn-auth" onclick="requestEmailAuth()">인증번호요청</button>
+            <input type="email" id="userEmail" class="form-control user-login-input" placeholder="이메일" style="margin-bottom:0;">
+            <button type="button" id="btnRequestAuth" class="btn btn-outline-secondary btn-auth">인증번호요청</button>
         </div>
 
         <div class="auth-group">
-            <input type="text" id="emailCode" class="form-control user-login-input" placeholder="인증번호 입력">
-            <button type="button" class="btn btn-outline-success btn-auth" onclick="verifyEmailCode()">확인</button>
+            <input type="text" id="emailCode" class="form-control user-login-input" placeholder="인증번호 입력" style="margin-bottom:0;">
+            <button type="button" id="btnVerifyCode" class="btn btn-outline-success btn-auth">확인</button>
         </div>
 
         <div id="emailStatusMsg" class="small mt-1 mb-3 d-none text-start" style="padding-left: 5px;"></div>
 
-        <button type="button" class="user-login-btn mt-4" onclick="handleRegister()">회원가입</button>
+        <button type="button" id="btnRegister" class="user-login-btn mt-4">회원가입</button>
 
-        <div class="user-login-links">
+        <div class="user-login-links mt-3">
             <a href="${pageContext.request.contextPath}/login">이미 계정이 있으신가요? 로그인</a>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. 이메일 인증 여부 상태 관리
-    let isEmailVerified = false;
-
-    // 2. 비밀번호 일치 확인 (실시간 피드백 개선)
-    const checkPasswordMatch = () => {
-        const pw = document.getElementById("userPassword").value;
-        const pwCheck = document.getElementById("userPasswordCheck").value;
-        const msg = document.getElementById("pwMatchMsg");
-
-        if (!pwCheck) {
-            msg.classList.add("d-none");
-            return;
-        }
-
-        msg.classList.remove("d-none");
-        if (pw !== pwCheck) {
-            msg.className = "text-danger small mb-2";
-            msg.textContent = "비밀번호가 일치하지 않습니다.";
-        } else {
-            msg.className = "text-success small mb-2";
-            msg.textContent = "비밀번호가 일치합니다.";
-        }
-    };
-
-    // 두 입력창 모두에 이벤트 리스너 등록
-    document.getElementById("userPassword").addEventListener("input", checkPasswordMatch);
-    document.getElementById("userPasswordCheck").addEventListener("input", checkPasswordMatch);
-
-    // 3. 이메일 인증번호 발송 요청
-    const requestEmailAuth = async () => {
-        const email = document.getElementById("userEmail").value.trim();
-
-        if (!email) {
-            alert("이메일을 입력해 주세요.");
-            return;
-        }
-
-        try {
-            const res = await fetch("${pageContext.request.contextPath}/api/email-auth", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userEmail: email })
-            });
-
-            if (res.ok) {
-                alert("인증번호가 이메일로 전송되었습니다. 5분 안에 입력해주세요.");
-            } else {
-                const data = await res.json();
-                alert(data.message || "발송 실패. 이메일 주소를 확인해주세요.");
-            }
-        } catch (e) {
-            console.error("이메일 인증 요청 에러:", e);
-            alert("서버 통신 오류가 발생했습니다.");
-        }
-    };
-
-    // 4. 인증번호 확인
-    const verifyEmailCode = async () => {
-        const email = document.getElementById("userEmail").value.trim();
-        const code = document.getElementById("emailCode").value.trim();
-        const msg = document.getElementById("emailStatusMsg");
-
-        if (!code) {
-            alert("인증번호를 입력해주세요.");
-            return;
-        }
-
-        try {
-            const res = await fetch("${pageContext.request.contextPath}/api/email-verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userEmail: email, emailCode: code })
-            });
-
-            msg.classList.remove("d-none");
-
-            if (res.ok) {
-                isEmailVerified = true;
-                msg.className = "text-success small mt-1 mb-3 text-start";
-                msg.textContent = "이메일 인증이 완료되었습니다.";
-                document.getElementById("userEmail").readOnly = true;
-                document.getElementById("emailCode").readOnly = true;
-            } else {
-                isEmailVerified = false;
-                msg.className = "text-danger small mt-1 mb-3 text-start";
-                msg.textContent = "인증번호가 일치하지 않거나 만료되었습니다.";
-            }
-        } catch (e) {
-            console.error("인증번호 확인 에러:", e);
-            alert("서버 통신 오류가 발생했습니다.");
-        }
-    };
-
-    // 5. 최종 회원가입 처리
-    const handleRegister = async () => {
-        const userId = document.getElementById("userId").value.trim();
-        const userPassword = document.getElementById("userPassword").value.trim();
-        const userPasswordCheck = document.getElementById("userPasswordCheck").value.trim();
-        const userName = document.getElementById("userName").value.trim();
-        const userEmail = document.getElementById("userEmail").value.trim();
-
-        if (!userId || !userPassword || !userName || !userEmail) {
-            alert("모든 필수 정보를 입력해 주세요.");
-            return;
-        }
-
-        if (userPassword !== userPasswordCheck) {
-            alert("비밀번호가 일치하지 않습니다.");
-            return;
-        }
-
-        if (!isEmailVerified) {
-            alert("이메일 인증을 완료해 주세요.");
-            return;
-        }
-
-        try {
-
-            const res = await fetch("${pageContext.request.contextPath}/api/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, userPassword, userName, userEmail })
-            });
-
-            if (res.ok) {
-                // 성공 시 로그인 페이지로 이동 (?success 파라미터는 login.jsp에서 체크함)
-                window.location.href = "${pageContext.request.contextPath}/login?success";
-            } else {
-                const data = await res.json();
-                alert(data.message || "회원가입 실패");
-            }
-        } catch (error) {
-            console.error("회원가입 요청 에러:", error);
-            alert("서버 통신 중 오류가 발생했습니다.");
-        }
-    }
+    // 전역 변수로 contextPath 설정
+    window.contextPath = "${pageContext.request.contextPath}";
 </script>
+
+<script src="${pageContext.request.contextPath}/js/user/register.js"></script>
 
 </body>
 </html>

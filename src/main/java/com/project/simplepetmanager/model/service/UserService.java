@@ -21,6 +21,8 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final Map<String, String> refreshTokenStorage = new ConcurrentHashMap<>();
 
+    // 비밀번호 정책 상수: 8자 이상, 대문자, 소문자, 숫자, 특수문자(!@#$) 필수 포함
+    private static final String PW_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$])[A-Za-z\\d!@#$]{8,}$";
     /**
      * 회원가입 처리
      * 1. 이메일 중복 체크
@@ -30,14 +32,14 @@ public class UserService {
     public void register(User user){
 
         int count = userMapper.checkEmail(user.getUserEmail());
-
         if(count > 0){
             throw new RuntimeException("이미 사용중인 이메일입니다.");
         }
-
+        if (user.getUserPassword() == null || !user.getUserPassword().matches(PW_PATTERN)) {
+            throw new RuntimeException("비밀번호는 8자 이상이며 영문 대/소문자, 숫자, 특수문자(!@#$)를 모두 포함해야 합니다.");
+        }
         // 비밀번호 암호화
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
-
         userMapper.register(user);
     }
     // 로그인
@@ -112,6 +114,10 @@ public class UserService {
      * 비밀번호 재설정 (암호화 처리 포함)
      */
     public boolean updatePassword(String userId, String newPassword) {
+        if (newPassword == null || !newPassword.matches(PW_PATTERN)) {
+            // 이 경우 false를 반환하여 컨트롤러에서 사용자에게 알림을 줄 수 있게 합니다.
+            return false;
+        }
         // 1. 새 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(newPassword);
 
