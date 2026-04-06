@@ -344,3 +344,6 @@ footer {
     color: white !important;
     border-color: #6750A4 !important;
 }
+.bookmark-btn.active i {
+    color: white !important;
+}

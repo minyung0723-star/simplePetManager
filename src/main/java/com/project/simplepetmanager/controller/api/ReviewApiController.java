@@ -1,9 +1,11 @@
 package com.project.simplepetmanager.controller.api;
 
+import com.project.simplepetmanager.model.dto.Board;
 import com.project.simplepetmanager.model.dto.Review;
 import com.project.simplepetmanager.model.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,20 +72,44 @@ public class ReviewApiController {
         return reviewService.getReviewList(storeId);
     }
 
-    @PostMapping("review/bookmark/toggle")
-    public String toggleBookmark(@RequestParam Map<String, Object> params) {
+    @PostMapping("/bookmark/toggle")
+    public String toggleBookmark(@RequestBody Map<String, Object> params) {
         try {
-            int storeId = (int) params.get("storeId");
-            System.out.println("즐겨찾기 요청 온 병원 ID: " + storeId);
+            if (params.get("storeId") == null) {
+                return "fail";
+            }
 
-            // TODO: 실제 DB에 즐겨찾기 저장/삭제 로직을 서비스에서 호출하세요!
-            // boolean isSuccess = reviewService.toggleBookmark(storeId);
+            long storeId = Long.parseLong(params.get("storeId").toString());
+            long userNumber = 1L; // [중요] 나중에 세션에서 가져와야 하지만, 일단 1번 유저로 테스트!
 
-            return "success"; // 일단 테스트를 위해 성공 문자열 반환!
+            // 3. ⭐⭐⭐ 드디어 서비스 호출! (여기가 진짜 DB랑 싸우는 곳) ⭐⭐⭐
+            String result = reviewService.toggleBookmark(userNumber, storeId);
+
+            System.out.println("결과: " + result); // 콘솔에 inserted 또는 deleted가 찍혀야 성공!
+            return result; // 프론트에 상태를 알려줍니다.
+
         } catch (Exception e) {
             e.printStackTrace();
             return "fail";
         }
-
     }
+
+    @GetMapping("/bookmark/check") // 최종 주소: /review/bookmark/check
+    public boolean checkBookmark(@RequestParam("storeId") long storeId) {
+        // 1. 임시 유저 번호 설정 (나중에 세션에서!)
+        long userNumber = 1L;
+
+        // 2. 서비스의 checkBookmark 메서드 호출!
+        // (결과가 1이면 true, 0이면 false를 반환하게 로직을 짜면 JS가 편해요)
+        int count = reviewService.checkBookmark(userNumber, storeId);
+
+        return count > 0;
+    }
+
+    @GetMapping("/store/info")
+    public Board getStoreInfo(@RequestParam("storeId") int storeId) {
+        // DB에서 병원(Board) 정보를 가져와서 리턴!
+        return reviewService.getStoreDetail(storeId);
+    }
+
 }

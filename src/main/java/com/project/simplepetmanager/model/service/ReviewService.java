@@ -1,15 +1,17 @@
 package com.project.simplepetmanager.model.service;
 
+import com.project.simplepetmanager.model.dto.Board;
 import com.project.simplepetmanager.model.dto.Review;
 import com.project.simplepetmanager.model.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReviewService {
 
 
@@ -31,5 +33,34 @@ public class ReviewService {
      */
     public List<Review> getReviewList(int storeId) {
         return reviewMapper.getReviewList(storeId);
+    }
+
+
+    public String toggleBookmark(long userNumber, long storeId) {
+
+        int count = reviewMapper.checkBookmark(userNumber, storeId);
+
+        if (count == 0) {
+            reviewMapper.insertBookmark(userNumber, storeId);
+            return "inserted";
+        } else {
+            reviewMapper.deleteBookmark(userNumber, storeId);
+            return "deleted";
+        }
+    }
+
+    // 2. [추가] 컨트롤러가 "이거 찜 되어 있어?"라고 물어볼 때 답해줄 메서드!
+    public int checkBookmark(long userNumber, long storeId) {
+        // 매퍼에게 직접 물어봐서 결과를 리턴해줍니다.
+        return reviewMapper.checkBookmark(userNumber, storeId);
+    }
+    /**
+     * 특정 병원(가게)의 상세 정보를 가져오는 서비스
+     * @param storeId 병원 아이디
+     * @return Board 객체 (병원 이름, 주소 등 포함)
+     */
+    public Board getStoreDetail(int storeId) {
+        // 매퍼에게 DB에서 데이터를 가져오라고 시킵니다.
+        return reviewMapper.getStoreDetail(storeId);
     }
 }

@@ -1,7 +1,10 @@
 package com.project.simplepetmanager.model.mapper;
 
+import com.project.simplepetmanager.model.dto.Board;
 import com.project.simplepetmanager.model.dto.Review;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 @Mapper
@@ -26,5 +29,13 @@ public interface ReviewMapper {
      * @return 작성자 정보(닉네임, 사진)가 포함된 리뷰 리스트
      */
     List<Review> getReviewList(int storeId);
+
+    /**
+     * 북마크 체크, 추가, 삭제
+     */
+    int checkBookmark(@Param("userNumber") long userNumber, @Param("storeId") long storeId);
+    void insertBookmark(@Param("userNumber") long userNumber, @Param("storeId") long storeId);
+    void deleteBookmark(@Param("userNumber") long userNumber, @Param("storeId") long storeId);
+    Board getStoreDetail(int storeId);
 
 }

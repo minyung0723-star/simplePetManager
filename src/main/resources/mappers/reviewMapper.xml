@@ -36,4 +36,30 @@
         ORDER BY Reviews.created_date DESC
     </select>
 
+    <select id="checkBookmark" resultType="int">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE user_number = #{userNumber} AND storeId = #{storeId}
+    </select>
+
+    <insert id="insertBookmark">
+        INSERT INTO bookmark (user_number, storeId, prefer)
+        VALUES (#{userNumber}, #{storeId}, 1)
+    </insert>
+
+    <delete id="deleteBookmark">
+        DELETE FROM bookmark
+        WHERE user_number = #{userNumber} AND storeId = #{storeId}
+    </delete>
+
+    <select id="getStoreDetail" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT
+            store_id AS storeId,
+            store_name AS storeName,
+            store_address AS storeAddress,
+            store_phone AS storePhone
+        FROM stores
+        WHERE store_id = #{storeId}
+    </select>
+
 </mapper>

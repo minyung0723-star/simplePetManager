@@ -5,7 +5,7 @@
     <div class="review-wrapper px-4">
         <section class="hospital-header d-flex justify-content-between align-items-start mb-4">
             <div>
-                <h2 class="fw-bold mb-1">${hospitalName}병원</h2>
+                <h2 class="fw-bold mb-1" id="hospitalName">불러오는 중...</h2>
                 <div class="d-flex align-items-center gap-2 mt-2">
                     <span class="fs-4 fw-bold">3.0</span>
                     <div class="star-rating">
@@ -27,52 +27,7 @@
         </div>
 
         <div class="review-list" id="review-container">
-            <%-- JSTL로 만든 화면 javaScript(fetch)로 교체
-            <c:forEach var="review" items="${reviewList}">
-                <article class="review-card">
-                    <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                            <img src="${review.profileImg}" class="review-profile-img" alt="유저 프로필">
-                        </div>
-
-                        <div class="flex-grow-1">
-                            <div class="mb-1 d-flex align-items-center">
-                                <span class="fw-bold me-2">${review.nickname}</span>
-                                <span class="review-meta">@${review.userId}</span>
-                            </div>
-
-                            <div class="mb-2">
-                            <span class="star-rating">
-                                <c:forEach begin="1" end="${review.rating}">★</c:forEach><c:forEach begin="${review.rating + 1}" end="5">☆</c:forEach>
-                            </span>
-                                <span class="review-meta ms-2">${review.regDate}</span>
-                            </div>
-
-                            <p class="review-content">
-                                    ${review.content}
-                            </p>
-
-                            <div class="d-flex align-items-center">
-                                <button type="button" class="btn-like-sm">
-                                    <span class="me-1">👍</span> ${review.likeCount != null ? review.likeCount : 0}
-                                </button>
-                                <button type="button" class="btn btn-link ms-auto text-muted p-0 text-decoration-none">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            </c:forEach>
-            --%>
-            <%--
-            <c:if test="${empty reviewList}">
-                <div class="text-center py-5 text-muted border-top">
-                    등록된 리뷰가 없습니다. 첫 리뷰를 작성해 보세요!
-                </div>
-            </c:if>
-            --%>
-                <div class="text-center py-5 text-muted">리뷰를 불러오는 중입니다...</div>
+            <div class="text-center py-5 text-muted">리뷰를 불러오는 중입니다...</div>
         </div>
     </div>
 </div>
@@ -92,27 +47,45 @@
         }
     };
     //===============  즐겨찾기버튼  ===============//
-    const toggleBookmark = async () => {
+    const checkBookmarkStatus = async () => {
         const btn = document.getElementById('bookmarkBtn');
-        const storeId=1; //임시 아이디
+        const storeId = 1; // 임시 아이디
 
-        try{
-            const response = await fetch('review/bookmark/toggle', {
-                method: 'POST',
-                headers: { 'Content-Type':'application-json'
-                },
-                body: JSON.stringify({storeId: storeId})
-            });
+        try {
+            const response = await fetch(`/review/bookmark/check?storeId=\${storeId}`);
             if (response.ok) {
-                const result = await response.text();
-                if (result === "success") {
-                    btn.classList().toggle('active');
-                    // 여기서 버튼 색깔 바꾸는 로직을 실행!
+                const isBookmarked = await response.json();
+                if (isBookmarked) {
+                    btn.classList.add('active');
                 }
             }
-        }catch (error) {
-            console.error("북마크 실패:", error);
-            alert("잠시 후 다시 시도해 주세요!");
+        } catch (error) {
+            console.error("북마크 상태 확인 실패:", error);
+        }
+    };
+
+    const toggleBookmark = async () => {
+        const btn = document.getElementById('bookmarkBtn');
+        const storeId = 1;
+
+        try {
+            const response = await fetch('/review/bookmark/toggle', { // 주소 슬래시(/) 주의!
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ storeId: storeId })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                // 서비스에서 반환한 "inserted", "deleted"에 따라 클래스 토글!
+                if (result === "inserted") {
+                    btn.classList.add('active');
+                } else if (result === "deleted") {
+                    btn.classList.remove('active');
+                }
+            }
+        } catch (error) {
+            console.error("북마크 통신 에러:", error);
         }
     };
 
@@ -137,8 +110,8 @@
     };
 
     // 2. 리뷰 목록 로드 함수 (핵심!)
-    const loadReviews = async () => {
-        const storeId = 1;
+    const loadReviews = async (storeId) => {
+        //const storeId = 1;
 
         try {
             const response = await fetch(`/review/list?storeId=\${storeId}`);
@@ -211,8 +184,26 @@
     };
 
     // 3. 페이지가 로드되면 자동으로 실행
-    document.addEventListener("DOMContentLoaded", () => {
-        loadReviews();
+    document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        let storeId = urlParams.get('storeId');
+
+        if(!storeId) storeId = 1; // 기본값 방어 코드
+
+        try {
+            // 병원 정보 가져오기
+            const response = await fetch(`/review/store/info?storeId=\${storeId}`);
+            if (response.ok) {
+                const store = await response.json();
+                document.getElementById("hospitalName").innerText = store.storeName;
+
+                // 정보를 성공적으로 가져온 뒤 목록과 북마크 실행
+                loadReviews(storeId);
+                checkBookmarkStatus(storeId);
+            }
+        } catch (error) {
+            console.error("데이터 로드 중 에러:", error);
+        }
     });
 </script>
 <%@include file="../common/footer.jsp"%>
