@@ -3,7 +3,8 @@
  */
 const state = {
     isEmailVerified: false,
-    contextPath: window.contextPath || ""
+    contextPath: window.contextPath || "",
+    emailTimer: null // 타이머 객체 저장을 위한 상태 추가
 };
 
 /**
@@ -19,6 +20,7 @@ const nodes = {
     pwMsg: document.getElementById("pwMatchMsg"),
     emailMsg: document.getElementById("emailStatusMsg"),
     alertBox: document.getElementById("alertBox"),
+    timerSpan: document.getElementById("timerSpan"), // 타이머 요소 추가
     // Buttons
     logoBtn: document.getElementById("logoBtn"),
     btnRequestAuth: document.getElementById("btnRequestAuth"),
@@ -30,7 +32,32 @@ const nodes = {
  * 3. 기능 로직 (함수들)
  */
 
-// register.js 내의 handlePasswordInput 함수 수정
+// 타이머 구동 함수
+const startEmailTimer = (duration) => {
+    if (state.emailTimer) clearInterval(state.emailTimer); // 기존 타이머 초기화
+
+    nodes.timerSpan.style.display = "block"; // 타이머 보이기
+    let timeLeft = duration;
+
+    state.emailTimer = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        nodes.timerSpan.textContent = `${minutes}:${seconds}`;
+
+        if (--timeLeft < 0) {
+            clearInterval(state.emailTimer);
+            nodes.timerSpan.textContent = "만료";
+            nodes.emailCode.value = "";
+            alert("인증 시간이 만료되었습니다. 다시 요청해 주세요.");
+        }
+    }, 1000);
+};
+
+// 비밀번호 입력 핸들러
 const handlePasswordInput = () => {
     const pw = nodes.userPw.value;
     const check = nodes.userPwCheck.value;
@@ -38,14 +65,12 @@ const handlePasswordInput = () => {
 
     nodes.pwMsg.classList.remove("d-none");
 
-    // 1. 복잡도 검사
     if (!pwPattern.test(pw)) {
         nodes.pwMsg.className = "text-danger small mb-2";
         nodes.pwMsg.textContent = "비밀번호는 8자 이상, 영문 대/소문자, 숫자, 특수문자(!@#$)를 포함해야 합니다.";
         return;
     }
 
-    // 2. 일치 여부 확인
     if (check === "") {
         nodes.pwMsg.classList.add("d-none");
         return;
@@ -74,6 +99,7 @@ const requestEmailAuth = async () => {
 
         if (res.ok) {
             alert("인증번호가 발송되었습니다. 5분 이내에 입력해주세요.");
+            startEmailTimer(300); // 5분 타이머 시작
         } else {
             const data = await res.json();
             alert(data.message || "발송 실패. 이메일 주소를 확인해주세요.");
@@ -103,8 +129,12 @@ const verifyEmailCode = async () => {
             state.isEmailVerified = true;
             nodes.emailMsg.className = "text-success small mt-1 mb-3 text-start";
             nodes.emailMsg.textContent = "이메일 인증이 완료되었습니다.";
+
+            // 인증 성공 시 처리
             nodes.userEmail.readOnly = true;
             nodes.emailCode.readOnly = true;
+            if (state.emailTimer) clearInterval(state.emailTimer); // 타이머 멈춤
+            nodes.timerSpan.style.display = "none"; // 타이머 숨김
         } else {
             state.isEmailVerified = false;
             nodes.emailMsg.className = "text-danger small mt-1 mb-3 text-start";
@@ -125,7 +155,6 @@ const handleRegister = async () => {
         userEmail: nodes.userEmail.value.trim()
     };
 
-    // 유효성 검사
     if (Object.values(data).some(val => !val)) return alert("모든 필수 정보를 입력해 주세요.");
     if (data.userPassword !== nodes.userPwCheck.value) return alert("비밀번호가 일치하지 않습니다.");
     if (!state.isEmailVerified) return alert("이메일 인증을 완료해 주세요.");

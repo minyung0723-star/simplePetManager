@@ -3,6 +3,7 @@ package com.project.simplepetmanager.common;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class EmailCodeService {
      * 6자리 랜덤 인증번호를 생성하여 사용자의 이메일로 발송합니다.
      * @param email 수신자 이메일 주소
      */
+    @Async
     public void sendVerificationCode(String email) {
         // 6자리 랜덤 숫자 생성 (000000 ~ 999999)
         String code = String.format("%06d", new Random().nextInt(1000000));

@@ -408,3 +408,62 @@ body {
     color: #666;
     cursor: default;
 }
+
+/* =========================================
+   회원가입 페이지 전용 스타일 (register.jsp)
+   ========================================= */
+
+/* 1. 인증 그룹 레이아웃 (이메일, 인증번호 공통) */
+.auth-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* 2. 인증번호 입력창 특수 처리 (타이머 공간 확보) */
+#emailCode {
+    padding-right: 55px !important; /* 타이머가 입력 글자와 겹치지 않게 충분히 확보 */
+}
+
+/* 3. 타이머 스팬 스타일 (입력창 우측 내부 고정) */
+#timerSpan {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #dc3545; /* Bootstrap text-danger 색상 */
+    z-index: 5;
+    pointer-events: none; /* 타이머 클릭 시에도 입력창이 클릭되도록 설정 */
+}
+
+/* 4. 상태 메시지 (이메일 인증 완료 등) */
+#emailStatusMsg {
+    font-size: 13px;
+    padding-left: 5px;
+    margin-top: 2px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* 5. 비밀번호 일치/강도 메시지 */
+#pwMatchMsg {
+    text-align: left;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+}
+
+/* 6. 로고 클릭 시 커서 모양 */
+#logoBtn {
+    cursor: pointer;
+}
+
+/* 7. 읽기 전용 상태일 때 시각적 피드백 (인증 완료 후) */
+.user-login-input[readonly] {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+}
