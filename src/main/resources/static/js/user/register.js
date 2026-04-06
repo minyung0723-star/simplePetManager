@@ -2,6 +2,7 @@
  * 1. 상태 관리
  */
 const state = {
+    isIdChecked: false,
     isEmailVerified: false,
     contextPath: window.contextPath || "",
     emailTimer: null // 타이머 객체 저장을 위한 상태 추가
@@ -12,6 +13,8 @@ const state = {
  */
 const nodes = {
     userId: document.getElementById("userId"),
+    btnCheckId: document.getElementById("btnCheckId"),
+    idMsg: document.getElementById("idStatusMsg"),
     userPw: document.getElementById("userPassword"),
     userPwCheck: document.getElementById("userPasswordCheck"),
     userName: document.getElementById("userName"),
@@ -25,12 +28,46 @@ const nodes = {
     logoBtn: document.getElementById("logoBtn"),
     btnRequestAuth: document.getElementById("btnRequestAuth"),
     btnVerifyCode: document.getElementById("btnVerifyCode"),
-    btnRegister: document.getElementById("btnRegister")
+    btnRegister: document.getElementById("btnRegister"),
 };
 
 /**
  * 3. 기능 로직 (함수들)
  */
+
+const checkIdDuplicate = async () => {
+    const userId = nodes.userId.value.trim();
+
+    if (!userId) {
+        alert("아이디를 입력해 주세요.");
+        nodes.userId.focus();
+        return;
+    }
+
+    try {
+        const res = await fetch(`${state.contextPath}/api/check-id?userId=${userId}`);
+        const data = await res.json();
+
+        nodes.idMsg.classList.remove("d-none");
+
+        if (data.isDuplicate === true) {
+            // 중복된 경우 (사용 불가)
+            state.isIdChecked = false;
+            nodes.idMsg.textContent = "이미 사용 중인 아이디입니다.";
+            nodes.idMsg.className = "text-danger small mb-3 text-start";
+        } else {
+            // 중복이 아닌 경우 (사용 가능)
+            state.isIdChecked = true;
+            nodes.idMsg.textContent = "사용 가능한 아이디입니다.";
+            nodes.idMsg.className = "text-success small mb-3 text-start";
+
+            // ✅ 성공해도 Lock(readOnly)을 걸지 않습니다.
+        }
+    } catch (e) {
+        console.error("아이디 중복 체크 에러:", e);
+        alert("서버와 통신 중 오류가 발생했습니다.");
+    }
+};
 
 // 타이머 구동 함수
 const startEmailTimer = (duration) => {
@@ -157,6 +194,7 @@ const handleRegister = async () => {
     };
 
     if (Object.values(data).some(val => !val)) return alert("모든 필수 정보를 입력해 주세요.");
+    if (!state.isIdChecked) return alert("아이디 중복 확인을 완료해 주세요.");
     if (data.userPassword !== nodes.userPwCheck.value) return alert("비밀번호가 일치하지 않습니다.");
     if (!state.isEmailVerified) return alert("이메일 인증을 완료해 주세요.");
 
@@ -191,7 +229,7 @@ const init = () => {
             location.href = state.contextPath + "/";
         });
     }
-
+    if (nodes.btnCheckId) nodes.btnCheckId.addEventListener("click", checkIdDuplicate);
     if (nodes.userPw) nodes.userPw.addEventListener("input", handlePasswordInput);
     if (nodes.userPwCheck) nodes.userPwCheck.addEventListener("input", handlePasswordInput);
 

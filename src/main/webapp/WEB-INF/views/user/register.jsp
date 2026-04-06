@@ -19,7 +19,11 @@
 
         <div id="alertBox" class="alert alert-danger d-none mb-3"></div>
 
-        <input type="text" id="userId" class="form-control user-login-input" placeholder="아이디">
+        <div class="auth-group">
+            <input type="text" id="userId" class="form-control user-login-input" placeholder="아이디">
+            <button type="button" id="btnCheckId" class="btn btn-outline-secondary btn-auth">중복확인</button>
+        </div>
+        <div id="idStatusMsg" class="d-none"></div>
 
         <div class="position-relative mb-3">
             <input type="password" id="userPassword" class="form-control user-login-input" placeholder="비밀번호" style="padding-right: 40px;">

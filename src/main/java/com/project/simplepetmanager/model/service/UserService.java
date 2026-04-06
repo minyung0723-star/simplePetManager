@@ -134,4 +134,14 @@ public class UserService {
     public boolean isEmailDuplicate(String email) {
         return userMapper.checkEmail(email) > 0;
     }
+
+    /**
+     * 아이디 중복 여부 확인 [추가]
+     * @param userId 검사할 아이디
+     * @return 이미 존재하면 true, 없으면 false
+     */
+    public boolean isIdDuplicate(String userId) {
+        // findByUserId로 조회했을 때 결과가 null이 아니면 이미 가입된 아이디입니다.
+        return userMapper.findByUserId(userId) != null;
+    }
 }

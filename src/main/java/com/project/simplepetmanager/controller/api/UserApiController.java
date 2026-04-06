@@ -30,7 +30,7 @@ public class UserApiController {
      * register.jsp에서 fetch로 호출
      */
     @PostMapping("/api/register")
-    public ResponseEntity<?> register(@RequestBody User user){
+    public ResponseEntity<?> register(@RequestBody User user) {
 
         userService.register(user);
 
@@ -215,6 +215,15 @@ public class UserApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "인증번호 불일치"));
         }
+    }
+
+    /**
+     * 아이디 중복 체크 [추가]
+     */
+    @GetMapping("/api/check-id")
+    public ResponseEntity<?> checkId(@RequestParam("userId") String userId) {
+        boolean isDuplicate = userService.isIdDuplicate(userId);
+        return ResponseEntity.ok(Map.of("isDuplicate", isDuplicate));
     }
 
 }
