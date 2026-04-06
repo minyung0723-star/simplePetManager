@@ -91,6 +91,7 @@ const requestEmailAuth = async () => {
     if (!email) return alert("이메일을 입력해 주세요.");
 
     try {
+        // 이메일 발송 전 혹은 발송 시 서버에서 중복 체크를 먼저 수행한다고 가정
         const res = await fetch(state.contextPath + "/api/email-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -99,10 +100,10 @@ const requestEmailAuth = async () => {
 
         if (res.ok) {
             alert("인증번호가 발송되었습니다. 5분 이내에 입력해주세요.");
-            startEmailTimer(300); // 5분 타이머 시작
+            startEmailTimer(300);
         } else {
             const data = await res.json();
-            alert(data.message || "발송 실패. 이메일 주소를 확인해주세요.");
+            alert(data.message || "이미 가입된 이메일이거나 발송에 실패했습니다.");
         }
     } catch (e) {
         console.error("인증 요청 에러:", e);
@@ -197,6 +198,36 @@ const init = () => {
     if (nodes.btnRequestAuth) nodes.btnRequestAuth.addEventListener("click", requestEmailAuth);
     if (nodes.btnVerifyCode) nodes.btnVerifyCode.addEventListener("click", verifyEmailCode);
     if (nodes.btnRegister) nodes.btnRegister.addEventListener("click", handleRegister);
+    // 비밀번호 토글 리스너
+    const togglePw = document.getElementById("togglePw");
+    if (togglePw) togglePw.addEventListener("click", togglePasswordVisibility);
+
+    // 인증번호 숫자만 입력 리스너
+    if (nodes.emailCode) nodes.emailCode.addEventListener("input", handleOnlyNumber);
+};
+/**
+ *  비밀번호 가시성 토글 함수
+ */
+
+const togglePasswordVisibility = () => {
+    const pwInput = nodes.userPw;
+    const toggleIcon = document.getElementById("togglePw");
+
+    if (pwInput.type === "password") {
+        pwInput.type = "text";
+        toggleIcon.textContent = "🙈"; // 가리기 아이콘으로 변경
+    } else {
+        pwInput.type = "password";
+        toggleIcon.textContent = "👁️"; // 보기 아이콘으로 변경
+    }
+};
+/**
+ * 숫자만 입력되도록 하는 함수
+ * @param e
+ */
+const handleOnlyNumber = (e) => {
+    // 숫자가 아닌 문자는 모두 제거
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
 };
 
 document.addEventListener("DOMContentLoaded", init);

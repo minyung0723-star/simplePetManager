@@ -185,7 +185,15 @@ public class UserApiController {
     @PostMapping("/api/email-auth")
     public ResponseEntity<?> sendEmailCode(@RequestBody Map<String, String> body) {
         String email = body.get("userEmail");
-        // 서비스의 영문 메서드 호출
+
+        // 1. [추가] UserService를 사용하여 이메일 중복 체크 진행
+        if (userService.isEmailDuplicate(email)) {
+            // 이미 가입된 이메일이면 409 상태와 함께 메시지 반환
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "이미 사용 중인 이메일입니다."));
+        }
+
+        // 2. 중복이 아닐 때만 메일 발송
         emailCodeService.sendVerificationCode(email);
         return ResponseEntity.ok(Map.of("message", "인증번호 발송 완료"));
     }

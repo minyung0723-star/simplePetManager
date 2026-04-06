@@ -15,7 +15,8 @@ const nodes = {
     confirmPassword: document.getElementById("confirmPassword"),
     pwMsg: document.getElementById("pwMatchMsg"),
     submitBtn: document.getElementById("submitBtn"),
-    logoBtn: document.getElementById("logoBtn")
+    logoBtn: document.getElementById("logoBtn"),
+    toggleBtn: document.getElementById("togglePw")
 };
 
 /**
@@ -103,6 +104,16 @@ const updatePassword = async () => {
     }
 };
 
+const togglePasswordVisibility = () => {
+    if (nodes.newPassword.type === "password") {
+        nodes.newPassword.type = "text";
+        nodes.toggleBtn.textContent = "🙈";
+    } else {
+        nodes.newPassword.type = "password";
+        nodes.toggleBtn.textContent = "👁️";
+    }
+};
+
 /**
  * 4. 이벤트 리스너 등록
  */
@@ -112,7 +123,9 @@ const bindEvents = () => {
             location.href = state.contextPath + "/";
         });
     }
-
+    if (nodes.toggleBtn) {
+        nodes.toggleBtn.addEventListener("click", togglePasswordVisibility);
+    }
     if (nodes.newPassword) nodes.newPassword.addEventListener("input", validatePassword);
     if (nodes.confirmPassword) nodes.confirmPassword.addEventListener("input", validatePassword);
 

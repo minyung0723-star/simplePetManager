@@ -126,4 +126,12 @@ public class UserService {
 
         return result > 0;
     }
+
+    /**
+     * 이메일 중복 여부 확인
+     * @return 존재하면 true, 없으면 false
+     */
+    public boolean isEmailDuplicate(String email) {
+        return userMapper.checkEmail(email) > 0;
+    }
 }

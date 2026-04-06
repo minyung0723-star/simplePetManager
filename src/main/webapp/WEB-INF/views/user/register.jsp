@@ -21,7 +21,10 @@
 
         <input type="text" id="userId" class="form-control user-login-input" placeholder="아이디">
 
-        <input type="password" id="userPassword" class="form-control user-login-input" placeholder="비밀번호">
+        <div class="position-relative mb-3">
+            <input type="password" id="userPassword" class="form-control user-login-input" placeholder="비밀번호" style="padding-right: 40px;">
+            <span id="togglePw" class="position-absolute top-50 translate-middle-y" style="right: 15px; cursor: pointer; z-index: 10;">👁️</span>
+        </div>
 
         <input type="password" id="userPasswordCheck" class="form-control user-login-input" placeholder="비밀번호 확인">
         <div id="pwMatchMsg" class="text-danger small d-none"></div>
@@ -37,9 +40,8 @@
         <div class="auth-group">
             <div class="position-relative flex-grow-1">
                 <input type="text" id="emailCode" class="form-control user-login-input"
-                       placeholder="인증번호 입력" autocomplete="off">
-
-                <span id="timerSpan">05:00</span>
+                       placeholder="인증번호 입력" autocomplete="off"
+                       inputmode="numeric" pattern="[0-9]*" maxlength="6"> <span id="timerSpan">05:00</span>
             </div>
             <button type="button" id="btnVerifyCode" class="btn btn-outline-success btn-auth">확인</button>
         </div>

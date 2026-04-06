@@ -238,7 +238,7 @@ body {
 
 /* 카드 */
 .user-login-card {
-    padding: 35px; /* 기존 30px보다 조금 더 여유있게 수정 */
+    padding: 40px; /* 조금 더 넓게 */
     border-radius: 14px;
     background: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
@@ -261,6 +261,12 @@ body {
     border-radius: 8px;
     font-weight: bold;
     width: 100%;
+    border: none;
+}
+
+.user-login-btn:disabled {
+    background-color: #ced4da;
+    cursor: not-allowed;
     border: none;
 }
 
@@ -386,10 +392,12 @@ body {
 
 /* 비밀번호 일치 여부 메시지 */
 .pw-edit-msg {
-    font-size: 13px;
-    margin-top: -8px;
-    margin-bottom: 10px;
     display: block;
+    text-align: left;
+    font-size: 13px;
+    margin-top: 5px;   /* 입력창과의 간격 */
+    margin-bottom: 15px; /* 다음 요소와의 간격 */
+    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
 }
 
 /* 상태 색상 (부트스트랩 미사용 대비) */
@@ -409,6 +417,40 @@ body {
     cursor: default;
 }
 
+.position-relative #togglePw {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 10;
+    user-select: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.position-relative #togglePw:hover {
+    opacity: 1;
+}
+
+/* [추가] 비밀번호 재설정 페이지용 상단 텍스트 정렬 */
+.user-login-card h4.text-start {
+    font-weight: bold;
+    text-align: left !important;
+}
+
+.user-login-card p.text-start {
+    text-align: left !important;
+}
+
+/* [추가] 입력창 포커스 시 테두리 색상 (디테일) */
+.user-login-input:focus {
+    border-color: #3b6ef5;
+    box-shadow: 0 0 0 0.2rem rgba(59, 110, 245, 0.1);
+    outline: none;
+}
+
 /* =========================================
    회원가입 페이지 전용 스타일 (register.jsp)
    ========================================= */
@@ -423,7 +465,8 @@ body {
 
 /* 2. 인증번호 입력창 특수 처리 (타이머 공간 확보) */
 #emailCode {
-    padding-right: 55px !important; /* 타이머가 입력 글자와 겹치지 않게 충분히 확보 */
+    letter-spacing: 2px; /* 숫자 사이 간격을 넓혀 가독성 향상 */
+    font-weight: bold;
 }
 
 /* 3. 타이머 스팬 스타일 (입력창 우측 내부 고정) */
@@ -441,19 +484,22 @@ body {
 
 /* 4. 상태 메시지 (이메일 인증 완료 등) */
 #emailStatusMsg {
-    font-size: 13px;
-    padding-left: 5px;
-    margin-top: 2px;
-    margin-bottom: 15px;
+    display: block;
     text-align: left;
+    font-size: 13px;
+    margin-top: 5px;   /* 입력창과의 간격 */
+    margin-bottom: 15px; /* 다음 요소와의 간격 */
+    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
 }
 
 /* 5. 비밀번호 일치/강도 메시지 */
 #pwMatchMsg {
+    display: block;
     text-align: left;
-    margin-top: -8px;
-    margin-bottom: 12px;
-    font-size: 12px;
+    font-size: 13px;
+    margin-top: 5px;   /* 입력창과의 간격 */
+    margin-bottom: 15px; /* 다음 요소와의 간격 */
+    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
 }
 
 /* 6. 로고 클릭 시 커서 모양 */
@@ -466,4 +512,15 @@ body {
     background-color: #f8f9fa !important;
     border: 1px solid #dee2e6;
     color: #6c757d;
+}
+
+#togglePw {
+    font-size: 1.1rem;
+    user-select: none; /* 드래그 방지 */
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+#togglePw:hover {
+    opacity: 1;
 }

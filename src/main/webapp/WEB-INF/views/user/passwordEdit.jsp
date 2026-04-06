@@ -26,9 +26,17 @@
             <input type="text" id="targetUserId" class="form-control user-login-input" readonly>
         </div>
 
-        <input type="password" id="newPassword" class="form-control user-login-input" placeholder="새 비밀번호">
+        <div class="position-relative mb-3">
+            <input type="password" id="newPassword" class="form-control user-login-input"
+                   placeholder="새 비밀번호" style="padding-right: 40px; margin-bottom:0;">
+            <span id="togglePw" class="position-absolute top-50 translate-middle-y"
+                  style="right: 15px; cursor: pointer; z-index: 10;">👁️</span>
+        </div>
 
-        <input type="password" id="confirmPassword" class="form-control user-login-input" placeholder="새 비밀번호 확인">
+        <div class="position-relative">
+            <input type="password" id="confirmPassword" class="form-control user-login-input"
+                   placeholder="새 비밀번호 확인" style="margin-bottom:0;">
+        </div>
         <span id="pwMatchMsg" class="pw-edit-msg text-start"></span>
 
         <button class="user-login-btn mt-3" id="submitBtn" disabled>
