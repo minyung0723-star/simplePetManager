@@ -1,8 +1,13 @@
 package com.project.simplepetmanager.controller;
 
+import com.project.simplepetmanager.model.dto.Board;
+import com.project.simplepetmanager.model.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -37,8 +42,19 @@ public class ViewController {
     @GetMapping("/board/boardList")
     public String boardList(){return "board/boardList";}
 
+    private final BoardService boardService; // 추가
+
     @GetMapping("/board/boardDetail")
-    public String boardDetail(){return "board/boardDetail";}
+    public String boardDetail(Model model) {
+        List<Board> boardListData = boardService.findAllBoard();
+        model.addAttribute("boardLists", boardListData);
+        System.out.println("boardListData: " + boardListData); // ✅ 추가
+        if (!boardListData.isEmpty()) {
+            model.addAttribute("store", boardListData.get(0));
+            System.out.println("store: " + boardListData.get(0)); // ✅ 추가
+        }
+        return "board/boardDetail";
+    }
 
 
 

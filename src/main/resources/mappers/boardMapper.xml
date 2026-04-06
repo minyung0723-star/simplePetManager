@@ -6,6 +6,10 @@
 <!-- boardMapper.xml -->
 <mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
     <select id="getStoreList" resultType="com.project.simplepetmanager.model.dto.Board">
-        SELECT * FROM stores;
+        SELECT * FROM stores LIMIT 1 OFFSET 1
     </select>
+    <insert id="insertBookmark">
+        INSERT INTO bookmark (user_number, storeId, prefer)
+        VALUES (#{userNumber}, #{storeId}, 1)
+    </insert>
 </mapper>
