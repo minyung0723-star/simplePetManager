@@ -15,27 +15,26 @@
 
 <div class="user-login-container">
     <img src="${pageContext.request.contextPath}/images/petlogo.png"
-         class="user-login-logo" id="logoBtn" alt="Logo" style="cursor:pointer;">
+         class="user-login-logo" id="logoBtn" alt="Logo">
 
     <div class="user-login-card">
-        <h4 class="text-start mb-1" style="font-weight: bold;">비밀번호 재설정</h4>
+        <h4 class="text-start mb-1">비밀번호 재설정</h4>
         <p class="text-start text-muted small mb-4">새로운 비밀번호를 입력해 주세요.</p>
 
         <div class="mb-3">
-            <label class="form-label d-block text-start small text-muted">대상 아이디</label>
+            <label class="form-label small-muted">대상 아이디</label>
             <input type="text" id="targetUserId" class="form-control user-login-input" readonly>
         </div>
 
         <div class="position-relative mb-3">
-            <input type="password" id="newPassword" class="form-control user-login-input"
-                   placeholder="새 비밀번호" style="padding-right: 40px; margin-bottom:0;">
-            <span id="togglePw" class="position-absolute top-50 translate-middle-y"
-                  style="right: 15px; cursor: pointer; z-index: 10;">👁️</span>
+            <input type="password" id="newPassword" class="form-control user-login-input pw-input"
+                   placeholder="새 비밀번호">
+            <span id="togglePw" class="position-absolute top-50 translate-middle-y">👁️</span>
         </div>
 
         <div class="position-relative">
             <input type="password" id="confirmPassword" class="form-control user-login-input"
-                   placeholder="새 비밀번호 확인" style="margin-bottom:0;">
+                   placeholder="새 비밀번호 확인">
         </div>
         <span id="pwMatchMsg" class="pw-edit-msg text-start"></span>
 

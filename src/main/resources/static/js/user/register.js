@@ -61,7 +61,6 @@ const checkIdDuplicate = async () => {
             nodes.idMsg.textContent = "사용 가능한 아이디입니다.";
             nodes.idMsg.className = "text-success small mb-3 text-start";
 
-            // ✅ 성공해도 Lock(readOnly)을 걸지 않습니다.
         }
     } catch (e) {
         console.error("아이디 중복 체크 에러:", e);
