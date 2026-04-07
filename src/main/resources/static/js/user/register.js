@@ -5,7 +5,7 @@ const state = {
     isIdChecked: false,
     isEmailVerified: false,
     contextPath: window.contextPath || "",
-    emailTimer: null // 타이머 객체 저장을 위한 상태 추가
+    emailTimer: null
 };
 
 /**
@@ -18,13 +18,18 @@ const nodes = {
     userPw: document.getElementById("userPassword"),
     userPwCheck: document.getElementById("userPasswordCheck"),
     userName: document.getElementById("userName"),
-    userEmail: document.getElementById("userEmail"),
+
+    // [수정됨] 이메일 분할 입력 필드들
+    emailPrefix: document.getElementById("emailPrefix"),
+    emailDomain: document.getElementById("emailDomain"),
+    emailDirect: document.getElementById("emailDirect"),
+
     emailCode: document.getElementById("emailCode"),
     pwMsg: document.getElementById("pwMatchMsg"),
     emailMsg: document.getElementById("emailStatusMsg"),
     alertBox: document.getElementById("alertBox"),
-    timerSpan: document.getElementById("timerSpan"), // 타이머 요소 추가
-    // Buttons
+    timerSpan: document.getElementById("timerSpan"),
+
     logoBtn: document.getElementById("logoBtn"),
     btnRequestAuth: document.getElementById("btnRequestAuth"),
     btnVerifyCode: document.getElementById("btnVerifyCode"),
@@ -32,12 +37,32 @@ const nodes = {
 };
 
 /**
- * 3. 기능 로직 (함수들)
+ * 3. 기능 로직
  */
+
+// [추가] 이메일 주소 합치기 헬퍼 함수
+const getFullEmail = () => {
+    const prefix = nodes.emailPrefix.value.trim();
+    const domainSelect = nodes.emailDomain.value;
+    const domainDirect = nodes.emailDirect.value.trim();
+    const finalDomain = (domainSelect === "") ? domainDirect : domainSelect;
+
+    return (prefix && finalDomain) ? `${prefix}@${finalDomain}` : "";
+};
+
+// [추가] 도메인 직접 입력 토글 핸들러
+const handleEmailDomainChange = () => {
+    if (nodes.emailDomain.value === "") {
+        nodes.emailDirect.classList.remove("d-none");
+        nodes.emailDirect.focus();
+    } else {
+        nodes.emailDirect.classList.add("d-none");
+        nodes.emailDirect.value = "";
+    }
+};
 
 const checkIdDuplicate = async () => {
     const userId = nodes.userId.value.trim();
-
     if (!userId) {
         alert("아이디를 입력해 주세요.");
         nodes.userId.focus();
@@ -47,20 +72,16 @@ const checkIdDuplicate = async () => {
     try {
         const res = await fetch(`${state.contextPath}/api/check-id?userId=${userId}`);
         const data = await res.json();
-
         nodes.idMsg.classList.remove("d-none");
 
         if (data.isDuplicate === true) {
-            // 중복된 경우 (사용 불가)
             state.isIdChecked = false;
             nodes.idMsg.textContent = "이미 사용 중인 아이디입니다.";
             nodes.idMsg.className = "text-danger small mb-3 text-start";
         } else {
-            // 중복이 아닌 경우 (사용 가능)
             state.isIdChecked = true;
             nodes.idMsg.textContent = "사용 가능한 아이디입니다.";
             nodes.idMsg.className = "text-success small mb-3 text-start";
-
         }
     } catch (e) {
         console.error("아이디 중복 체크 에러:", e);
@@ -68,17 +89,14 @@ const checkIdDuplicate = async () => {
     }
 };
 
-// 타이머 구동 함수
 const startEmailTimer = (duration) => {
-    if (state.emailTimer) clearInterval(state.emailTimer); // 기존 타이머 초기화
-
-    nodes.timerSpan.style.display = "block"; // 타이머 보이기
+    if (state.emailTimer) clearInterval(state.emailTimer);
+    nodes.timerSpan.style.display = "block";
     let timeLeft = duration;
 
     state.emailTimer = setInterval(() => {
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
-
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
@@ -93,7 +111,6 @@ const startEmailTimer = (duration) => {
     }, 1000);
 };
 
-// 비밀번호 입력 핸들러
 const handlePasswordInput = () => {
     const pw = nodes.userPw.value;
     const check = nodes.userPwCheck.value;
@@ -121,13 +138,12 @@ const handlePasswordInput = () => {
     }
 };
 
-// 이메일 인증번호 발송 요청
+// [수정됨] 이메일 인증번호 발송 요청
 const requestEmailAuth = async () => {
-    const email = nodes.userEmail.value.trim();
-    if (!email) return alert("이메일을 입력해 주세요.");
+    const email = getFullEmail(); // 합쳐진 이메일 가져오기
+    if (!email) return alert("이메일 주소를 완성해 주세요.");
 
     try {
-        // 이메일 발송 전 혹은 발송 시 서버에서 중복 체크를 먼저 수행한다고 가정
         const res = await fetch(state.contextPath + "/api/email-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -147,9 +163,9 @@ const requestEmailAuth = async () => {
     }
 };
 
-// 이메일 인증번호 검증
+// [수정됨] 이메일 인증번호 검증
 const verifyEmailCode = async () => {
-    const email = nodes.userEmail.value.trim();
+    const email = getFullEmail();
     const code = nodes.emailCode.value.trim();
     if (!code) return alert("인증번호를 입력해주세요.");
 
@@ -167,11 +183,13 @@ const verifyEmailCode = async () => {
             nodes.emailMsg.className = "text-success small mt-1 mb-3 text-start";
             nodes.emailMsg.textContent = "이메일 인증이 완료되었습니다.";
 
-            // 인증 성공 시 처리
-            nodes.userEmail.readOnly = true;
+            // 인증 성공 시 필드 잠금
+            nodes.emailPrefix.readOnly = true;
+            nodes.emailDomain.disabled = true;
+            nodes.emailDirect.readOnly = true;
             nodes.emailCode.readOnly = true;
-            if (state.emailTimer) clearInterval(state.emailTimer); // 타이머 멈춤
-            nodes.timerSpan.style.display = "none"; // 타이머 숨김
+            if (state.emailTimer) clearInterval(state.emailTimer);
+            nodes.timerSpan.style.display = "none";
         } else {
             state.isEmailVerified = false;
             nodes.emailMsg.className = "text-danger small mt-1 mb-3 text-start";
@@ -183,13 +201,14 @@ const verifyEmailCode = async () => {
     }
 };
 
-// 최종 회원가입 제출
+// [수정됨] 최종 회원가입 제출
 const handleRegister = async () => {
+    const email = getFullEmail();
     const data = {
         userId: nodes.userId.value.trim(),
         userPassword: nodes.userPw.value.trim(),
         userName: nodes.userName.value.trim(),
-        userEmail: nodes.userEmail.value.trim()
+        userEmail: email
     };
 
     if (Object.values(data).some(val => !val)) return alert("모든 필수 정보를 입력해 주세요.");
@@ -232,38 +251,32 @@ const init = () => {
     if (nodes.userPw) nodes.userPw.addEventListener("input", handlePasswordInput);
     if (nodes.userPwCheck) nodes.userPwCheck.addEventListener("input", handlePasswordInput);
 
+    // [추가] 이메일 도메인 변경 리스너
+    if (nodes.emailDomain) nodes.emailDomain.addEventListener("change", handleEmailDomainChange);
+
     if (nodes.btnRequestAuth) nodes.btnRequestAuth.addEventListener("click", requestEmailAuth);
     if (nodes.btnVerifyCode) nodes.btnVerifyCode.addEventListener("click", verifyEmailCode);
     if (nodes.btnRegister) nodes.btnRegister.addEventListener("click", handleRegister);
-    // 비밀번호 토글 리스너
+
     const togglePw = document.getElementById("togglePw");
     if (togglePw) togglePw.addEventListener("click", togglePasswordVisibility);
 
-    // 인증번호 숫자만 입력 리스너
     if (nodes.emailCode) nodes.emailCode.addEventListener("input", handleOnlyNumber);
 };
-/**
- *  비밀번호 가시성 토글 함수
- */
 
 const togglePasswordVisibility = () => {
     const pwInput = nodes.userPw;
     const toggleIcon = document.getElementById("togglePw");
-
     if (pwInput.type === "password") {
         pwInput.type = "text";
-        toggleIcon.textContent = "🙈"; // 가리기 아이콘으로 변경
+        toggleIcon.textContent = "🙈";
     } else {
         pwInput.type = "password";
-        toggleIcon.textContent = "👁️"; // 보기 아이콘으로 변경
+        toggleIcon.textContent = "👁️";
     }
 };
-/**
- * 숫자만 입력되도록 하는 함수
- * @param e
- */
+
 const handleOnlyNumber = (e) => {
-    // 숫자가 아닌 문자는 모두 제거
     e.target.value = e.target.value.replace(/[^0-9]/g, "");
 };
 

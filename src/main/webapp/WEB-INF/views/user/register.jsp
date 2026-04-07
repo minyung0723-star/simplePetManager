@@ -35,11 +35,23 @@
 
         <input type="text" id="userName" class="form-control user-login-input" placeholder="이름">
 
-        <div class="auth-group">
-            <input type="email" id="userEmail" class="form-control user-login-input"
-                   placeholder="이메일" autocomplete="off">
-            <button type="button" id="btnRequestAuth" class="btn btn-outline-secondary btn-auth">인증번호요청</button>
+        <div class="find-email-group mb-2">
+            <input type="text" id="emailPrefix" class="form-control user-login-input" placeholder="이메일" style="flex: 3;">
+
+            <span class="mb-2" style="flex: 0.5; text-align: center;">@</span>
+
+            <select id="emailDomain" class="form-select user-login-input" style="flex: 2;">
+                <option value="naver.com">naver.com</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="hanmail.net">hanmail.net</option>
+                <option value="daum.net">daum.net</option>
+                <option value="">직접입력</option>
+            </select>
+
+            <button type="button" id="btnRequestAuth" class="btn btn-outline-secondary btn-auth" style="margin-left:8px; height:50px; flex: 1.5;">인증요청</button>
         </div>
+
+        <input type="text" id="emailDirect" class="form-control user-login-input find-direct-input d-none" placeholder="도메인 직접 입력 (ex: nate.com)">
 
         <div class="auth-group">
             <div class="position-relative flex-grow-1">
