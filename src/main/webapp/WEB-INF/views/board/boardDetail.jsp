@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <head>
     <title>카카오맵 마커</title>
-    <!-- <link rel="stylesheet" href="/resources/css/BookmarkUI.css">-->
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/kakao-map.css">
@@ -11,12 +10,13 @@
 </head>
 <body>
 <%@ include file="../common/header.jsp"%>
+<%@ include file="../board/Bookmarkpopup.jsp" %>
 
 <div style="display:flex; justify-content:center; gap:32px; padding:80px 40px;;">
-    <div style="display:flex; justify-content:center; max-width:1000px; margin:auto;">
+    <div style="display:flex; justify-content:center; max-width:1700px; margin:auto;">
         <div style="width:320px;">
         </div>
-        <div id="map" style="width:600px; height:550px;"></div>
+        <div id="map"style=" width:1000px; height:630px;"></div>
         <div style="width: 320px;"></div>
     </div>
 
@@ -69,24 +69,25 @@
 
     </script>
 
-    <%@ include file="../board/Detailpopup.jsp" %>
-
-
-    <%@include file="../common/footer.jsp"%>
-</body>
-<script>
-    function addBookmark(userNumber, storeId) {
-        fetch("/api/bookmark/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `userNumber=${userNumber}&storeId=${storeId}`
-        })
-            .then(res => res.text())
-            .then(data => {
-                alert("즐겨찾기 추가됨");
+    <script>
+        function addBookmark(userNumber, storeId) {
+            fetch("/api/bookmark/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `userNumber=${userNumber}&storeId=${storeId}`
             })
-            .catch(err => console.error(err));
-    }
-</script>
+                .then(res => res.text())
+                .then(data => {
+                    alert("즐겨찾기 추가됨");
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
+</div>
+
+</body>
+<%@include file="../common/footer.jsp"%>
+<%@ include file="../board/Detailpopup.jsp" %>
+
