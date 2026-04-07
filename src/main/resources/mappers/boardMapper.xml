@@ -5,6 +5,12 @@
 
 <!-- boardMapper.xml -->
 <mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
+    <!--
+    where 을 이용해서 BoardList 에서 선택한 가게 번호를 넣어주고 그 번호에 해당하는 데이터 보여주기
+    todo :getStoreList 수정 LIMIT 1 OFFSET 1  ===> WHERE 교체해서 storeId 를 가져오게 하기
+         수정해야할 파일 BoardMapper.java BoardService.java  ViewController   ->  수정하기
+         BoardApiController는 아직 쳐다보지도 말기!!!
+    -->
     <select id="getStoreList" resultType="com.project.simplepetmanager.model.dto.Board">
         SELECT * FROM stores LIMIT 1 OFFSET 1
     </select>
