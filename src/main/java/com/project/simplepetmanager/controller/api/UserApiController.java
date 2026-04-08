@@ -166,7 +166,7 @@ public class UserApiController {
      * 비밀번호 재설정
      */
     @PostMapping("/api/update-password")
-    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body, HttpSession session) {
         String userId = body.get("userId");
         String userPassword = body.get("userPassword");
 
@@ -181,6 +181,10 @@ public class UserApiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "비밀번호 변경 중 오류가 발생했습니다."));
         }
+
+        // [핵심 추가] 비밀번호 변경 성공 시, 세션에서 인증 권한을 즉시 삭제합니다!
+        // 이렇게 하면 남은 시간(5분)에 상관없이 재접근이 불가능해집니다.
+        session.removeAttribute("verifiedUserId");
 
         return ResponseEntity.ok(Map.of("message", "비밀번호가 변경되었습니다."));
     }
