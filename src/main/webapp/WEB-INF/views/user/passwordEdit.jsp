@@ -23,15 +23,13 @@
             <input type="text" id="targetUserId" class="form-control user-login-input" readonly>
         </div>
 
-        <div class="position-relative mb-3">
-            <input type="password" id="newPassword" class="form-control user-login-input"
-                   placeholder="새 비밀번호">
+        <div class="position-relative mb-3 password-wrapper">
+            <input type="password" id="newPassword" class="form-control user-login-input" placeholder="새 비밀번호">
             <span id="togglePw">👁️</span>
         </div>
 
-        <div class="position-relative mb-1">
-            <input type="password" id="confirmPassword" class="form-control user-login-input"
-                   placeholder="새 비밀번호 확인">
+        <div class="position-relative mb-1 password-wrapper">
+            <input type="password" id="confirmPassword" class="form-control user-login-input" placeholder="새 비밀번호 확인">
         </div>
 
         <div id="pwMatchMsg" class="pw-edit-msg"></div>
@@ -47,6 +45,7 @@
 </div>
 
 <script>
+    // JS에서 공통으로 사용할 컨텍스트 경로 선언
     window.contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="${pageContext.request.contextPath}/js/user/passwordEdit.js"></script>

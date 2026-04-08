@@ -7,6 +7,7 @@ import com.project.simplepetmanager.model.mapper.UserMapper;
 import com.project.simplepetmanager.model.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -142,7 +143,7 @@ public class UserApiController {
      * 비밀번호 찾기 전 사용자 검증
      */
     @PostMapping("/api/verify-for-pw")
-    public ResponseEntity<?> verifyForPw(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> verifyForPw(@RequestBody Map<String, String> body, HttpSession session) {
         String userId = body.get("userId");
         String userEmail = body.get("userEmail");
 
@@ -152,6 +153,11 @@ public class UserApiController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("message", "정보가 일치하지 않습니다."));
         }
+
+        // [핵심 추가] 인증 성공 시 세션에 아이디 저장!!
+        // 이 코드가 있어야 인터셉터가 verifiedUserId를 찾을 수 있습니다.
+        session.setAttribute("verifiedUserId", userId);
+        session.setMaxInactiveInterval(300); // 5분간 허용
 
         return ResponseEntity.ok().build();
     }
@@ -204,18 +210,21 @@ public class UserApiController {
      * 이메일 인증번호 검증
      */
     @PostMapping("/api/email-verify")
-    public ResponseEntity<?> verifyEmailCode(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> verifyEmailCode(@RequestBody Map<String, String> body, HttpSession session) {
         String email = body.get("userEmail");
         String code = body.get("emailCode");
+        String userId = body.get("userId"); // 프론트에서 userId도 같이 보내주도록 수정 필요
 
-        // 서비스의 영문 메서드 호출
         boolean isMatch = emailCodeService.verifyCode(email, code);
 
         if (isMatch) {
+            // [핵심] 세션에 비밀번호 변경 권한을 임시 저장 (3분 정도만 유효)
+            session.setAttribute("verifiedUserId", userId);
+            session.setMaxInactiveInterval(180); // 3분 후 자동 만료
+
             return ResponseEntity.ok(Map.of("message", "인증 성공"));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "인증번호 불일치"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "인증번호 불일치"));
         }
     }
 

@@ -205,11 +205,12 @@ const processFindPw = async () => {
         const res = await fetch(state.contextPath + "/api/verify-for-pw", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            // ★ 여기서 보낸 userId가 나중에 세션에 저장되어야 합니다.
             body: JSON.stringify({ userId: userId, userEmail: email }),
         });
 
         if (res.ok) {
-            // 성공 시 비밀번호 수정 페이지로 이동
+            // 이제 서버 세션에 verifiedUserId가 저장되었으므로 인터셉터가 통과시켜줍니다.
             location.href = state.contextPath + "/passwordEdit?userId=" + encodeURIComponent(userId);
         } else {
             const errorData = await res.json();
