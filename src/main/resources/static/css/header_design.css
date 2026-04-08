@@ -1,9 +1,18 @@
+/* =========================================
+   1. 전역 설정 및 초기화
+   ========================================= */
+body {
+    background-color: #f5f6f8;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
 
-/* 1. 헤더 전체 레이아웃 */
+/********************* 2. Header (헤더) *****************************/
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* 양 끝 배치 */
+    justify-content: space-between;
     padding: 0 40px;
     height: 64px;
     background: #ffffff;
@@ -13,12 +22,11 @@
     z-index: 1000;
 }
 
-/* 2. 왼쪽 영역 (로고 + 환영문구) */
 .header-left {
     display: flex;
     align-items: center;
-    gap: 15px; /* 로고와 문구 사이 간격 */
-    flex: 1;   /* 왼쪽 공간 확보 */
+    gap: 15px;
+    flex: 1;
 }
 
 .user-welcome-text {
@@ -28,38 +36,38 @@
     white-space: nowrap;
 }
 
-/* 중앙 네비게이션 영역 */
 .header-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 메뉴 사이의 간격 (이미지처럼 촘촘하게 모으려면 30~40px 권장) */
     gap: 35px;
-    flex: 2; /* 왼쪽/오른쪽 영역보다 넓게 잡아 중앙 배치 보장 */
+    flex: 2;
 }
 
 .header-nav a {
     text-decoration: none;
     color: #333;
     font-size: 14px;
-    font-weight: 600; /* 조금 더 선명하게 */
+    font-weight: 600;
     white-space: nowrap;
     transition: all 0.2s ease;
-    position: relative;
 }
 
-/* 마우스 올렸을 때 밑줄 효과 (선택사항) */
-.header-nav a:hover {
+.header-nav a:hover, .header-nav a.active {
     color: #3b6ef5;
 }
 
-/* 현재 활성화된 메뉴 강조 (필요 시) */
-.header-nav a.active {
-    color: #3b6ef5;
-    font-weight: 700;
+.header-logo img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
 }
 
-/* ... 기존 .header, .header-logo, .header-nav 스타일은 그대로 유지 ... */
+.header-logo a:hover img {
+    transform: scale(1.05);
+}
 
 .header-actions {
     display: flex;
@@ -67,37 +75,7 @@
     align-items: center;
 }
 
-/* 1. 로고 전체 감싸는 링크 (정렬용) */
-.header-logo a {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* 로고와 텍스트(만약 있다면) 사이 간격 */
-    text-decoration: none;
-}
-
-/* 2. 로고 이미지 (크기 고정 및 둥글게) */
-.header-logo img {
-    /* ✅ 크기를 44px로 명확히 고정합니다. */
-    width: 44px;
-    height: 44px;
-
-    /* ✅ 이미지가 찌그러지지 않고 비율을 유지하며 꽉 차게 합니다. */
-    object-fit: cover;
-
-    /* ✅ 이미지 3번처럼 둥글게 만듭니다. (선택사항) */
-    border-radius: 50%;
-
-    /* 부드러운 호버 효과를 위한 설정 */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-/* 3. 로고에 마우스 올렸을 때 효과 (선택사항, 생동감 부여) */
-.header-logo a:hover img {
-    transform: scale(1.05); /* 살짝 커짐 */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 그림자 추가 */
-}
-
-/* 1. 공통 스타일 (로그인, 로그아웃, 회원가입 모두 적용) */
+/* 헤더 공통 버튼 */
 .btn-login, .btn-logout, .btn-register {
     padding: 8px 16px;
     border-radius: 8px;
@@ -105,69 +83,34 @@
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
-    display: inline-block; /* 버튼 크기 보존 */
+    display: inline-block;
 }
 
-/* 2. 로그인 버튼: 테두리 강조 */
-.btn-login {
-    border: 1px solid #222;
-    color: #222;
-    background: #ffffff;
-}
+.btn-login { border: 1px solid #222; color: #222; background: #ffffff; }
+.btn-register { background: #222; color: #ffffff !important; border: 1px solid #222; }
+.btn-logout { background: #f5f5f5; color: #666; border: 1px solid #e8e8e8; }
 
-.btn-login:hover {
-    background: #f5f5f5;
-}
-
-/* 3. 회원가입 버튼: 배경색 강조 */
-.btn-register {
-    background: #222;
-    color: #ffffff !important; /* 글자색 강제 적용 */
-    border: 1px solid #222;
-}
-
-.btn-register:hover {
-    background: #444;
-    border-color: #444;
-}
-
-/* 4. 로그아웃 버튼: 연한 스타일 */
-.btn-logout {
-    background: #f5f5f5;
-    color: #666;
-    border: 1px solid #e8e8e8;
-}
-
-.btn-logout:hover {
-    background: #eeeeee;
-    color: #333;
-}
-
-/********************* footer *****************************/
+/********************* 3. Footer (푸터) *****************************/
 footer {
     background: #ffffff !important;
     border-top: 1px solid #e8e8e8 !important;
     padding: 60px 0 !important;
-    display: block !important;
 }
-
 
 .footer-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
 }
-
 
 .footer-logo img {
     width: 80px;
     height: auto;
-    margin-right: 24px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-
 
 .footer-links a {
     color: #222;
@@ -177,11 +120,6 @@ footer {
     margin-right: 20px;
 }
 
-.footer-links a:hover {
-    text-decoration: underline;
-}
-
-
 .footer-info {
     font-size: 13px;
     color: #888;
@@ -189,62 +127,30 @@ footer {
     margin-top: 12px;
 }
 
+.footer-right { text-align: right; }
+.customer-phone { font-size: 28px; font-weight: 700; color: #222; }
 
-.footer-right {
-    text-align: right;
-}
-
-.customer-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #666;
-    margin-right: 8px;
-}
-
-.customer-phone {
-    font-size: 28px;
-    font-weight: 700;
-    color: #222;
-    letter-spacing: -0.5px;
-}
-
-.operating-time {
-    font-size: 13px;
-    color: #888;
-    margin-top: 8px;
-    line-height: 1.6;
-}
-
-
-/**************************** user/login **************************************/
-/* 배경 */
-body {
-    background-color: #f5f6f8;
-}
-
-/* 전체 컨테이너 */
+/********************* 4. User Auth Common (인증 공통 뼈대) *****************************/
+/* 로그인, 회원가입, 찾기 페이지에서 공통으로 쓰는 카드 구조 */
 .user-login-container {
     max-width: 520px;
     margin: 100px auto;
     text-align: center;
 }
 
-/* 로고 */
 .user-login-logo {
     width: 150px;
     margin-bottom: 25px;
     cursor: pointer;
 }
 
-/* 카드 */
 .user-login-card {
-    padding: 40px; /* 조금 더 넓게 */
+    padding: 40px;
     border-radius: 14px;
     background: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
-/* 입력창 */
 .user-login-input {
     border-radius: 8px;
     height: 50px;
@@ -252,7 +158,12 @@ body {
     margin-bottom: 12px;
 }
 
-/* 버튼 */
+.user-login-input:focus {
+    border-color: #3b6ef5;
+    box-shadow: 0 0 0 0.2rem rgba(59, 110, 245, 0.1);
+    outline: none;
+}
+
 .user-login-btn {
     background-color: #3b6ef5;
     color: white;
@@ -262,274 +173,36 @@ body {
     font-weight: bold;
     width: 100%;
     border: none;
+    transition: background-color 0.2s;
 }
 
-.user-login-btn:disabled {
-    background-color: #ced4da;
-    cursor: not-allowed;
-    border: none;
-}
+.user-login-btn:hover { background-color: #2f5ad1; }
+.user-login-btn:disabled { background-color: #ced4da; cursor: not-allowed; }
 
-.user-login-btn:hover {
-    background-color: #2f5ad1;
-}
+/* login.css 또는 header_design.css 하단에 추가 */
 
-/* 하단 링크 */
 .user-login-links {
-    margin-top: 18px;
+    font-size: 14px;
+    color: #888; /* 구분선 기본 색상 */
+    margin-top: 1.5rem; /* mt-4에 해당 */
 }
 
+/* 링크 태그 공통 스타일 초기화 */
 .user-login-links a {
-    font-size: 14px;
-    color: #888;
-    text-decoration: none;
-    margin: 0 6px;
+    text-decoration: none !important; /* 밑줄 절대 없음 */
+    color: #666 !important; /* 글자 색상 (진한 회색) */
+    cursor: default !important; /* 마우스 커서 화살표 유지 */
+    margin: 0 5px; /* 링크 간 간격 */
+    transition: color 0.2s; /* 부드러운 색상 변화 */
 }
 
+/* 구분선 스타일 */
+.user-login-links span {
+    color: #ccc; /* 구분선 색상 (연한 회색) */
+    margin: 0 3px;
+}
+
+/* (선택 사항) 마우스를 올렸을 때 아주 살짝만 티나게 하고 싶다면 */
 .user-login-links a:hover {
-    text-decoration: underline;
-}
-
-/* 회원가입 이메일/인증번호 그룹 레이아웃 */
-.auth-group {
-    display: flex;
-    gap: 10px;        /* 입력창과 버튼 사이 간격 */
-    align-items: center;
-    margin-bottom: 12px; /* 기존 입력창들과 동일한 하단 여백 */
-}
-
-/* 그룹 내 입력창 조절 */
-.auth-group .user-login-input {
-    flex: 3;          /* 입력창 너비 비율 */
-    margin-bottom: 0; /* 그룹 내에서는 하단 여백 제거 (정렬 위해) */
-}
-
-/* 그룹 내 버튼 조절 */
-.auth-group .btn-auth {
-    flex: 1;          /* 버튼 너비 비율 */
-    height: 50px;     /* 입력창 높이와 통일 */
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap; /* 글자 줄바꿈 방지 */
-    border-radius: 8px;
-}
-
-/* 1. 알림창 스타일 (추가) */
-.login-alert {
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 15px;
-}
-
-
-/* =========================================
-   ID/PW 찾기 페이지 전용 스타일 (findUser.jsp)
-   ========================================= */
-
-/* 탭 메뉴 레이아웃 */
-.find-nav-tabs {
-    display: flex;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 25px;
-}
-
-.find-nav-link {
-    flex: 1;
-    text-align: center;
-    padding: 15px;
-    cursor: pointer;
-    color: #888;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.find-nav-link.active {
-    color: #3b6ef5;
-    border-bottom: 2px solid #3b6ef5;
-}
-
-/* 이메일 입력 그룹 보정 */
-.find-email-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.find-email-group .user-login-input {
-    margin-bottom: 0; /* 그룹 내 여백 제거 */
-}
-
-/* 결과 박스 (아이디 표시) */
-.found-result-box {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    padding: 25px;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.found-user-icon {
-    width: 30px;
-    height: 30px;
-    opacity: 0.4;
-}
-
-/* 직접 입력 필드 간격 */
-.find-direct-input {
-    margin-top: 10px;
-}
-
-/* =========================================
-   비밀번호 재설정 페이지 전용 스타일 (passwordEdit.jsp)
-   ========================================= */
-
-/* 비밀번호 일치 여부 메시지 */
-.pw-edit-msg {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    margin-top: 5px;   /* 입력창과의 간격 */
-    margin-bottom: 15px; /* 다음 요소와의 간격 */
-    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
-}
-
-/* 상태 색상 (부트스트랩 미사용 대비) */
-.text-status-success {
-    color: #28a745 !important;
-}
-
-.text-status-danger {
-    color: #dc3545 !important;
-}
-
-/* 읽기 전용 필드 스타일 (아이디 표시용) */
-.user-login-input[readonly] {
-    background-color: #f8f9fa !important;
-    border: 1px solid #e9ecef;
-    color: #666;
-    cursor: default;
-}
-
-.position-relative #togglePw {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    font-size: 1.1rem;
-    cursor: pointer;
-    z-index: 10;
-    user-select: none;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-.position-relative #togglePw:hover {
-    opacity: 1;
-}
-
-/* [추가] 비밀번호 재설정 페이지용 상단 텍스트 정렬 */
-.user-login-card h4.text-start {
-    font-weight: bold;
-    text-align: left !important;
-}
-
-.user-login-card p.text-start {
-    text-align: left !important;
-}
-
-/* [추가] 입력창 포커스 시 테두리 색상 (디테일) */
-.user-login-input:focus {
-    border-color: #3b6ef5;
-    box-shadow: 0 0 0 0.2rem rgba(59, 110, 245, 0.1);
-    outline: none;
-}
-
-/* =========================================
-   회원가입 페이지 전용 스타일 (register.jsp)
-   ========================================= */
-
-/* 1. 인증 그룹 레이아웃 (이메일, 인증번호 공통) */
-.auth-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-/* 2. 인증번호 입력창 특수 처리 (타이머 공간 확보) */
-#emailCode {
-    letter-spacing: 2px; /* 숫자 사이 간격을 넓혀 가독성 향상 */
-    font-weight: bold;
-}
-
-/* 3. 타이머 스팬 스타일 (입력창 우측 내부 고정) */
-#timerSpan {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #dc3545; /* Bootstrap text-danger 색상 */
-    z-index: 5;
-    pointer-events: none; /* 타이머 클릭 시에도 입력창이 클릭되도록 설정 */
-}
-
-/* 4. 상태 메시지 (이메일 인증 완료 등) */
-#emailStatusMsg {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    margin-top: 5px;   /* 입력창과의 간격 */
-    margin-bottom: 15px; /* 다음 요소와의 간격 */
-    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
-}
-
-/* 5. 비밀번호 일치/강도 메시지 */
-#pwMatchMsg {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    margin-top: 5px;   /* 입력창과의 간격 */
-    margin-bottom: 15px; /* 다음 요소와의 간격 */
-    min-height: 1.2rem; /* 메시지가 없어도 공간을 차지하여 덜컹거림 방지 */
-}
-
-/* 6. 로고 클릭 시 커서 모양 */
-#logoBtn {
-    cursor: pointer;
-}
-
-/* 7. 읽기 전용 상태일 때 시각적 피드백 (인증 완료 후) */
-.user-login-input[readonly] {
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6;
-    color: #6c757d;
-}
-
-#togglePw {
-    font-size: 1.1rem;
-    user-select: none; /* 드래그 방지 */
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-#togglePw:hover {
-    opacity: 1;
-}
-
-#idStatusMsg {
-    font-size: 13px;
-    text-align: left;
-    margin-top: -8px;
-    margin-bottom: 12px;
-    display: block;
-    min-height: 1.2rem;
+    color: #3b6ef5 !important; /* 아주 살짝 파란색으로 변경 (완전히 안 바뀌게 하려면 이 블록 삭제) */
 }

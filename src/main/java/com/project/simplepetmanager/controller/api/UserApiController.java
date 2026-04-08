@@ -185,12 +185,14 @@ public class UserApiController {
     @PostMapping("/api/email-auth")
     public ResponseEntity<?> sendEmailCode(@RequestBody Map<String, String> body) {
         String email = body.get("userEmail");
+        String mode = body.get("mode"); // 프론트에서 보낸 mode 값 확인
 
-        // 1. [추가] UserService를 사용하여 이메일 중복 체크 진행
-        if (userService.isEmailDuplicate(email)) {
-            // 이미 가입된 이메일이면 409 상태와 함께 메시지 반환
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "이미 사용 중인 이메일입니다."));
+        // 회원가입일 때만 중복 체크 실행
+        if (!"findPw".equals(mode)) {
+            if (userService.isEmailDuplicate(email)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "이미 사용 중인 이메일입니다."));
+            }
         }
 
         // 2. 중복이 아닐 때만 메일 발송

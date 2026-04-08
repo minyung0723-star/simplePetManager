@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <title>비밀번호 재설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
-    <style>
-        /* 가독성을 위한 추가 스타일 */
-        .pw-edit-msg { font-size: 0.85rem; display: block; min-height: 1.2rem; margin-top: 5px; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css?v=1.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/passwordEdit.css?v=1.1">
 </head>
 <body>
 
@@ -18,27 +15,28 @@
          class="user-login-logo" id="logoBtn" alt="Logo">
 
     <div class="user-login-card">
-        <h4 class="text-start mb-1">비밀번호 재설정</h4>
+        <h4 class="text-start mb-1 fw-bold">비밀번호 재설정</h4>
         <p class="text-start text-muted small mb-4">새로운 비밀번호를 입력해 주세요.</p>
 
-        <div class="mb-3">
-            <label class="form-label small-muted">대상 아이디</label>
+        <div class="mb-3 text-start">
+            <label class="form-label small text-muted">대상 아이디</label>
             <input type="text" id="targetUserId" class="form-control user-login-input" readonly>
         </div>
 
         <div class="position-relative mb-3">
-            <input type="password" id="newPassword" class="form-control user-login-input pw-input"
+            <input type="password" id="newPassword" class="form-control user-login-input"
                    placeholder="새 비밀번호">
-            <span id="togglePw" class="position-absolute top-50 translate-middle-y">👁️</span>
+            <span id="togglePw">👁️</span>
         </div>
 
-        <div class="position-relative">
+        <div class="position-relative mb-1">
             <input type="password" id="confirmPassword" class="form-control user-login-input"
                    placeholder="새 비밀번호 확인">
         </div>
-        <span id="pwMatchMsg" class="pw-edit-msg text-start"></span>
 
-        <button class="user-login-btn mt-3" id="submitBtn" disabled>
+        <div id="pwMatchMsg" class="pw-edit-msg"></div>
+
+        <button class="user-login-btn mt-2" id="submitBtn" disabled>
             비밀번호 변경하기
         </button>
 
@@ -49,10 +47,8 @@
 </div>
 
 <script>
-    // 전역 변수로 contextPath 설정
     window.contextPath = "${pageContext.request.contextPath}";
 </script>
-
 <script src="${pageContext.request.contextPath}/js/user/passwordEdit.js"></script>
 
 </body>

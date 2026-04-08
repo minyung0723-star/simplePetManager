@@ -6,7 +6,7 @@
     <title>로그인</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user/register.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 
         <div class="position-relative mb-2">
             <input type="password" id="userPassword" class="form-control user-login-input"
-                   placeholder="비밀번호" style="padding-right: 40px;">
+                   placeholder="비밀번호">
             <span id="togglePw">👁️</span>
         </div>
 
@@ -37,8 +37,10 @@
         <button type="button" id="btnLogin" class="user-login-btn w-100">로그인</button>
 
         <div class="user-login-links mt-3 text-center">
-            <a href="${pageContext.request.contextPath}/findUser?mode=id">아이디 찾기</a> |
-            <a href="${pageContext.request.contextPath}/findUser?mode=pw">비밀번호 찾기</a> |
+            <a href="${pageContext.request.contextPath}/findUser?mode=id">아이디 찾기</a>
+            <span class="link-divider">|</span>
+            <a href="${pageContext.request.contextPath}/findUser?mode=pw">비밀번호 찾기</a>
+            <span class="link-divider">|</span>
             <a href="${pageContext.request.contextPath}/register">회원가입</a>
         </div>
     </div>

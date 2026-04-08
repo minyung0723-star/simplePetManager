@@ -83,7 +83,7 @@ const handleLogin = async () => {
     const userId = nodes.userId.value.trim();
     const userPassword = nodes.userPw.value.trim();
 
-    // ✅ 체크박스 상태 확인 (정의되지 않은 변수 오류 해결)
+    //  체크박스 상태 확인 (정의되지 않은 변수 오류 해결)
     const isRememberChecked = nodes.rememberMe ? nodes.rememberMe.checked : false;
 
     if (!userId || !userPassword) {
