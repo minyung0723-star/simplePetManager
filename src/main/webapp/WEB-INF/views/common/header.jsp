@@ -58,7 +58,7 @@
             // 2. 마이페이지 메뉴 추가
             if (!document.getElementById("nav-mypage")) {
                 const myPageLink = document.createElement("a");
-                myPageLink.href = "${pageContext.request.contextPath}/user/myPage";
+                myPageLink.href = "${pageContext.request.contextPath}/mypage/myPage";
                 myPageLink.id = "nav-mypage";
                 myPageLink.textContent = "마이페이지";
                 mainNav.appendChild(myPageLink);
