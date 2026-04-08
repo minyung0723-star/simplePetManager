@@ -1,13 +1,18 @@
 { margin: 0; padding: 0; box-sizing: border-box; }
 .bookmark-panel {
+    position: absolute; /* 또는 fixed */
+    top: 130px;         /* 상단에서의 거리 (적절히 조절) */
+
+    /* 왼쪽(left) 설정을 지우거나 auto로 변경하고, 오른쪽(right)을 설정합니다 */
+    left: auto !important;
+    right: 130px;        /* 오른쪽 벽에서 20px 띄움 */
+
+    z-index: 1000;      /* 지도보다 위에 보이도록 설정 */
+
+    /* 기타 스타일들 (너비, 배경색 등) */
     width: 300px;
-    height: 550px;
-    background: #000000;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
 }
 
 .bookmark-panel-header {

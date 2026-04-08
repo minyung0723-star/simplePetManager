@@ -10,9 +10,9 @@
 
     <div class="bookmark-list" id="bookmarkList">
         <c:forEach var="bookmark" items="${bookmarkList}">
-            <div class="bookmark-card" onclick="moveToStore(${board.latitude}, ${board.longitude})">
-                <div class="bookmark-card-name">${board.storeName}</div>
-                <div class="bookmark-card-address">${board.storeAddress}</div>
+            <div class="bookmark-card" onclick="moveToStore(${bookmark.latitude}, ${bookmark.longitude})">
+                <div class="bookmark-card-name">${bookmark.storeName}</div>
+                <div class="bookmark-card-address">${bookmark.storeAddress}</div>
                 <div class="bookmark-card-footer">삭제하기</div>
             </div>
         </c:forEach>
