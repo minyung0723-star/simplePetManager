@@ -19,7 +19,9 @@
     </div>
 </div>
 <button id="openBookmarkBtn" class="open-bookmark-btn" onclick="openBookmarkPanel()" style="display: none;">
-    즐겨찾기
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="gold" stroke="orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
 </button>
 <script>
     function moveToStore(lat, lng) {
@@ -29,20 +31,25 @@
     }
 
     function closeBookmarkPanel() {
-        // 1. 즐겨찾기 패널을 숨깁니다.
+        // 1. 즐겨찾기 패널 숨기기
         document.querySelector('.bookmark-panel').style.display = 'none';
 
-        // 2. 숨겨져 있던 '즐겨찾기 열기' 버튼을 보이게 합니다.
-        const openBookmarkBtn = document.getElementById("openBookmarkBtn"); // 버튼 ID 확인!
-        if (openBookmarkBtn) {
-            openBookmarkBtn.style.display = "block";
+        // 2. 별 버튼 보이기
+        const openBtn = document.getElementById("openBookmarkBtn");
+        if (openBtn) {
+            openBtn.style.display = "flex"; // CSS에서 flex를 썼으므로 flex로 설정
         }
     }
 
-    // 반대로 버튼을 눌러서 팝업을 열 때의 함수도 필요합니다.
     function openBookmarkPanel() {
+        // 1. 즐겨찾기 패널 보이기
         document.querySelector('.bookmark-panel').style.display = 'block';
-        document.getElementById("openBookmarkBtn").style.display = "none";
+
+        // 2. 별 버튼 숨기기
+        const openBtn = document.getElementById("openBookmarkBtn");
+        if (openBtn) {
+            openBtn.style.display = "none";
+        }
     }
     // 페이지 로드 시 실행되는 부분
     window.onload = function () {

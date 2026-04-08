@@ -98,22 +98,23 @@
 }
 
 .open-bookmark-btn {
-    /* 1. 위치 기준 설정 (부모 요소가 relative여야 함) */
-    position: absolute;
-
-    /* 2. 위쪽과 오른쪽 끝에서 얼마나 띄울지 설정 */
-    top: 130px;    /* 가장 위쪽에서 10px 아래로 */
-    right: 335px;  /* 가장 오른쪽에서 10px 왼쪽으로 */
-
-    /* 3. 왼쪽(left) 설정이 남아있다면 반드시 해제 */
-    left: auto;
-
-    /* 4. 지도보다 위에 보이도록 우선순위 설정 */
-    z-index: 1001;
-
-    /* 나머지 디자인 스타일 (예시) */
-    padding: 10px 15px;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    position: fixed;
+    bottom: 300px;   /* 하단에서 20px 띄움 */
+    right: 450px;    /* 우측에서 20px 띄움 */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* 동그란 버튼 */
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;  /* 지도나 다른 요소보다 위에 오도록 */
+    transition: transform 0.2s;
+}
+
+.open-bookmark-btn:hover {
+    transform: scale(1.1); /* 마우스 올리면 살짝 커짐 */
 }
