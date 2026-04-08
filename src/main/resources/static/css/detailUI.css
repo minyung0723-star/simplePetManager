@@ -95,3 +95,28 @@
     font-size: 12px;
     text-decoration: none;
 }
+
+/* 기본 상태: 버튼이 보임 */
+.open-btn {
+    /* 부모 요소(지도 컨테이너)를 기준으로 위치를 잡습니다 */
+    position: absolute;
+
+    /* 왼쪽 상단에서 얼마나 띄울지 결정합니다 */
+    top: 130px;   /* 위에서 20px 내려옴 */
+    left: 430px;  /* 왼쪽에서 20px 띄움 */
+
+    /* 지도나 다른 요소보다 위에 보이도록 z-index를 높입니다 */
+    z-index: 1000;
+
+    /* 버튼이 잘 보이도록 배경과 테두리를 추가합니다 */
+    background-color: white;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+/* 팝업이 활성화(popup-active)된 상태일 때 버튼을 숨김 */
+body.popup-active .open-btn {
+    display: none;
+}

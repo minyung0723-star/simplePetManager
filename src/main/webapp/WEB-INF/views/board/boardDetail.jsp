@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <head>
-    <title>카카오맵 마커</title>
+    <title>상세보기</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/kakao-map.css">
@@ -85,7 +85,10 @@
                 })
                 .catch(err => console.error(err));
         }
+
+
     </script>
+
 </div>
 
 </body>

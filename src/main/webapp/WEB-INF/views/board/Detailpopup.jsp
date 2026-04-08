@@ -40,14 +40,37 @@
     --%>
 </div>
 
+<button id="openBtn" class="open-btn" onclick="openPopup()" style="display: none;">
+    정보보기
+</button>
 <script>
+    // 페이지 로드 시 실행되는 부분
     window.onload = function () {
+        // 처음엔 팝업이 열려있으므로 버튼을 확실히 숨깁니다.
+        const openBtn = document.getElementById("openBtn");
+        if (openBtn) openBtn.style.display = "none";
+
         document.getElementById("popup").classList.add("show");
+
+        // 핸들 클릭 시 닫기
         document.querySelector(".popup-handle").addEventListener("click", function () {
-            document.getElementById("popup").classList.remove("show");
+            closePopup();
         });
     };
 
+    function openPopup() {
+        document.getElementById("popup").classList.add("show");
+        // 팝업 열리면 버튼 숨기기
+        document.getElementById("openBtn").style.display = "none";
+    }
 
-
+    function closePopup() {
+        document.getElementById("popup").classList.remove("show");
+        // 팝업 닫히면 버튼 보여주기
+        const btn = document.getElementById("openBtn");
+        if (btn) {
+            btn.style.display = "block";
+            console.log("버튼이 활성화되었습니다."); // 브라우저 F12 콘솔에서 확인용
+        }
+    }
 </script>
