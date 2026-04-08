@@ -46,13 +46,15 @@ public class ViewController {
 
     @GetMapping("/board/boardDetail")
     public String boardDetail(Model model) {
-        List<Board> boardListData = boardService.findAllBoard();
-        model.addAttribute("boardLists", boardListData);
+        Board 하나의게시물데이터 = boardService.findBoardByBoardId(1);
+        model.addAttribute("board",하나의게시물데이터);
+        //List<Board> boardListData = boardService.findAllBoard();
+       /* model.addAttribute("boardLists", boardListData);
         System.out.println("boardListData: " + boardListData); // ✅ 추가
         if (!boardListData.isEmpty()) {
             model.addAttribute("store", boardListData.get(0));
             System.out.println("store: " + boardListData.get(0)); // ✅ 추가
-        }
+        }*/
         return "board/boardDetail";
     }
 
