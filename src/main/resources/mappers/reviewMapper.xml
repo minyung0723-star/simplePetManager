@@ -4,36 +4,39 @@
 <mapper namespace="com.project.simplepetmanager.model.mapper.ReviewMapper">
 
     <insert id="insertReview" parameterType="com.project.simplepetmanager.model.dto.Review">
-        INSERT INTO Reviews (
+        INSERT INTO reviews (
             store_id,
             user_number,
             category,
             review_content,
             rating
         ) VALUES (
-                     #{storeId},
-                     #{userNumber},
-                     #{category},
-                     #{reviewContent},
-                     #{rating}
+             #{storeId},
+             #{userNumber},
+             #{category},
+             #{reviewContent},
+             #{rating}
                  )
     </insert>
 
     <select id="getReviewList" resultType="com.project.simplepetmanager.model.dto.Review">
         SELECT
-            Reviews.review_id,
-            Reviews.store_id,
-            Reviews.user_number,
-            Reviews.category,
-            Reviews.review_content,
-            Reviews.rating,
-            Reviews.created_date,
-            Users.user_name AS nickname,
-            Users.profile_image AS profileImage
-        FROM Reviews
-                 JOIN Users ON Reviews.user_number = Users.user_number
-        WHERE Reviews.store_id = #{storeId}
-        ORDER BY Reviews.created_date DESC
+            reviews.review_id,
+            reviews.store_id,
+            reviews.user_number,
+            reviews.category,
+            reviews.review_content,
+            reviews.rating,
+            reviews.created_date,
+            users.user_name AS nickname,
+            users.profile_image AS profileImage,
+            (SELECT store_name FROM stores WHERE store_id = reviews.store_id) AS storeName,
+            (SELECT IFNULL(AVG(rating), 0) FROM reviews WHERE store_id = #{storeId}) AS averageRating,
+            (SELECT COUNT(*) FROM Reviews WHERE store_id = #{storeId}) AS reviewCount
+        FROM reviews
+                 JOIN users ON reviews.user_number = users.user_number
+        WHERE reviews.store_id = #{storeId}
+        ORDER BY reviews.created_date DESC
     </select>
 
     <select id="checkBookmark" resultType="int">
@@ -61,5 +64,23 @@
         FROM stores
         WHERE store_id = #{storeId}
     </select>
+
+    <insert id="registerReview" parameterType="com.project.simplepetmanager.model.dto.Review">
+        INSERT INTO reviews (
+            store_id,        user_number,
+            category,
+            review_content,  rating,
+            created_date
+        ) VALUES (
+                     #{storeId},      #{userNumber},
+                     #{category},
+                     #{reviewContent}, #{rating},
+                     NOW()            )
+    </insert>
+    
+    <delete id="deleteReview">
+        DELETE FROM reviews
+        WHERE review_id = #{reviewId}
+    </delete>
 
 </mapper>

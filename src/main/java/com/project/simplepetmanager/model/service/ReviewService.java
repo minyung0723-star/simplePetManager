@@ -18,15 +18,6 @@ public class ReviewService {
     private final ReviewMapper reviewMapper; // 외부에서 함부로 조작 못하게 private으로 선언!
 
     /**
-     * 새로운 리뷰를 등록하는 기능 (public: 컨트롤러가 호출 가능)
-     * @param review 사용자가 입력한 데이터가 담긴 바구니
-     */
-    public void registerReview(Review review) {
-        // 나중에 "이미 리뷰를 쓴 사용자인지 확인" 같은 로직이 들어올 수 잇음.
-        reviewMapper.insertReview(review);
-    }
-
-    /**
      * 특정 병원의 리뷰 목록을 가져오는 기능 (public: 컨트롤러가 호출 가능)
      * @param storeId 병원 번호
      * @return 작성자 정보가 포함된 리뷰 리스트
@@ -63,4 +54,43 @@ public class ReviewService {
         // 매퍼에게 DB에서 데이터를 가져오라고 시킵니다.
         return reviewMapper.getStoreDetail(storeId);
     }
+
+    /**
+     * 과제 문제 서비스로 옮기기
+     */
+    public String registerReview (Review review) {
+        // 1. 병원 ID (null이거나 0이면 1번으로 고정)
+
+        if (review.getStoreId() == null || review.getStoreId() == 0) {
+            review.setStoreId(1);
+        }
+        // 2. 유저 번호 (null이면 1번으로 고정)
+        if (review.getUserNumber() == null || review.getUserNumber() == 0) {
+            review.setUserNumber(1);
+        }
+        // 3. 별점 (이번 에러의 원인! null이면 임시로 5점 부여)
+        if (review.getRating() == null) {
+            review.setRating(5.0);
+        }
+        // 4. 카테고리 (null 방지)
+        if (review.getCategory() == null) {
+            review.setCategory("병원");
+        }
+        try {
+            reviewMapper.registerReview(review);
+            return "success";
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        }
+    }
+
+    /**
+     *
+     */
+    public String removeReview(int reviewId){
+        int result = reviewMapper.deleteReview(reviewId);
+        return (result > 0) ? "success" : "fail";
+    }
+
 }

@@ -8,9 +8,9 @@
         </div>
 
         <form id="reviewForm" enctype="multipart/form-data"> <div class="text-center py-4">
-            <div id="star-rating-container" class="star-rating-container">
-                <div class="star-rating-empty">★★★★★</div>
-                <div id="star-rating-fill" class="star-rating-fill">★★★★★</div>
+            <div id="review-star-rating-container" class="review-star-rating-container">
+                <div class="review-star-rating-empty">★★★★★</div>
+                <div id="review-star-rating-fill" class="review-star-rating-fill">★★★★★</div>
             </div>
             <input type="hidden" name="rating" id="rating-value" value="0">
             <div id="rating-display" class="fw-bold mt-2">0.0 점</div>
@@ -25,7 +25,7 @@
             </div>
 
             <div class="d-flex justify-content-end mt-4">
-                <button type="button" onclick="submitReview()" class="btn btn-primary btn-submit shadow-sm fw-bold">
+                <button type="button" onclick="submitReview()" class="btn btn-primary review-btn-submit shadow-sm fw-bold">
                     작성완료
                 </button>
             </div>
@@ -47,35 +47,45 @@
     });
 
     // 별점 마우스 이동 로직
-    const container = document.getElementById('star-rating-container');
-    const fill = document.getElementById('star-rating-fill');
+    const container = document.getElementById('review-star-rating-container');
+    const fill = document.getElementById('review-star-rating-fill');
     const ratingValue = document.getElementById('rating-value');
     const ratingDisplay = document.getElementById('rating-display');
 
     // 마우스 움직임에 따라 실시간으로 별 채우기
     container.addEventListener('mousemove', (e) => {
         const rect = container.getBoundingClientRect();
-        const x = e.clientX - rect.left; // 마우스의 X 좌표
-        const width = rect.width;        // 전체 별 영역 너비
+        const x = e.clientX - rect.left;
+        const width = rect.width;
 
         // 0.5단위 계산
         let score = (x / width) * 5;
-        score = Math.ceil(score * 2) / 2; // 0.5 단위로 올림
+        score = Math.ceil(score * 2) / 2;
 
         if (score < 0.5) score = 0.5;
         if (score > 5) score = 5;
 
+        // ★ 실시간으로 별 색깔 채우기
         renderStars(score);
+        // 마우스 움직일 때 숫자도 미리 보여주면
+        ratingDisplay.innerText = `\${score.toFixed(1)} 점`;
     });
 
     // 클릭 시 값 확정
     container.addEventListener('click', (e) => {
         const rect = container.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        const score = Math.ceil(((x / rect.width) * 5) * 2) / 2;
+        const width = rect.width;
 
-        ratingValue.value = score;
+        let score = (x / width) * 5;
+        score = Math.ceil(score * 2) / 2;
+
+        if (score < 0.5) score = 0.5;
+        if (score > 5) score = 5;
+
+        ratingValue.value = score; // hidden input에 저장
         ratingDisplay.innerText = `\${score.toFixed(1)} 점`;
+        renderStars(score); // 별 너비 고정!
     });
 
     // 마우스를 떼면 마지막으로 클릭(확정)한 값으로 복구
@@ -92,40 +102,54 @@
 
     // 별점 및 리뷰내용을 작성 시 작성완료 버튼 활성화
     const submitReview = async () => {
+        // 1. 값 가져오기
         const content = document.getElementById('reviewContent').value;
         const rating = document.getElementById('rating-value').value;
 
+        // URL에서 storeId 가져오기 (이거 없으면 DB 저장 안 됨!)
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('storeId') || 1;
+
+        // 2. 유효성 검사
         if (rating == 0 || rating == "0.0") {
             alert("별점을 선택해 주세요! ");
             return;
         }
-
         if (content.trim().length < 1) {
-            alert("리뷰 내용을 작성해 주세요! ✍");
+            alert("리뷰 내용을 작성해 주세요!");
             document.getElementById('reviewContent').focus();
             return;
         }
 
-        const form = document.getElementById('reviewForm');
-        const formData = new FormData(form);
+        // 3. 서버에 보낼 '진짜 데이터' 만들기 (DTO 필드명과 똑같이!)
+        const reviewData = {
+            storeId: parseInt(storeId),
+            reviewContent: content,
+            rating: parseFloat(rating),
+            userNumber: 1 // [임시] 나중에 세션에서 가져올 값!
+        };
 
         try {
-            const response = await fetch('insertReview', {
+            const response = await fetch('/api/review/insert', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reviewData)
             });
 
-            const data = await response.text();
+            const result = await response.text();
 
-            if (data === "success") {
-                alert("리뷰가 성공적으로 완료되었습니다. ");
-                location.href = "reviewPage";
+            if (result === "success") {
+                alert("리뷰 등록이 완료되었습니다! ");
+                // 주소 앞에 / 붙여서 상세페이지로 튕겨주기!
+                location.href = `/api/hospital/detail?storeId=\${storeId}`;
             } else {
-                alert("등록 중 오류가 발생했습니다.");
+                alert("등록 중 오류가 발생했습니다. (서버 응답: " + result + ")");
             }
         } catch (error) {
             console.error('Error:', error);
-            alert("서버 통신 오류가 발생했습니다.");
+            alert("서버 통신 오류가 발생했습니다. ");
         }
     };
 

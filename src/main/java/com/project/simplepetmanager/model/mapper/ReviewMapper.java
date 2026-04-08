@@ -38,4 +38,11 @@ public interface ReviewMapper {
     void deleteBookmark(@Param("userNumber") long userNumber, @Param("storeId") long storeId);
     Board getStoreDetail(int storeId);
 
+    int registerReview(Review review);
+
+    /**
+     * 리뷰 삭제 기능 (임시)
+     */
+    int deleteReview(int reviewId);
+
 }
