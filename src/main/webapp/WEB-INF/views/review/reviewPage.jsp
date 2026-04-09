@@ -104,22 +104,29 @@
 
     // 1 별점 나오게 하기!
     const generateStars = (rating) => {
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-            // 꽉 찬 별: 현재 루프(i)가 점수보다 작거나 같을 때
-            if (i <= Math.floor(rating)) {
-                starsHtml += `<i class="bi bi-star-fill review-star-filled"></i>`;
-            }
-            // 반 별: 현재 루프(i)가 올림한 점수와 같고, 소수점이 있을 때
-            else if (i === Math.ceil(rating) && rating % 1 !== 0) {
-                starsHtml += `<i class="bi bi-star-half review-star-filled"></i>`;
-            }
-            // 빈 별
-            else {
-                starsHtml += `<i class="bi bi-star review-star-empty"></i>`;
-            }
-        }
-        return starsHtml;
+        // 1. 숫자로 확실히 변환 (가끔 문자열로 들어오면 계산이 꼬여!)
+        const numRating = parseFloat(rating);
+        const percentage = (numRating / 5) * 100;
+
+        // 2. 템플릿 리터럴로 반환
+        return `
+        <div class="review-star-rating-container readonly">
+            <div class="review-star-rating-empty">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <div class="review-star-rating-fill" style="width: \${percentage}% !important;">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+            </div>
+        </div>
+    `;
     };
 
     // 2. 리뷰 목록 로드 함수 (핵심!)

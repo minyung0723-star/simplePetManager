@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@include file="../common/header.jsp"%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container mt-4">
     <div class="review-create-wrapper">
         <div class="hospital-header d-flex justify-content-center align-items-center position-relative mb-4 pb-3 border-bottom">
@@ -9,8 +10,20 @@
 
         <form id="reviewForm" enctype="multipart/form-data"> <div class="text-center py-4">
             <div id="review-star-rating-container" class="review-star-rating-container">
-                <div class="review-star-rating-empty">★★★★★</div>
-                <div id="review-star-rating-fill" class="review-star-rating-fill">★★★★★</div>
+                <div class="review-star-rating-empty">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div id="review-star-rating-fill" class="review-star-rating-fill">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
             </div>
             <input type="hidden" name="rating" id="rating-value" value="0">
             <div id="rating-display" class="fw-bold mt-2">0.0 점</div>
@@ -90,14 +103,28 @@
 
     // 마우스를 떼면 마지막으로 클릭(확정)한 값으로 복구
     container.addEventListener('mouseleave', () => {
+        // 1. 현재 hidden input에 저장된 진짜 점수 가져오기
         const fixedValue = parseFloat(ratingValue.value) || 0;
+
+        // 2. 별 모양 복구
         renderStars(fixedValue);
+
+        // ★ 3. 텍스트도 원래 점수로 복구! (이게 핵심!)
+        // 문자열로 인식시키기 위해 넣은 거니까 그대로 유지해줘!
+        ratingDisplay.innerText = `\${fixedValue.toFixed(1)} 점`;
     });
 
-    // 핵심 함수: 숫자에 따라 CSS 너비를 조절함
-    const renderStars=(score)=> {
+    //핵심 함수: 숫자에 따라 CSS 너비를 조절함
+    const renderStars = (score) => {
         const percentage = (score / 5) * 100;
+
+        // 1. 너비를 조절한다
         fill.style.width = percentage + "%";
+
+        // 2. ★범인 검거용 핵심 코드★
+
+        fill.style.setProperty('display', 'flex', 'important');
+        fill.style.setProperty('overflow', 'hidden', 'important');
     }
 
     // 별점 및 리뷰내용을 작성 시 작성완료 버튼 활성화

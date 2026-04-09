@@ -181,7 +181,7 @@ footer {
 /* 별점 색상 (시안의 노랑색 계열) */
 .review-star-rating {
     color: #ffc61a;
-    letter-spacing: -2px;
+    letter-spacing: 0;
     font-size: 20px;
 }
 
@@ -242,36 +242,62 @@ footer {
     background-color: #2266EE; /* 호버 시 약간 어둡게 */
 }
 /********************************** rating *********************************************/
-/* 1. 별을 감싸는 전체 컨테이너 */
+
+/* 1. 전체 컨테이너 */
 .review-star-rating-container {
-    display: inline-flex;
-    position: relative; /* 자식 요소인 fill의 기준점이 됩니다 */
-    font-size: 3rem;
+    position: relative;
+    display: inline-flex !important; /* 가로로 정렬 */
+    font-size: 3rem;                 /* 별 크기 */
+    line-height: 1;
+    color: #ddd;                     /* 회색 별 색상 */
     cursor: pointer;
-    color: #ddd; /* 빈 별 색상 */
     user-select: none;
+    width: 5em;                      /* 별 5개 너비 고정 (1em * 5) */
+    overflow: hidden;
 }
 
-/* 2. 빈 별 (배경) */
+/* 2. 바탕이 되는 회색 별 (반드시 flex여야 가로로 줄을 서!) */
 .review-star-rating-empty {
+    display: flex !important;
+    width: 100%;
+    position: relative;
     z-index: 1;
 }
 
-/* 3. 노란색으로 채워질 별 (위에 겹쳐짐) */
+/* 3. 노란색으로 채워지는 별 (얘도 flex여야 똑같이 겹쳐!) */
 .review-star-rating-fill {
-    display: block;
-    position: absolute; /* 이 설정이 있어야 빈 별 위로 올라갑니다! */
+    position: absolute;
     top: 0;
     left: 0;
-    width: 0%; /* 기본값 */
+    width: 0%;                       /* JS가 조절 */
     height: 100%;
-    overflow: hidden; /* 영역 밖 별을 숨김 */
-    color: #ffc61a; /* 노란색 별 */
-    z-index: 2; /* 빈 별보다 위에 오도록 설정 */
-    white-space: nowrap; /* 별이 아래로 떨어지지 않게 고정 */
+    display: flex !important;        /* 가로 정렬 */
+    overflow: hidden;                /* 넘치는 별 자르기 */
+    color: #ffc61a;                  /* 노란색 별 색상 */
+    white-space: nowrap;
+    z-index: 2;
+}
 
-    /* 너비가 변해도 안의 별 글자 크기가 변하지 않도록 보장 */
-    pointer-events: none; /* 별 채우기 영역이 마우스 이벤트를 방해하지 않게 설정 */
+/* 4. 별 아이콘 하나하나의 규격 강제 고정 */
+.review-star-rating-container i {
+    display: flex !important;
+    justify-content: center;         /* 칸 안에서 별을 정중앙으로 */
+    align-items: center;
+    width: 1em !important;           /* ★ 별 하나의 너비를 정확히 1em으로 고정 ★ */
+    flex-shrink: 0;                  /* 절대 찌그러지지 않게 */
+    margin: 0;
+    padding: 0;
+}
+
+.review-star-rating-fill i {
+    flex-shrink: 0;        /* 별이 찌그러지지 않고 원래 크기 유지 */
+    width: 1em;            /* 배경 별과 똑같은 너비 */
+}
+
+.review-star-rating-container.readonly {
+    font-size: 1.5rem !important; /* 지니야, 여기서 크기를 조절하면 돼! */
+    width: 5em !important;        /* 별 5개 너비 강제 고정 */
+    pointer-events: none;         /* 클릭 방지 */
 }
 /********************************** review-profile-img *********************************************/
 /* 프로필 이미지 동그랗게 */
