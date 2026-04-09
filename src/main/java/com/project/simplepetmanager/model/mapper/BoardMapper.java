@@ -23,6 +23,7 @@ public interface BoardMapper {
             @Param("keyword")    String keyword
     );
 
+
     /**
      * TODO : 가게 상세 단건 조회
      *

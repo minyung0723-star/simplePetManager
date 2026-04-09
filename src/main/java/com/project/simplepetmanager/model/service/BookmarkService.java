@@ -31,6 +31,12 @@ public class BookmarkService {
         bookmarkMapper.deleteBookmark(userNumber, storeId);
     }
 
+    public boolean confirmBookmark(int userNumber, int storeId) {
+
+    }
+
+
+
     /**
      * TODO : 북마크 존재 여부를 boolean 으로 반환하는 래퍼 메서드
      *
@@ -42,4 +48,3 @@ public class BookmarkService {
      *   BoardApiController 토글 API(TODO) 와 ViewController(TODO) 에서 사용
      */
 
-}

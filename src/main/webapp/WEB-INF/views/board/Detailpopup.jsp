@@ -10,7 +10,7 @@
         <h3 id="storeName">${board.storeName}</h3>
         <a href="/review/reviewPage">[리뷰보기]</a>
     </div>
-    <img id="storeImg" class="popup-img" src="${pageContext.request.contextPath}/images/animal_hospital.png" alt="가게 이미지">
+    <img id="storeImg" class="popup-img" src="${board.storeImage}" alt="가게 이미지">
 
     <div class="popup-info">
         <div class="popup-row">
@@ -20,6 +20,8 @@
         <div class="popup-row">
             <span class="label">주소</span>
             <span id="storeAddress">${board.storeAddress}</span>
+            <span class="label">전화번호</span>
+            <span id="storeAddress">${board.storePhone}</span>
             <button onclick="addBookmark(1, ${bookmark.storeId})">
                 즐겨찾기
             </button>
@@ -44,6 +46,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
     </svg>
+
 </button>
 <script>
     // 페이지 로드 시 실행되는 부분
@@ -71,7 +74,7 @@
         // 팝업 닫히면 버튼 보여주기
         const btn = document.getElementById("openBtn");
         if (btn) {
-            btn.style.display = "flex";//"block";
+            btn.style.display = "block";
             console.log("버튼이 활성화되었습니다."); // 브라우저 F12 콘솔에서 확인용
         }
     }

@@ -53,7 +53,22 @@
             </if>
         </where>
     </select>
+    <select id= "selectStoreById" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT
+            s.store_id      AS storeId,
+            s.store_name    AS storeName,
+            s.store_phone   AS storePhone,
+            s.store_address AS storeAddress,
+            s.category,
+            s.latitude,
+            s.longitude,
+            s.store_image   AS storeImage,
+            b.user_number       AS bookmarkUserId  FROM stores s
+                                                            LEFT JOIN bookmark b ON s.store_id = b.storeId
+        WHERE s.store_id = #{storeId}
 
+
+    </select>
     <!--
         TODO : 가게 단건 조회 쿼리
         id         : selectStoreById

@@ -13,10 +13,21 @@
         수정 방향  : stores 테이블과 JOIN 해서 store_name, store_address, store_image 를 가져올 것
                      → BookMark.java 에 storeImage 필드 추가도 함께 필요
     -->
-    <select id="getBookmarkListByUser" resultType="com.project.simplepetmanager.model.dto.BookMark">
-        SELECT user_number, Store_name, storeid
-        FROM bookmark
-        WHERE user_number = #{userNumber}
+    <select id="getBookmarkListByUser" parameterType="int" resultType="com.project.simplepetmanager.model.dto.BookMark">
+        SELECT
+            b.storeId,          -- 북마크 고유 번호
+            b.user_number    AS userNumber,
+            s.store_id       AS storeId,
+            s.store_name     AS storeName,    -- stores 테이블에서 가져옴
+            s.store_address  AS storeAddress, -- stores 테이블에서 가져옴
+            s.store_phone    AS storePhone,
+            s.category,
+            s.latitude,
+            s.longitude,
+            s.store_image    AS storeImage    -- 추가된 요구사항
+        FROM bookmark b
+                 INNER JOIN stores s ON b.storeId = s.store_id
+        WHERE b.user_number = #{userNumber}
     </select>
 
     <!--
@@ -39,8 +50,8 @@
                      가게 정보는 stores JOIN 으로 가져오면 되므로 bookmark 에 저장 불필요
     -->
     <insert id="insertBookmarkList">
-        INSERT INTO bookmark (user_number, Store_name, Store_address)
-        VALUES (#{user_number}, #{storeName}, #{storeAddress})
+        INSERT INTO bookmark (user_number, Storeid, prefer)
+        VALUES (#{user_number}, #{storeId},1)
     </insert>
 
     <!--

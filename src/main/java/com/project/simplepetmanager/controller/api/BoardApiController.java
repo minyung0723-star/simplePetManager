@@ -17,7 +17,8 @@ public class BoardApiController {
     // TODO 8 : BookmarkService 주입 추가
     // 북마크 추가/삭제/조회 API 를 이 컨트롤러에서 처리하려면 아래 주석 해제
     //
-    // private final BookmarkService bookmarkService;
+    //  private final BookmarkService bookmarkService;
+     private final BookmarkService bookmarkService;
 
 
     // TODO 9 : 북마크 추가 API

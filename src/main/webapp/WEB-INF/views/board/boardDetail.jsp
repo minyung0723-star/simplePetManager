@@ -24,8 +24,8 @@
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=695388472b1552749308a93b8da89e82"></script>
     <script>
         var container = document.getElementById('map');
-        var lat = ${store.latitude != null ? store.latitude : 37.5665}; //위도
-        var lng = ${store.longitude != null ? store.longitude : 126.9780}; //경도
+        var lat = ${board.latitude != null ? board.latitude : 37.5665}; //위도
+        var lng = ${board.longitude != null ? board.longitude : 126.9780}; //경도
         var options = {
             center: new kakao.maps.LatLng(lat,lng),
             level: 3
