@@ -21,7 +21,7 @@
                         AND store_address LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <otherwise>
-                        AND (store_name    LIKE CONCAT('%', #{keyword}, '%')
+                        AND (store_name  LIKE CONCAT('%', #{keyword}, '%')
                         OR store_address LIKE CONCAT('%', #{keyword}, '%'))
                     </otherwise>
                 </choose>
@@ -46,7 +46,7 @@
                         AND store_address LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <otherwise>
-                        AND (store_name    LIKE CONCAT('%', #{keyword}, '%')
+                        AND (store_name  LIKE CONCAT('%', #{keyword}, '%')
                         OR store_address LIKE CONCAT('%', #{keyword}, '%'))
                     </otherwise>
                 </choose>
@@ -54,11 +54,14 @@
         </where>
     </select>
 
-    <!-- 즐겨찾기 추가 -->
-    <insert id="insertBookmark">
-        INSERT INTO bookmark (user_number, storeId, prefer)
-        VALUES (#{userNumber}, #{storeId}, 1)
-    </insert>
-
+    <!--
+        TODO : 가게 단건 조회 쿼리
+        id         : selectStoreById
+        파라미터   : storeId (int) → stores.store_id 와 매핑
+        resultType : com.project.simplepetmanager.model.dto.Board
+        반환 컬럼  : store_id → storeId, store_name → storeName,
+                     store_phone → storePhone, store_address → storeAddress,
+                     category, latitude, longitude, store_image → storeImage
+    -->
 
 </mapper>
