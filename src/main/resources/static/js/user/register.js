@@ -211,7 +211,7 @@ const handleRegister = async () => {
         userEmail: email
     };
 
-    if (Object.values(data).some(val => !val)) return alert("모든 필수 정보를 입력해 주세요.");
+    if (Object.values(data).some(val => !val)) return alert("모든 정보를 입력해 주세요.");
     if (!state.isIdChecked) return alert("아이디 중복 확인을 완료해 주세요.");
     if (data.userPassword !== nodes.userPwCheck.value) return alert("비밀번호가 일치하지 않습니다.");
     if (!state.isEmailVerified) return alert("이메일 인증을 완료해 주세요.");

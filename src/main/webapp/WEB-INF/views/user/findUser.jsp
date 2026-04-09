@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div class="user-login-container find-container">
+<div class="user-login-container">
     <img src="${pageContext.request.contextPath}/images/petlogo.png"
          class="user-login-logo" id="logoBtn" alt="로고">
 
