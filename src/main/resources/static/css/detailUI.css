@@ -98,24 +98,38 @@
 
 /* 기본 상태: 버튼이 보임 */
 .open-btn {
-    /* 부모 요소(지도 컨테이너)를 기준으로 위치를 잡습니다 */
-    position: absolute;
+    position: absolute; /* 지도 컨테이너(.map-box) 기준 */
 
-    /* 왼쪽 상단에서 얼마나 띄울지 결정합니다 */
-    top: 130px;   /* 위에서 20px 내려옴 */
-    left: 430px;  /* 왼쪽에서 20px 띄움 */
-
-    /* 지도나 다른 요소보다 위에 보이도록 z-index를 높입니다 */
+    /* 기존 top, left 값 유지 (이미지상 위치가 괜찮아 보입니다) */
+    bottom: 20px; /* 또는 top 값을 쓰셔도 됩니다. 이미지상 아래쪽이니 bottom 추천 */
+    right: 20px;
     z-index: 1000;
 
-    /* 버튼이 잘 보이도록 배경과 테두리를 추가합니다 */
+    /* --- [핵심 수정 부분: 이 4줄이 중요합니다] --- */
+    width: 60px;       /* 1. 가로 길이를 고정 */
+    height: 60px;      /* 2. 세로 길이를 가로와 똑같이 맞춤 (정사각형 상태) */
+    padding: 0;         /* 3. 기존의 패딩 제거 (고정 크기를 방해함) */
+    border-radius: 50%; /* 4. 이 상태에서 radius 50%를 줘야 정원이 됨 */
+    /* ------------------------------------------ */
+
     background-color: white;
-    padding: 10px 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* 좀 더 깊이감 있는 그림자 */
     cursor: pointer;
+    transition: all 0.2s ease; /* 호버 효과 */
+
+    /* --- [팁: 아이콘 중앙 정렬 설정] --- */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+/* 마우스를 올렸을 때 살짝 커지는 효과 */
+.open-btn:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
 /* 팝업이 활성화(popup-active)된 상태일 때 버튼을 숨김 */
 body.popup-active .open-btn {
     display: none;
