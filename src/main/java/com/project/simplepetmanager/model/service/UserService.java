@@ -118,6 +118,12 @@ public class UserService {
             // 이 경우 false를 반환하여 컨트롤러에서 사용자에게 알림을 줄 수 있게 합니다.
             return false;
         }
+        User user = userMapper.findByUserId(userId);
+
+        if (user != null && passwordEncoder.matches(newPassword, user.getUserPassword())) {
+            // 기존 비밀번호와 같으면 업데이트를 하지 않고 false를 반환합니다.
+            return false;
+        }
         // 1. 새 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(newPassword);
 

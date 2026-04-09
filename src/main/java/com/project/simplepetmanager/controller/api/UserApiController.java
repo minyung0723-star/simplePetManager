@@ -178,8 +178,8 @@ public class UserApiController {
         boolean isUpdated = userService.updatePassword(userId, userPassword);
 
         if (!isUpdated) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "비밀번호 변경 중 오류가 발생했습니다."));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "비밀번호 형식이 올바르지 않거나, 기존 비밀번호와 동일합니다."));
         }
 
         // [핵심 추가] 비밀번호 변경 성공 시, 세션에서 인증 권한을 즉시 삭제합니다!

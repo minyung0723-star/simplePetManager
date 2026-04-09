@@ -33,7 +33,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         boolean isLoggedIn = (token != null && jwtUtil.isValidToken(token));
 
-        // [수정] contains 대신 정확한 경로 비교를 권장하지만,
+
         // 최소한 .js 파일이 아닐 때만 작동하도록 조건을 보강합니다.
         if (uri.endsWith("/passwordEdit")) {
             String paramUserId = request.getParameter("userId");
