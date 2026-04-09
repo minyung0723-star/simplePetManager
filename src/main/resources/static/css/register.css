@@ -1,29 +1,44 @@
 /* register.css */
 
-/* 가로 정렬을 위한 핵심 설정 (아이디, 이메일, 인증번호 그룹) */
+/* 가로 정렬을 위한 핵심 설정
+   [!important 이유]: 부트스트랩의 .form-control들이 세로로 나열되는 기본 동작을 차단하고,
+   인증 버튼과 입력창을 한 줄에 나란히 정렬하기 위해 필수적입니다.
+*/
 .auth-group, .find-email-group {
     display: flex !important;
-    flex-direction: row !important; /* 가로 방향 강제 */
+    flex-direction: row !important;
     align-items: center !important;
     gap: 10px !important;
     margin-bottom: 12px !important;
     width: 100% !important;
 }
 
-/* 입력창 너비 자동 확장 */
+/* [!important 이유]: 부트스트랩의 width: 100% 설정을 무력화해야
+   Flexbox의 비율(flex: 1)이 정상적으로 작동하여 옆에 버튼을 배치할 수 있습니다.
+*/
 .auth-group input, .find-email-group input, .find-email-group select {
     flex: 1 !important;
     margin-bottom: 0 !important;
     height: 50px !important;
 }
 
-/* 1. 이메일 비율 설정 */
+/* 1. 이메일 비율 설정
+   [!important 이유]: 이메일 앞부분(@ 앞), 뒷부분(도메인), 인증 버튼의
+   각기 다른 너비 비율을 부트스트랩 스타일보다 우선하여 강제 적용합니다.
+*/
 #emailPrefix { flex: 2.5 !important; }
 .email-at { flex: 0.3 !important; text-align: center; }
 #emailDomain { flex: 2 !important; }
-.btn-request { flex: 1.5 !important; height: 50px !important; white-space: nowrap !important; }
+.btn-request {
+    flex: 1.5 !important;
+    height: 50px !important;
+    white-space: nowrap !important; /* 버튼 글자 깨짐 방지 */
+}
 
-/* 2. 비밀번호/인증번호 아이콘 및 타이머 (입력창 안으로 배치) */
+/* 2. 비밀번호/인증번호 아이콘 및 타이머
+   [!important 이유]: 부트스트랩의 유틸리티 클래스들이 가질 수 있는 위치 값을 덮어쓰고,
+   입력창 우측 내부에 아이콘과 타이머를 정확히 띄우기(absolute) 위해 사용합니다.
+*/
 .position-relative {
     position: relative !important;
     width: 100% !important;
@@ -40,7 +55,10 @@
 
 #timerSpan { color: #dc3545; font-weight: bold; font-size: 0.85rem; }
 
-/* 3. 상태 메시지 정렬 (왼쪽 맞춤) */
+/* 3. 상태 메시지 정렬
+   [!important 이유]: 부트스트랩의 기본 마진이나 정렬을 무시하고
+   입력창 바로 아래 왼쪽 정렬된 안내 문구 자리를 강제로 확보합니다.
+*/
 #idStatusMsg, #pwMatchMsg, #emailStatusMsg {
     display: block !important;
     text-align: left !important;
@@ -51,7 +69,10 @@
     color: #dc3545;
 }
 
-/* 4. 버튼 고정 높이 */
+/* 4. 버튼 고정 높이
+   [!important 이유]: 버튼 안의 텍스트가 길어질 때 높이가 변하거나
+   줄바꿈되는 것을 막고 50px 높이를 고정하기 위해 사용합니다.
+*/
 .btn-auth {
     height: 50px !important;
     padding: 0 15px !important;

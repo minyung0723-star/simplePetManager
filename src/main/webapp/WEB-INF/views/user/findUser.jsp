@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <title>아이디/비밀번호 찾기</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css?v=1.4">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/findUser.css?v=1.4">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/findUser.css">
 </head>
 <body>
 
-<div class="user-login-container">
+<div class="user-login-container find-container">
     <img src="${pageContext.request.contextPath}/images/petlogo.png"
          class="user-login-logo" id="logoBtn" alt="로고">
 

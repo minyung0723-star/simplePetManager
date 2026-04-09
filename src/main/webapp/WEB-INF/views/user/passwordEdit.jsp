@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>비밀번호 재설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css?v=1.1">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/passwordEdit.css?v=1.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/passwordEdit.css">
 </head>
 <body>
 

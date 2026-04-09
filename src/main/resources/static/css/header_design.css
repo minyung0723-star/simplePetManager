@@ -13,110 +13,104 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
+    padding: 0 40px;
     height: 64px;
     background: #ffffff;
-    border-bottom: 1px solid #e8e8e8;
-    font-family: 'Noto Sans KR', sans-serif;
+    border-bottom: 1px solid #f0f0f0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-.header-logo a {
+.header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    text-decoration: none;
+    gap: 15px;
+    flex: 1;
 }
 
-.header-logo img {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
+.user-welcome-text {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .header-nav {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex: 1;
     justify-content: center;
+    gap: 35px;
+    flex: 2;
 }
 
 .header-nav a {
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
     color: #333;
-    padding: 8px 16px;
-    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
-.header-nav a:hover {
-    background: #f5f5f5;
+.header-nav a:hover, .header-nav a.active {
+    color: #3b6ef5;
 }
 
-.header-nav a.active {
-    background: #f0f0f0;
-    font-weight: 700;
+.header-logo img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.header-logo a:hover img {
+    transform: scale(1.05);
 }
 
 .header-actions {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
-.btn-login, .btn-logout {
+/* 헤더 공통 버튼 */
+.btn-login, .btn-logout, .btn-register {
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
 }
 
-.btn-login {
-    border: 1px solid #222;
-    color: #222;
-}
+.btn-login { border: 1px solid #222; color: #222; background: #ffffff; }
+.btn-register { background: #222; color: #ffffff !important; border: 1px solid #222; }
+.btn-logout { background: #f5f5f5; color: #666; border: 1px solid #e8e8e8; }
 
-.btn-login:hover {
-    background: #222;
-    color: #fff;
-}
-
-.btn-logout {
-    background: #222;
-    color: #fff;
-}
-
-/********************* footer *****************************/
+/********************* 3. Footer (푸터) *****************************/
 footer {
     background: #ffffff !important;
     border-top: 1px solid #e8e8e8 !important;
     padding: 60px 0 !important;
-    display: block !important;
 }
-
 
 .footer-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
 }
-
 
 .footer-logo img {
     width: 80px;
     height: auto;
-    margin-right: 24px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-
 
 .footer-links a {
     color: #222;
@@ -126,11 +120,6 @@ footer {
     margin-right: 20px;
 }
 
-.footer-links a:hover {
-    text-decoration: underline;
-}
-
-
 .footer-info {
     font-size: 13px;
     color: #888;
@@ -138,28 +127,82 @@ footer {
     margin-top: 12px;
 }
 
+.footer-right { text-align: right; }
+.customer-phone { font-size: 28px; font-weight: 700; color: #222; }
 
-.footer-right {
-    text-align: right;
+/********************* 4. User Auth Common (인증 공통 뼈대) *****************************/
+/* 로그인, 회원가입, 찾기 페이지에서 공통으로 쓰는 카드 구조 */
+.user-login-container {
+    max-width: 520px;
+    margin: 100px auto;
+    text-align: center;
 }
 
-.customer-title {
+.user-login-logo {
+    width: 150px;
+    margin-bottom: 25px;
+    cursor: pointer;
+}
+
+.user-login-card {
+    padding: 40px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.user-login-input {
+    border-radius: 8px;
+    height: 50px;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.user-login-input:focus {
+    border-color: #3b6ef5;
+    box-shadow: 0 0 0 0.2rem rgba(59, 110, 245, 0.1);
+    outline: none;
+}
+
+.user-login-btn {
+    background-color: #3b6ef5;
+    color: white;
+    height: 50px;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.user-login-btn:hover { background-color: #2f5ad1; }
+.user-login-btn:disabled { background-color: #ced4da; cursor: not-allowed; }
+
+/* login.css 또는 header_design.css 하단에 추가 */
+
+.user-login-links {
     font-size: 14px;
-    font-weight: 500;
-    color: #666;
-    margin-right: 8px;
+    color: #888; /* 구분선 기본 색상 */
+    margin-top: 1.5rem; /* mt-4에 해당 */
 }
 
-.customer-phone {
-    font-size: 28px;
-    font-weight: 700;
-    color: #222;
-    letter-spacing: -0.5px;
+/* 링크 태그 공통 스타일 초기화 */
+.user-login-links a {
+    text-decoration: none; /* 밑줄 절대 없음 */
+    color: #666; /* 글자 색상 (진한 회색) */
+    cursor: default; /* 마우스 커서 화살표 유지 */
+    margin: 0 5px; /* 링크 간 간격 */
+    transition: color 0.2s; /* 부드러운 색상 변화 */
 }
 
-.operating-time {
-    font-size: 13px;
-    color: #888;
-    margin-top: 8px;
-    line-height: 1.6;
+/* 구분선 스타일 */
+.user-login-links span {
+    color: #ccc; /* 구분선 색상 (연한 회색) */
+    margin: 0 3px;
+}
+
+/* (선택 사항) 마우스를 올렸을 때 아주 살짝만 티나게 하고 싶다면 */
+.user-login-links a:hover {
+    color: #3b6ef5; /* 아주 살짝 파란색으로 변경 (완전히 안 바뀌게 하려면 이 블록 삭제) */
 }
