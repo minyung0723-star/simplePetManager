@@ -1,0 +1,127 @@
+/* findUser.css */
+
+/* 1. 로고 및 기본 이미지 설정 */
+.user-login-logo {
+    cursor: pointer; /* 이미지 클릭 시 커서 모양 유지 */
+    display: block;
+    margin: 0 auto 20px;
+}
+
+.found-user-icon {
+    width: 40px; /* 결과창 사용자 아이콘 크기 */
+}
+
+/* 2. 가로 정렬 및 입력창 공통 설정 */
+.find-email-group, .auth-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-bottom: 12px;
+}
+
+.find-email-group input, .find-email-group select, .auth-group input {
+    margin-bottom: 0 !important;
+    height: 50px !important;
+    flex: 1; /* 기본적으로 1:1 비율 */
+}
+
+.email-at {
+    flex: 0.2;
+    text-align: center;
+    line-height: 50px;
+}
+
+/* 3. 비밀번호 찾기 섹션 전용 비율 (JSP에서 옮겨온 부분) */
+#sectionFindPw .find-email-group input,
+#sectionFindPw .find-email-group select {
+    flex: 2 !important; /* 입력칸과 선택칸을 더 넓게 */
+}
+
+#btnPwRequestAuth {
+    flex: 1.5 !important; /* 인증요청 버튼 비율 */
+    margin-left: 8px;
+}
+
+/* 4. 타이머 위치 및 인증번호 입력창 */
+.position-relative { position: relative; width: 100%; }
+
+#pwEmailCode {
+    padding-right: 60px; /* 타이머가 겹치지 않게 오른쪽 여백 확보 */
+}
+
+#pwTimerSpan {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #dc3545;
+    font-weight: bold;
+    display: none; /* JS에서 인증 시작 시 block으로 변경 */
+}
+
+/* 5. 탭 메뉴 스타일 */
+.find-nav-tabs {
+    display: flex;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 25px;
+}
+
+.find-nav-link {
+    flex: 1;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #888;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.find-nav-link.active {
+    color: #3b6ef5;
+    border-bottom: 2px solid #3b6ef5;
+}
+
+/* 6. 하단 링크 및 구분선 (밑줄/파란색 제거) */
+.user-login-links {
+    font-size: 14px;
+    color: #888;
+}
+
+.user-login-links a {
+    text-decoration: none !important;
+    color: #666 !important;
+    cursor: default !important; /* 일반 텍스트처럼 보이게 함 */
+}
+
+.find-sep {
+    margin: 0 10px;
+    color: #ccc;
+}
+
+/* 7. 결과 박스 및 버튼 */
+.found-result-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.btn-half-height {
+    height: 50px !important;
+    border-radius: 8px !important;
+}
+
+/* 8. 인증 버튼 및 확인 버튼 (크기 강화) */
+.btn-auth {
+    height: 50px !important;
+    white-space: nowrap !important;
+    border-radius: 8px !important;
+    font-weight: bold;
+}
+
+/* 확인 버튼: 너비를 확실히 넓히고 좌우 여백 추가 */
+#btnPwVerifyCode {
+    margin-left: 8px;
+    min-width: 100px !important; /* 90px에서 조금 더 키움 */
+    padding: 0 25px !important;
+}

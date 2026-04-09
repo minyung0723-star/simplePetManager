@@ -1,0 +1,59 @@
+/* register.css */
+
+/* 가로 정렬을 위한 핵심 설정 (아이디, 이메일, 인증번호 그룹) */
+.auth-group, .find-email-group {
+    display: flex !important;
+    flex-direction: row !important; /* 가로 방향 강제 */
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+}
+
+/* 입력창 너비 자동 확장 */
+.auth-group input, .find-email-group input, .find-email-group select {
+    flex: 1 !important;
+    margin-bottom: 0 !important;
+    height: 50px !important;
+}
+
+/* 1. 이메일 비율 설정 */
+#emailPrefix { flex: 2.5 !important; }
+.email-at { flex: 0.3 !important; text-align: center; }
+#emailDomain { flex: 2 !important; }
+.btn-request { flex: 1.5 !important; height: 50px !important; white-space: nowrap !important; }
+
+/* 2. 비밀번호/인증번호 아이콘 및 타이머 (입력창 안으로 배치) */
+.position-relative {
+    position: relative !important;
+    width: 100% !important;
+}
+
+#togglePw, #timerSpan {
+    position: absolute !important;
+    top: 50% !important;
+    right: 15px !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+}
+
+#timerSpan { color: #dc3545; font-weight: bold; font-size: 0.85rem; }
+
+/* 3. 상태 메시지 정렬 (왼쪽 맞춤) */
+#idStatusMsg, #pwMatchMsg, #emailStatusMsg {
+    display: block !important;
+    text-align: left !important;
+    font-size: 13px;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    min-height: 1.2rem;
+    color: #dc3545;
+}
+
+/* 4. 버튼 고정 높이 */
+.btn-auth {
+    height: 50px !important;
+    padding: 0 15px !important;
+    white-space: nowrap !important;
+}

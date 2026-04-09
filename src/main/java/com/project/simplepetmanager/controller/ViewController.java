@@ -13,16 +13,16 @@ public class ViewController {
         return "index";
     }
 
-    @GetMapping("/user/login")
+    @GetMapping("/login")
     public String loginView() {return "user/login";}
 
-    @GetMapping("/user/register")
+    @GetMapping("/register")
     public String registerView() {return "user/register";}
 
-    @GetMapping("/user/findUser")
+    @GetMapping("/findUser")
     public String findUserView(){return "user/findUser";}
 
-    @GetMapping("/user/passwordEdit")
+    @GetMapping("/passwordEdit")
     public String passwordEditView(){return "user/passwordEdit";}
 
     @GetMapping("/mypage/myPage")

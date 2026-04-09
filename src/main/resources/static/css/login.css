@@ -1,0 +1,26 @@
+/* login.css */
+.user-login-card #userPassword {
+    padding-right: 40px;
+}
+
+.user-login-card #togglePw {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.6;
+}
+
+.user-login-card .form-check-label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.user-login-card .user-login-links a {
+    color: #888;
+    text-decoration: none;
+    margin: 0 5px;
+}
