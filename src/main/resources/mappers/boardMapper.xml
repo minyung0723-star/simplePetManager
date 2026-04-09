@@ -3,21 +3,62 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- boardMapper.xml -->
 <mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
-    <!--
-    where 을 이용해서 BoardList 에서 선택한 가게 번호를 넣어주고 그 번호에 해당하는 데이터 보여주기
-    todo :getStoreList 수정 LIMIT 1 OFFSET 1  ===> WHERE 교체해서 storeId 를 가져오게 하기
-         수정해야할 파일 boardMapper.xml BoardMapper.java BoardService.java    /api/aa 에서 1번 데이터 잘 나오는지만 확인하기
 
-        아직 하지말기 ViewController   ->  수정하기
-         BoardApiController는 아직 쳐다보지도 말기!!!
-    -->
-    <select id="addBookMark" resultType="com.project.simplepetmanager.model.dto.Board">
-        SELECT * FROM stores  WHERE store_id = #{storeId}
+    <select id="selectStoreList" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT *
+        FROM stores
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'name'">
+                        AND store_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'address'">
+                        AND store_address LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (store_name    LIKE CONCAT('%', #{keyword}, '%')
+                        OR store_address LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
+
+    <select id="countStores" resultType="int">
+        SELECT COUNT(*)
+        FROM stores
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'name'">
+                        AND store_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'address'">
+                        AND store_address LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (store_name    LIKE CONCAT('%', #{keyword}, '%')
+                        OR store_address LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 즐겨찾기 추가 -->
     <insert id="insertBookmark">
         INSERT INTO bookmark (user_number, storeId, prefer)
         VALUES (#{userNumber}, #{storeId}, 1)
     </insert>
+
+
 </mapper>

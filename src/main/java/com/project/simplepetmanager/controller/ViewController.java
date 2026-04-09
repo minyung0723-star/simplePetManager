@@ -5,59 +5,59 @@ import com.project.simplepetmanager.model.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
-import java.util.List;
-
 
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
 
+    private final BoardService boardService;
+
     @GetMapping("/")
-    public String indexView(){
-        return "index";
-    }
+    public String indexView() { return "index"; }
 
     @GetMapping("/user/login")
-    public String loginView() {return "user/login";}
+    public String loginView() { return "user/login"; }
 
     @GetMapping("/user/register")
-    public String registerView() {return "user/register";}
+    public String registerView() { return "user/register"; }
 
     @GetMapping("/user/findUser")
-    public String findUserView(){return "user/findUser";}
+    public String findUserView() { return "user/findUser"; }
 
     @GetMapping("/user/passwordEdit")
-    public String passwordEditView(){return "user/passwordEdit";}
+    public String passwordEditView() { return "user/passwordEdit"; }
 
     @GetMapping("/mypage/myPage")
-    public String mypageView(){return "mypage/myPage";}
+    public String mypageView() { return "mypage/myPage"; }
 
-    @GetMapping ("/review/reviewPage")
-    public String reviewView(){return "review/reviewPage";}
+    @GetMapping("/review/reviewPage")
+    public String reviewView() { return "review/reviewPage"; }
 
-    @GetMapping ("/review/createreviewPage")
-    public String createreviewPageView() {return "review/createreviewPage";}
+    @GetMapping("/review/createreviewPage")
+    public String createreviewPageView() { return "review/createreviewPage"; }
 
     @GetMapping("/board/boardList")
-    public String boardList(){return "board/boardList";}
+    public String boardList(
+            @RequestParam(defaultValue = "")    String category,
+            @RequestParam(defaultValue = "all") String searchType,
+            @RequestParam(defaultValue = "")    String keyword,
+            @RequestParam(defaultValue = "1")   int page,
+            Model model) {
 
-    private final BoardService boardService; // 추가
+        int pageSize = 10;
+        int offset   = (page - 1) * pageSize;
 
-    @GetMapping("/board/boardDetail")
-    public String boardDetail(Model model) {
-        Board 하나의게시물데이터 = boardService.findBoardByBoardId(1);
-        model.addAttribute("board",하나의게시물데이터);
-        //List<Board> boardListData = boardService.findAllBoard();
-       /* model.addAttribute("boardLists", boardListData);
-        System.out.println("boardListData: " + boardListData); // ✅ 추가
-        if (!boardListData.isEmpty()) {
-            model.addAttribute("store", boardListData.get(0));
-            System.out.println("store: " + boardListData.get(0)); // ✅ 추가
-        }*/
-        return "board/boardDetail";
+        model.addAttribute("storeList",   boardService.findStoreList(category, searchType, keyword, offset, pageSize));
+        model.addAttribute("total",       boardService.countStores(category, searchType, keyword));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize",    pageSize);
+        model.addAttribute("category",    category);
+        model.addAttribute("searchType",  searchType);
+        model.addAttribute("keyword",     keyword);
+
+        return "board/boardList";
     }
-
-
 
 }

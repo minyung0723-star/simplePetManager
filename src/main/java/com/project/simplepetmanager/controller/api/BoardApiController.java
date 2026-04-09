@@ -19,14 +19,6 @@ public class BoardApiController {
     // ✅ BoardService를 필드로 선언 → @RequiredArgsConstructor가 생성자 주입 자동 처리
     private final BoardService boardService;
 
-    @GetMapping("/api/aa")
-    public  Board 가게하나상세조회확인(){
-        return boardService.findBoardByBoardId(1);
-
-    }
-
-
-
 
 /*
     @GetMapping("/api/board/boardDetail")

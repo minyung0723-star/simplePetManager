@@ -5,8 +5,25 @@ import com.project.simplepetmanager.model.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
+@Service
+@RequiredArgsConstructor
+public class BoardService {
 
+    private final BoardMapper boardMapper;
+
+    // 가게 목록 조회 (boardList용)
+    public List<Board> findStoreList(String category, String searchType, String keyword, int offset, int pageSize) {
+        return boardMapper.selectStoreList(category, searchType, keyword, offset, pageSize);
+    }
+
+    // 전체 건수 (페이지네이션용)
+    public int countStores(String category, String searchType, String keyword) {
+        return boardMapper.countStores(category, searchType, keyword);
+    }
+}
+/*
 
 @Service
 @RequiredArgsConstructor
@@ -28,3 +45,6 @@ public class BoardService {
         boardMapper.insertBookmark(userNumber, storeId);
     }
 }
+
+
+ */
