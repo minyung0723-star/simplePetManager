@@ -295,10 +295,25 @@ footer {
 }
 
 .review-star-rating-container.readonly {
-    font-size: 1.5rem !important; /* 지니야, 여기서 크기를 조절하면 돼! */
+    font-size: 1.5rem !important; /*  여기서 크기를 조절하면 돼! */
     width: 5em !important;        /* 별 5개 너비 강제 고정 */
     pointer-events: none;         /* 클릭 방지 */
 }
+
+/* 리스트의 별들도 한 줄로 정렬되게 다시 한번 확인! */
+.review-star-rating-container.readonly .review-star-rating-empty,
+.review-star-rating-container.readonly .review-star-rating-fill {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+/* 별 아이콘들 간격 제로! */
+.review-star-rating-container.readonly i {
+    width: 1em !important;
+    display: flex !important;
+    justify-content: center;
+}
+
 /********************************** review-profile-img *********************************************/
 /* 프로필 이미지 동그랗게 */
 .review-profile-img {
