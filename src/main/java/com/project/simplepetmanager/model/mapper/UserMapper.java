@@ -3,6 +3,7 @@ package com.project.simplepetmanager.model.mapper;
 import com.project.simplepetmanager.model.dto.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
 @Mapper
 public interface UserMapper {
@@ -27,5 +28,16 @@ public interface UserMapper {
 
     // 비밀번호 업데이트
     int updatePassword(String userId, String userPassword);
-}
 
+    // 이메일로 유저 조회
+    User findByUserEmail(String userEmail);
+
+    // 기본 정보 수정 (이름, 이메일)
+    int updateUserInfo(Map<String, Object> param);
+
+    // 프로필 이미지 수정
+    int updateProfileImage(Map<String, Object> param);
+
+    // 회원 탈퇴
+    int deleteUser(int userNumber);
+}

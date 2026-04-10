@@ -7,7 +7,7 @@
     <!-- 회원가입 -->
     <insert id="register" parameterType="com.project.simplepetmanager.model.dto.User">
         INSERT INTO users
-        (user_id, user_password, user_name, user_email, created_date)
+            (user_id, user_password, user_name, user_email, created_date)
         VALUES
             (#{userId}, #{userPassword}, #{userName}, #{userEmail}, NOW())
     </insert>
@@ -29,22 +29,25 @@
     <!-- 로그인 기능 -->
     <select id="findByUserId" parameterType="String" resultType="com.project.simplepetmanager.model.dto.User">
         SELECT
-        user_number,user_id,user_password,user_name,user_email,profile_image,image_url
+            user_number,user_id,user_password,user_name,user_email,profile_image,image_url
         FROM users
         WHERE user_id = #{userId}
     </select>
+
     <!-- 아이디 찾기 -->
     <select id="findId" parameterType="map" resultType="String">
         SELECT user_id
         FROM users
         WHERE user_name = #{userName} AND user_email = #{userEmail}
     </select>
+
     <!-- 비밀번호 찾기 -->
     <select id="verifyPw" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM users
         WHERE user_id = #{userId} AND user_email = #{userEmail}
     </select>
+
     <!-- 비밀번호 수정 -->
     <update id="updatePassword" parameterType="map">
         UPDATE users
@@ -52,5 +55,36 @@
             modified_date = NOW()
         WHERE user_id = #{userId}
     </update>
+
+    <!-- 이메일로 유저 조회 -->
+    <select id="findByUserEmail" parameterType="String"
+            resultType="com.project.simplepetmanager.model.dto.User">
+        SELECT user_number, user_id, user_password, user_name, user_email, profile_image, image_url
+        FROM users
+        WHERE user_email = #{userEmail}
+    </select>
+
+    <!-- 기본 정보 수정 (이름, 이메일) -->
+    <update id="updateUserInfo" parameterType="map">
+        UPDATE users
+        SET user_name     = #{userName},
+            user_email    = #{userEmail},
+            modified_date = NOW()
+        WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 프로필 이미지 수정 -->
+    <update id="updateProfileImage" parameterType="map">
+        UPDATE users
+        SET image_url     = #{imageUrl},
+            modified_date = NOW()
+        WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM users
+        WHERE user_number = #{userNumber}
+    </delete>
 
 </mapper>

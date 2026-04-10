@@ -25,8 +25,8 @@ public class ViewController {
     @GetMapping("/passwordEdit")
     public String passwordEditView(){return "user/passwordEdit";}
 
-    @GetMapping("/mypage/myPage")
-    public String mypageView(){return "mypage/myPage";}
+    //@GetMapping("/mypage/myPage")
+    //public String mypageView(){return "mypage/myPage";}
 
     @GetMapping ("/review/reviewPage")
     public String reviewView(){return "review/reviewPage";}

@@ -23,6 +23,7 @@ public class UserService {
 
     // 비밀번호 정책 상수: 8자 이상, 대문자, 소문자, 숫자, 특수문자(!@#$) 필수 포함
     private static final String PW_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$])[A-Za-z\\d!@#$]{8,}$";
+
     /**
      * 회원가입 처리
      * 1. 이메일 중복 체크
@@ -42,6 +43,7 @@ public class UserService {
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
         userMapper.register(user);
     }
+
     // 로그인
     public Map<String, String> login(String userId, String inputPassword) {
         // 1. DB에서 아이디로 유저 정보 조회
@@ -67,6 +69,7 @@ public class UserService {
 
         return tokens;
     }
+
     // 로그아웃
     public void logout(String email) {
         // 서버 보관함에서 리프레시 토큰 삭제
@@ -149,5 +152,116 @@ public class UserService {
     public boolean isIdDuplicate(String userId) {
         // findByUserId로 조회했을 때 결과가 null이 아니면 이미 가입된 아이디입니다.
         return userMapper.findByUserId(userId) != null;
+    }
+
+    /**
+     * 이메일로 유저 조회
+     * MyPageApiController의 getLoginUser()에서 JWT 토큰 → 이메일 → 유저 조회 시 사용
+     */
+    public User getUserByEmail(String email) {
+        return userMapper.findByUserEmail(email);
+    }
+
+    /**
+     * 기본 정보 수정 (이름, 이메일)
+     * PUT /mypage/update 에서 호출
+     */
+    public Map<String, Object> updateUserInfo(Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<>();
+        int rows = userMapper.updateUserInfo(param);
+        result.put("success", rows > 0);
+        result.put("message", rows > 0 ? "수정되었습니다." : "수정에 실패했습니다.");
+        return result;
+    }
+
+    /**
+     * 프로필 이미지 수정
+     * POST /mypage/profile-image 에서 호출
+     */
+    public Map<String, Object> updateProfileImage(Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<>();
+        int rows = userMapper.updateProfileImage(param);
+        result.put("success", rows > 0);
+        result.put("message", rows > 0 ? "이미지가 변경되었습니다." : "변경에 실패했습니다.");
+        return result;
+    }
+
+    /**
+     * 회원 탈퇴
+     * DELETE /mypage/withdraw 에서 호출
+     * 1. 비밀번호 확인
+     * 2. DB에서 유저 삭제
+     */
+    public Map<String, Object> withdraw(Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<>();
+        int userNumber  = (int) param.get("userNumber");
+        String inputPw  = (String) param.get("userPassword");
+        String email    = (String) param.get("userEmail");
+
+        // 1. 이메일로 유저 조회 후 비밀번호 확인
+        User user = userMapper.findByUserEmail(email);
+        if (user == null || !passwordEncoder.matches(inputPw, user.getUserPassword())) {
+            result.put("success", false);
+            result.put("message", "비밀번호가 올바르지 않습니다.");
+            return result;
+        }
+
+        // 2. DB에서 유저 삭제
+        int rows = userMapper.deleteUser(userNumber);
+        result.put("success", rows > 0);
+        result.put("message", rows > 0 ? "탈퇴되었습니다." : "탈퇴에 실패했습니다.");
+        return result;
+    }
+
+    /**
+     * 마이페이지 비밀번호 변경
+     * PUT /mypage/password 에서 호출
+     * 1. 현재 비밀번호 확인
+     * 2. 새 비밀번호 정책 검사
+     * 3. 암호화 후 DB 업데이트
+     */
+    public Map<String, Object> changePassword(Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<>();
+        int userNumber      = (int) param.get("userNumber");
+        String currentPw    = (String) param.get("currentPassword");
+        String newPw        = (String) param.get("newPassword");
+
+        // 1. userNumber로 유저 조회 (이메일도 param에 있으면 findByUserEmail 사용 가능)
+        // 여기서는 withdraw와 동일하게 email을 활용
+        String email = (String) param.get("userEmail");
+        User user = userMapper.findByUserEmail(email);
+
+        if (user == null) {
+            result.put("success", false);
+            result.put("message", "유저 정보를 찾을 수 없습니다.");
+            return result;
+        }
+
+        // 2. 현재 비밀번호 확인
+        if (!passwordEncoder.matches(currentPw, user.getUserPassword())) {
+            result.put("success", false);
+            result.put("message", "현재 비밀번호가 올바르지 않습니다.");
+            return result;
+        }
+
+        // 3. 새 비밀번호 정책 검사
+        if (newPw == null || !newPw.matches(PW_PATTERN)) {
+            result.put("success", false);
+            result.put("message", "비밀번호는 8자 이상이며 영문 대/소문자, 숫자, 특수문자(!@#$)를 모두 포함해야 합니다.");
+            return result;
+        }
+
+        // 4. 기존 비밀번호와 동일하면 거부
+        if (passwordEncoder.matches(newPw, user.getUserPassword())) {
+            result.put("success", false);
+            result.put("message", "새 비밀번호가 기존 비밀번호와 동일합니다.");
+            return result;
+        }
+
+        // 5. 암호화 후 DB 업데이트
+        int rows = userMapper.updatePassword(user.getUserId(), passwordEncoder.encode(newPw));
+        result.put("success", rows > 0);
+        result.put("message", rows > 0 ? "비밀번호가 변경되었습니다." : "변경에 실패했습니다.");
+        return result;
     }
 }
