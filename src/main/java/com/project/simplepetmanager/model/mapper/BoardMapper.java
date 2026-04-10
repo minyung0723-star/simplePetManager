@@ -23,14 +23,5 @@ public interface BoardMapper {
             @Param("keyword")    String keyword
     );
 
-
-    /**
-     * TODO : 가게 상세 단건 조회
-     *
-     * @param storeId  조회할 가게 PK (stores.store_id)
-     * @return         해당 가게의 Board 객체 (없으면 null)
-     *
-     * → boardMapper.xml 에 id="selectStoreById" 쿼리 작성 필요
-     */
-
+    Board selectStoreById(@Param("storeId") ___ storeId);  // TODO 채울 것: ___ 에 int 작성
 }

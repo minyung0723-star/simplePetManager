@@ -21,13 +21,7 @@ public class BoardService {
         return boardMapper.countStores(category, searchType, keyword);
     }
 
-    /**
-     * TODO : 가게 단건 조회 서비스 메서드
-     *
-     * @param storeId  조회할 가게 PK
-     * @return         Board 객체 → ViewController 에서 model.addAttribute("store", ...) 로 뷰에 전달
-     *
-     * → boardMapper.selectStoreById(storeId) 호출
-     */
-
+    public Board findStoreById(int storeId) {
+        return boardMapper.___(___)  // TODO: 메서드명과 인자 채울 것
+    }
 }

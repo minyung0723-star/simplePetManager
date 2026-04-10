@@ -2,6 +2,7 @@ package com.project.simplepetmanager.controller;
 
 import com.project.simplepetmanager.model.dto.Board;
 import com.project.simplepetmanager.model.service.BoardService;
+import com.project.simplepetmanager.model.service.BookmarkService;  // TODO: 이 import 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 public class ViewController {
 
     private final BoardService boardService;
+    private final ___ bookmarkService;  // TODO: 타입명 채울 것
 
     @GetMapping("/")
     public String indexView() { return "index"; }
@@ -60,19 +62,20 @@ public class ViewController {
         return "board/boardList";
     }
 
-    /**
-     * TODO : 가게 상세 페이지 엔드포인트
-     *
-     * @param storeId  boardList 카드 클릭 시 전달되는 가게 PK (?storeId=N)
-     * @param model    뷰에 전달할 데이터 컨테이너
-     * @return         "board/boardDetail" 뷰 이름
-     *
-     * model 에 담아야 할 것:
-     *   - "store"        → boardService.findStoreById(storeId)   (BoardService TODO 참고)
-     *   - "loginUser"    → 세션 또는 JWT 에서 꺼낸 로그인 유저 객체
-     *                      boardDetail.jsp 의 isLogin 체크에 사용됨
-     *   - "isBookmarked" → bookmarkService.checkBookmarkExists(userNumber, storeId) > 0
-     *                      상세 진입 시 북마크 버튼 초기 상태(활성/비활성) 설정에 사용됨
-     */
+    @GetMapping("/board/boardDetail")
+    public String boardDetail(
+            @RequestParam int storeId,
+            Model model) {
 
+        Board store = boardService.___(___);     // TODO: 메서드명, 인자 채울 것
+        model.addAttribute("___", store);        // TODO: 뷰에서 쓸 키 이름 채울 것
+
+        boolean isBookmarked = false;
+        // 로그인 처리 방식(세션/JWT)에 따라 userNumber를 꺼내는 코드 직접 작성
+        // isBookmarked = bookmarkService.___(___, storeId);  // TODO: 메서드명, userNumber 채울 것
+
+        model.addAttribute("isBookmarked", isBookmarked);
+
+        return "board/boardDetail";
+    }
 }
