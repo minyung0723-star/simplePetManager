@@ -32,8 +32,13 @@ public class BookmarkService {
     }
 
     public boolean confirmBookmark(int userNumber, int storeId) {
-
-    }
+        int confirm = bookmarkMapper.checkBookmarkExists(userNumber, storeId);
+        if (confirm > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }}
 
 
 

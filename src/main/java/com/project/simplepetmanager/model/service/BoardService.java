@@ -22,6 +22,6 @@ public class BoardService {
     }
 
     public Board findStoreById(int storeId) {
-        return boardMapper.___(___)  // TODO: 메서드명과 인자 채울 것
+        return boardMapper.selectStoreById(storeId);  // TODO: 메서드명과 인자 채울 것
     }
 }

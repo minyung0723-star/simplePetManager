@@ -23,5 +23,5 @@ public interface BoardMapper {
             @Param("keyword")    String keyword
     );
 
-    Board selectStoreById(@Param("storeId") ___ storeId);  // TODO 채울 것: ___ 에 int 작성
+    Board selectStoreById(@Param("storeId") int storeId);  // TODO 채울 것: ___ 에 int 작성
 }

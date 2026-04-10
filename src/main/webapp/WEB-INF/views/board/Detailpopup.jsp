@@ -20,9 +20,9 @@
         <div class="popup-row">
             <span class="label">주소</span>
             <span id="storeAddress">${board.storeAddress}</span>
-            <span class="label">전화번호</span>
-            <span id="storeAddress">${board.storePhone}</span>
-            <button onclick="addBookmark(1, ${bookmark.storeId})">
+
+
+            <button onclick="addBookmark(${user.userNumber}, ${board.storeId})">
                 즐겨찾기
             </button>
         </div>

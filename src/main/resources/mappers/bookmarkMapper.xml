@@ -18,8 +18,8 @@
             b.storeId,          -- 북마크 고유 번호
             b.user_number    AS userNumber,
             s.store_id       AS storeId,
-            s.store_name     AS storeName,    -- stores 테이블에서 가져옴
-            s.store_address  AS storeAddress, -- stores 테이블에서 가져옴
+                -- stores 테이블에서 가져옴
+                -- stores 테이블에서 가져옴
             s.store_phone    AS storePhone,
             s.category,
             s.latitude,

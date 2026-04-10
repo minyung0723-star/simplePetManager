@@ -19,8 +19,8 @@ public class BoardApiController {
     public String addBookmark(@RequestParam int userNumber,
                               @RequestParam int storeId) {
         BookMark bookMark = new BookMark();
-        bookMark.setUser_number(___);   // TODO: 인자 채울 것
-        bookMark.setStoreId(___);       // TODO: 인자 채울 것
+        bookMark.setUser_number(userNumber);   // TODO: 인자 채울 것
+        bookMark.setStoreId(storeId);       // TODO: 인자 채울 것
         bookmarkService.insertBookmark(bookMark);
         return "ok";
     }
@@ -28,12 +28,12 @@ public class BoardApiController {
     @DeleteMapping("/api/bookmark/delete")
     public String deleteBookmark(@RequestParam int userNumber,
                                  @RequestParam int storeId) {
-        bookmarkService.___(userNumber, storeId);  // TODO: 메서드명 채울 것
+        bookmarkService.deleteBookmark(userNumber, storeId);  // TODO: 메서드명 채울 것
         return "ok";
     }
 
     @GetMapping("/api/bookmark/list")
     public List<BookMark> getBookmarkList(@RequestParam int userNumber) {
-        return bookmarkService.___(userNumber);  // TODO: 메서드명 채울 것
+        return bookmarkService.findBookMarkListByUser(userNumber);  // TODO: 메서드명 채울 것
     }
 }

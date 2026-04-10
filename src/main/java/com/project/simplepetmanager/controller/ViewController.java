@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 public class ViewController {
 
     private final BoardService boardService;
-    private final ___ bookmarkService;  // TODO: 타입명 채울 것
+    private final BookmarkService bookmarkService;  // TODO: 타입명 채울 것
 
     @GetMapping("/")
     public String indexView() { return "index"; }
@@ -67,8 +67,8 @@ public class ViewController {
             @RequestParam int storeId,
             Model model) {
 
-        Board store = boardService.___(___);     // TODO: 메서드명, 인자 채울 것
-        model.addAttribute("___", store);        // TODO: 뷰에서 쓸 키 이름 채울 것
+        Board store = boardService.findStoreById(storeId);     // TODO: 메서드명, 인자 채울 것
+        model.addAttribute("board", store);        // TODO: 뷰에서 쓸 키 이름 채울 것
 
         boolean isBookmarked = false;
         // 로그인 처리 방식(세션/JWT)에 따라 userNumber를 꺼내는 코드 직접 작성
