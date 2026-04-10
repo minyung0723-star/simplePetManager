@@ -26,5 +26,6 @@ public interface UserMapper {
     int verifyPw(String userId, String userEmail);
 
     // 비밀번호 업데이트
-    int updatePassword (String userId, String userPassword);
+    int updatePassword(String userId, String userPassword);
+}
 
