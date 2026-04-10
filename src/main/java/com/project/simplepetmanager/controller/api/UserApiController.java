@@ -170,7 +170,16 @@ public class UserApiController {
         String userId = body.get("userId");
         String userPassword = body.get("userPassword");
 
-        if (userId == null || userPassword == null || userPassword.trim().isEmpty()) {
+        // [보안 강화] 세션에 저장된 인증 ID 가져오기
+        String verifiedId = (String) session.getAttribute("verifiedUserId");
+
+        // [보안 강화] 세션 권한이 없거나, 세션 ID와 요청 ID가 다르면 차단
+        if (verifiedId == null || !verifiedId.equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "권한이 없거나 인증 세션이 만료되었습니다."));
+        }
+
+        if (userPassword == null || userPassword.trim().isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "유효하지 않은 요청입니다."));
         }
@@ -182,8 +191,7 @@ public class UserApiController {
                     .body(Map.of("message", "비밀번호 형식이 올바르지 않거나, 기존 비밀번호와 동일합니다."));
         }
 
-        // [핵심 추가] 비밀번호 변경 성공 시, 세션에서 인증 권한을 즉시 삭제합니다!
-        // 이렇게 하면 남은 시간(5분)에 상관없이 재접근이 불가능해집니다.
+        // 성공 시 권한 삭제
         session.removeAttribute("verifiedUserId");
 
         return ResponseEntity.ok(Map.of("message", "비밀번호가 변경되었습니다."));
