@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
 
     @GetMapping("/")
-    public String indexView(){
-        return "index";
-    }
+    public String indexView(){return "index";}
 
     @GetMapping("/login")
     public String loginView() {return "user/login";}

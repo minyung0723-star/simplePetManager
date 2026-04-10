@@ -32,6 +32,13 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
 
+        // [추가] 비밀번호 수정 페이지 진입 시 캐시 방지 헤더 설정 (뒤로가기 방어용)
+        if (uri.contains("/passwordEdit")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.setHeader("Pragma", "no-cache");
+            res.setDateHeader("Expires", 0);
+        }
+
         // 1. 정적 리소스 통과
         if (uri.endsWith(".js") || uri.endsWith(".css") ||
                 uri.endsWith(".png") || uri.endsWith(".jpg")) {
