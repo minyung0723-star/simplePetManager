@@ -190,6 +190,19 @@ public class UserApiController {
     }
 
     /**
+     * 비밀번호 수정 취소 및 권한 조기 만료
+     * 사용자가 메인으로 돌아가거나 페이지를 이탈할 때 호출
+     */
+    @PostMapping("/api/clear-password-auth")
+    public ResponseEntity<?> clearPasswordAuth(HttpSession session) {
+        if (session != null) {
+            // 비밀번호 수정 권한만 타겟팅해서 삭제
+            session.removeAttribute("verifiedUserId");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 이메일 인증번호 발송
      */
     @PostMapping("/api/email-auth")

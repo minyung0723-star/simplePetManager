@@ -8,29 +8,38 @@ const state = {
 
 let nodes = {};
 
-// 1. 페이지 초기화 및 유효성 체크
+// [신규] 세션 권한 삭제 함수 (메인 이동 전 실행)
+const clearAuthAndMove = async (targetPath = "/") => {
+    try {
+        // 서버에 세션 삭제 요청 (결과와 상관없이 이동)
+        await fetch(`${state.contextPath}/api/clear-password-auth`, {
+            method: "POST"
+        });
+    } catch (err) {
+        console.error("세션 삭제 오류:", err);
+    } finally {
+        location.href = state.contextPath + targetPath;
+    }
+};
+
+// 1. 페이지 초기화 및 유효성 체크 (유지)
 const initPage = () => {
     const urlParams = new URLSearchParams(window.location.search);
     state.userId = urlParams.get('userId');
 
-    // 디버깅용: F12 콘솔에서 확인 가능
-    console.log("추출된 ID:", state.userId);
-
-    // [중요] 아이디가 아예 없는 경우에만 튕겨내기
     if (!state.userId || state.userId === "null" || state.userId === "") {
         alert("잘못된 접근입니다. 아이디 찾기부터 다시 진행해 주세요.");
         location.href = state.contextPath + "/login";
         return false;
     }
 
-    // 대상 아이디 필드에 값 할당
     if (nodes.targetUserId) {
         nodes.targetUserId.value = state.userId;
     }
     return true;
 };
 
-// 2. 비밀번호 실시간 검증
+// 2. 비밀번호 실시간 검증 (유지)
 const validatePassword = () => {
     const pw = nodes.newPassword.value;
     const confirm = nodes.confirmPassword.value;
@@ -60,7 +69,7 @@ const validatePassword = () => {
     }
 };
 
-// 3. 눈 아이콘 토글
+// 3. 눈 아이콘 토글 (유지)
 const togglePasswordVisibility = (e) => {
     if (e) e.preventDefault();
     const isPassword = nodes.newPassword.type === "password";
@@ -71,12 +80,19 @@ const togglePasswordVisibility = (e) => {
     nodes.toggleBtn.textContent = isPassword ? "🙈" : "👁️";
 };
 
-// 4. 이벤트 바인딩
+// 4. 이벤트 바인딩 (수정됨)
 const bindEvents = () => {
     if (nodes.toggleBtn) nodes.toggleBtn.onclick = togglePasswordVisibility;
     if (nodes.newPassword) nodes.newPassword.oninput = validatePassword;
     if (nodes.confirmPassword) nodes.confirmPassword.oninput = validatePassword;
-    if (nodes.logoBtn) nodes.logoBtn.onclick = () => location.href = state.contextPath + "/";
+
+    // [수정] 로고 버튼 클릭 시 세션 삭제 후 이동
+    if (nodes.logoBtn) {
+        nodes.logoBtn.onclick = (e) => {
+            e.preventDefault();
+            clearAuthAndMove("/");
+        };
+    }
 
     if (nodes.submitBtn) {
         nodes.submitBtn.onclick = async () => {
@@ -104,7 +120,7 @@ const bindEvents = () => {
     }
 };
 
-// 5. 실행
+// 5. 실행 (유지)
 document.addEventListener("DOMContentLoaded", () => {
     nodes = {
         targetUserId: document.getElementById("targetUserId"),
@@ -116,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleBtn: document.getElementById("togglePw")
     };
 
-    // 페이지 초기화가 성공했을 때만 이벤트 바인딩
     if (initPage()) {
         bindEvents();
     }
