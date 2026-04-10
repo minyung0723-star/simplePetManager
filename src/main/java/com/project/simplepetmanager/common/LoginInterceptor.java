@@ -48,7 +48,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                     return true; // 인증된 비로그인 사용자만 통과
                 }
                 // 인증 안 된 사용자가 주소창 입력 시 로그인으로 차단
-                res.sendRedirect(req.getContextPath() + "/login");
+                res.sendRedirect(req.getContextPath() + "/?error=forbidden");
                 return false;
             }
 
