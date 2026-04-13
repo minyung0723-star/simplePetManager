@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -40,25 +41,39 @@ public class BoardApiController {
         return bookmarkService.findBookMarkListByUser(userNumber);  // TODO: 메서드명 채울 것
     }
 
+    //수정한 코드
     @GetMapping("/board/boardList")
-    public String boardList(@RequestParam(defaultValue = "") String category,
-                            @RequestParam(defaultValue = "") String keyword,
-                            @RequestParam(defaultValue = "all") String searchType,
-                            @RequestParam(defaultValue = "1") int page,
-                            Model model) {
+    public ModelAndView boardList(@RequestParam(defaultValue = "") String category,
+                                  @RequestParam(defaultValue = "") String keyword,
+                                  @RequestParam(defaultValue = "all") String searchType,
+                                  @RequestParam(defaultValue = "1") int page) {
 
         int pageSize = 10;
-        List<Board> storeList = boardService.findStoreList(category, keyword, searchType, page, pageSize);
-        int total = boardService.countStores(category, keyword, searchType);
+        int offset = (page - 1) * pageSize;  // ← offset 계산
 
-        model.addAttribute("storeList", storeList);   // ← 카드 목록
-        model.addAttribute("total", total);            // ← 총 건수
-        model.addAttribute("currentPage", page);       // ← 현재 페이지
-        model.addAttribute("pageSize", pageSize);      // ← 페이지당 개수
-        model.addAttribute("category", category);      // ← 카테고리 탭
-        model.addAttribute("keyword", keyword);        // ← 검색어
-        model.addAttribute("searchType", searchType);  // ← 검색 타입
+        // ↓ 인자 순서 수정 (category, searchType, keyword 순서)
+        List<Board> storeList = boardService.findStoreList(category, searchType, keyword, offset, pageSize);
+        int total = boardService.countStores(category, searchType, keyword);
 
-        return "board/boardList";
+        ModelAndView mav = new ModelAndView("board/boardList");
+        mav.addObject("storeList", storeList);
+        mav.addObject("total", total);
+        mav.addObject("currentPage", page);
+        mav.addObject("pageSize", pageSize);
+        mav.addObject("category", category);
+        mav.addObject("keyword", keyword);
+        mav.addObject("searchType", searchType);
+        return mav;
     }
+
+    @GetMapping("/board/boardDetail")
+    public ModelAndView boardDetail(@RequestParam int storeId) {
+
+        Board store = boardService.findStoreById(storeId);
+
+        ModelAndView mav = new ModelAndView("board/boardDetail");
+        mav.addObject("board", store);
+        return mav;
+    }
+
 }

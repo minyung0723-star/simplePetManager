@@ -21,6 +21,7 @@ public class Board {
 
     // ======= bookmark Variables ==========
     private int userNumber;
+    private int bookmarkUserId;
     private int storeId;
     private boolean prefer;
 

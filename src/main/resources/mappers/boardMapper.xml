@@ -63,7 +63,7 @@
             s.latitude,
             s.longitude,
             s.store_image   AS storeImage,
-            b.user_number       AS bookmarkUserId  FROM stores s
+            b.user_number       AS userNumber  FROM stores s
                                                             LEFT JOIN bookmark b ON s.store_id = b.storeId
         WHERE s.store_id = #{storeId}
 

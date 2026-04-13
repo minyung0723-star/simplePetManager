@@ -32,7 +32,7 @@ public class ViewController {
     @GetMapping ("/review/createreviewPage")
     public String createreviewPageView() {return "review/createreviewPage";}
 
-
+    //@GetMapping("/board/boardList")... mapping 중복문제로 삭제
 
 
 
