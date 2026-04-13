@@ -28,7 +28,7 @@ public class SecurityConfig {
     // SecurityFilterChain @Bean 설정을 하면 스프링에 기존 존재하는 보안팀과 우리 회사에서 만든 보안팀이 한 팀이되어
     // 나의 프로젝트 지키겠다. 설정
     @Bean
-    public SecurityFilterChain 보안설정(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // CSRF = 보호 기능 끄기
                 // CSRF = 다른 사이트에서 몰래 요청 보내는 공격
