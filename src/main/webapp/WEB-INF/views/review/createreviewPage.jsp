@@ -5,7 +5,7 @@
 <div class="container mt-4">
     <div class="review-create-wrapper">
         <div class="hospital-header d-flex justify-content-center align-items-center position-relative mb-4 pb-3 border-bottom">
-            <h2 class="fw-bold mb-0">${hospitalName}병원</h2>
+            <h2 class="fw-bold mb-0" id="hospitalName">불러오는중..</h2>
             <a href="reviewPage" class="text-secondary position-absolute end-0 top-0 fs-2" style="line-height: 1; text-decoration: none;">✕</a>
         </div>
 

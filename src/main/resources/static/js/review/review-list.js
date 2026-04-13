@@ -161,7 +161,6 @@ window.checkUserLogin = () => {
     // TODO_3 ___________________________________________
     // const isLogined = true 하드코딩 제거 필요
     // /mypage/info API를 fetch 해서 로그인 여부 판단하는 방식으로 교체:
-    //
      window.checkUserLogin = async () => {
         try {
             const res = await fetch('/mypage/info');
@@ -175,7 +174,9 @@ window.checkUserLogin = () => {
                 // TODO_4 _______________________________________
                 // 경로를 /review/create 와 /review/createreviewPage 중 하나로 통일 필요
                 // ReviewController.java 의 매핑과 반드시 일치해야 함 (ReviewController TODO_5 참고)
-                location.href = "/review/create";
+                const urlParams = new URLSearchParams(window.location.search);
+                const storeId = urlParams.get('storeId');
+                location.href = `/review/create?storeId=${storeId}`;
             }
         } catch (e) {
             console.error("로그인 상태 확인 실패:", e);
