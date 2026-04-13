@@ -32,7 +32,7 @@
 
             <div class="py-2">
         <textarea name="reviewContent" id="reviewContent" class="form-control review-textarea"
-                  placeholder="진료가 좋았어요!" rows="10" maxlength="199"></textarea>
+                  placeholder="진료가 좋았어요!" rows="10" maxlength="200"></textarea>
                 <div class="text-muted text-end small mt-1">
                     <span id="charCount">0</span>/200
                 </div>

@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 // TODO_1 ___________________________________________
 //  HttpServletRequest 임포트 추가 필요
-//  import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 // TODO_2 ___________________________________________
 //  로그인 유저 조회에 필요한 CookieUtil, JwtUtil, UserService 임포트 추가 필요
-//  import com.project.simplepetmanager.common.CookieUtil;
-//  import com.project.simplepetmanager.common.JwtUtil;
-//  import com.project.simplepetmanager.model.service.UserService;
-//  import com.project.simplepetmanager.model.dto.User;
+import com.project.simplepetmanager.common.CookieUtil;
+import com.project.simplepetmanager.common.JwtUtil;
+import com.project.simplepetmanager.model.service.UserService;
+import com.project.simplepetmanager.model.dto.User;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +28,9 @@ public class ReviewApiController {
 
     // TODO_3 ___________________________________________
     //  아래 두 필드 추가 필요 (로그인 유저 조회용)
-    //  private final JwtUtil     jwtUtil;
-    //  private final CookieUtil  cookieUtil;
-    //  private final UserService userService;
+      private final JwtUtil     jwtUtil;
+      private final CookieUtil  cookieUtil;
+      private final UserService userService;
 
 
     // ==================== 리뷰 목록 ====================
@@ -52,7 +52,7 @@ public class ReviewApiController {
      * 주소: /api/review/insert
      */
     @PostMapping("/insert")
-    public String insertReview(@RequestBody Review review) {
+    public String insertReview(@RequestBody Review review, HttpServletRequest request) {
 
         // TODO_4 ___________________________________________
         //  파라미터에 HttpServletRequest request 추가
@@ -60,16 +60,16 @@ public class ReviewApiController {
 
         // TODO_5 ___________________________________________
         //  비로그인 차단 로직 추가
-        //  User loginUser = getLoginUser(request);
-        //  if (loginUser == null) {
-        //      return "unauthorized"; // 프론트에서 이 값 받으면 로그인 페이지로 이동
-        //  }
+          User loginUser = getLoginUser(request);
+          if (loginUser == null) {
+              return "unauthorized"; // 프론트에서 이 값 받으면 로그인 페이지로 이동
+          }
 
         // TODO_6 ___________________________________________
         //  하드코딩된 userNumber 제거 후 로그인 유저 번호 주입
         //  현재는 ReviewService.registerReview() 내부에서 userNumber=1로 고정됨
         //  아래처럼 여기서 세팅해서 넘기는 방식으로 변경:
-        //  review.setUserNumber(loginUser.getUserNumber());
+        review.setUserNumber(loginUser.getUserNumber());
 
         try {
             String result = reviewService.registerReview(review);
@@ -88,7 +88,7 @@ public class ReviewApiController {
      * 주소: /api/review/delete?reviewId=1
      */
     @PostMapping("/delete")
-    public String deleteReview(@RequestParam("reviewId") int reviewId) {
+    public String deleteReview(@RequestParam("reviewId") int reviewId, HttpServletRequest request) {
 
         // TODO_7 ___________________________________________
         //  파라미터에 HttpServletRequest request 추가
@@ -96,13 +96,13 @@ public class ReviewApiController {
 
         // TODO_8 ___________________________________________
         //  비로그인 차단 + 본인 리뷰 여부 확인 로직 추가
-        //  User loginUser = getLoginUser(request);
-        //  if (loginUser == null) return "unauthorized";
-        //
-        //  Review target = reviewService.getReviewById(reviewId); // TODO_9 참고
-        //  if (target == null || target.getUserNumber() != loginUser.getUserNumber()) {
-        //      return "forbidden"; // 남의 리뷰는 삭제 불가
-        //  }
+          User loginUser = getLoginUser(request);
+          if (loginUser == null) return "unauthorized";
+
+          Review target = reviewService.getReviewById(reviewId); // TODO_9 참고
+          if (target == null || target.getUserNumber() != loginUser.getUserNumber()) {
+              return "forbidden"; // 남의 리뷰는 삭제 불가
+          }
 
         try {
             return reviewService.removeReview(reviewId);
@@ -120,7 +120,7 @@ public class ReviewApiController {
      * 주소: /api/review/bookmark/toggle
      */
     @PostMapping("/bookmark/toggle")
-    public String toggleBookmark(@RequestBody Map<String, Object> params) {
+    public String toggleBookmark(@RequestBody Map<String, Object> params,HttpServletRequest request) {
 
         // TODO_10 ___________________________________________
         //  파라미터에 HttpServletRequest request 추가
@@ -128,8 +128,8 @@ public class ReviewApiController {
 
         // TODO_11 ___________________________________________
         //  비로그인 차단 로직 추가
-        //  User loginUser = getLoginUser(request);
-        //  if (loginUser == null) return "unauthorized";
+          User loginUser = getLoginUser(request);
+          if (loginUser == null) return "unauthorized";
 
         try {
             if (params.get("storeId") == null) return "fail";
@@ -140,7 +140,7 @@ public class ReviewApiController {
             //  하드코딩된 userNumber 제거 후 로그인 유저 번호로 교체
             //  현재: long userNumber = 1L;  ← 이 줄 삭제
             //  변경: long userNumber = loginUser.getUserNumber();
-            long userNumber = 1L; // ← TODO_12 완료 후 삭제할 줄
+            long userNumber = loginUser.getUserNumber(); // ← TODO_12 완료 후 삭제할 줄
 
             String result = reviewService.toggleBookmark(userNumber, storeId);
             System.out.println("북마크 결과: " + result);
@@ -157,7 +157,7 @@ public class ReviewApiController {
      * 주소: /api/review/bookmark/check?storeId=1
      */
     @GetMapping("/bookmark/check")
-    public boolean checkBookmark(@RequestParam("storeId") long storeId) {
+    public boolean checkBookmark(@RequestParam("storeId") long storeId, HttpServletRequest request) {
 
         // TODO_13 ___________________________________________
         //  파라미터에 HttpServletRequest request 추가
@@ -165,14 +165,14 @@ public class ReviewApiController {
 
         // TODO_14 ___________________________________________
         //  비로그인 시 false 반환 (북마크 안 된 상태)
-        //  User loginUser = getLoginUser(request);
-        //  if (loginUser == null) return false;
+          User loginUser = getLoginUser(request);
+          if (loginUser == null) return false;
 
         // TODO_15 ___________________________________________
         //  하드코딩된 userNumber 제거 후 로그인 유저 번호로 교체
         //  현재: long userNumber = 1L;  ← 이 줄 삭제
         //  변경: long userNumber = loginUser.getUserNumber();
-        long userNumber = 1L; // ← TODO_15 완료 후 삭제할 줄
+        long userNumber = loginUser.getUserNumber(); // ← TODO_15 완료 후 삭제할 줄 (변경)
 
         int count = reviewService.checkBookmark(userNumber, storeId);
         return count > 0;
@@ -196,11 +196,11 @@ public class ReviewApiController {
     // TODO_16 ___________________________________________
     //  아래 헬퍼 메서드 추가 (MyPageApiController와 동일한 방식)
     //  JWT 쿠키에서 로그인 유저를 꺼내는 공통 유틸
-    //
-    //  private User getLoginUser(HttpServletRequest request) {
-    //      String token = cookieUtil.get(request, "access_token");
-    //      if (token == null || !jwtUtil.isValidToken(token)) return null;
-    //      return userService.getUserByEmail(jwtUtil.getEmail(token));
-    //  }
+
+      private User getLoginUser(HttpServletRequest request) {
+          String token = cookieUtil.get(request, "access_token");
+          if (token == null || !jwtUtil.isValidToken(token)) return null;
+          return userService.getUserByEmail(jwtUtil.getEmail(token));
+      }
 
 }

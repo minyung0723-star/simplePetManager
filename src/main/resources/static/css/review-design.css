@@ -169,6 +169,7 @@ button.review-bookmark-btn i.bi-bookmark-fill {
 button.review-bookmark-btn.inserted {
     background-color: #6750A4; /* 배경 보라색 가득! */
 }
+
 /* 등록된 상태 아이콘 (흰색 채워진 아이콘 반전!) */
 button.review-bookmark-btn.inserted i.bi-bookmark-fill {
     color: #FFFFFF; /* 글자색 흰색으로 반전! */

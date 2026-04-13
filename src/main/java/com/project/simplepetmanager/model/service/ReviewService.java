@@ -60,6 +60,11 @@ public class ReviewService {
     // ===================== 리뷰 삭제 =====================
 
     /** 리뷰 삭제 */
+    public Review getReviewById(int reviewId) {
+        // Mapper를 통해 DB에서 리뷰 1건을 조회해와야 해
+        return reviewMapper.getReviewById(reviewId);
+    }
+
     public String removeReview(int reviewId) {
         int result = reviewMapper.deleteReview(reviewId);
         return (result > 0) ? "success" : "fail";

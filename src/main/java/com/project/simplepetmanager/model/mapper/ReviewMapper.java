@@ -25,6 +25,8 @@ public interface ReviewMapper {
     /** 리뷰 삭제 */
     int deleteReview(int reviewId);
 
+    Review getReviewById(int reviewId);
+
     // ===================== 북마크 =====================
 
     /** 북마크 등록 여부 확인 */
@@ -40,4 +42,7 @@ public interface ReviewMapper {
 
     /** 병원(가게) 상세 정보 조회 */
     Board getStoreDetail(int storeId);
+
+    /* 삭제 전 본인 확인용 */
+
 }
