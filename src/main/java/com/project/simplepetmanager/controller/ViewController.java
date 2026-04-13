@@ -32,8 +32,7 @@ public class ViewController {
     @GetMapping ("/review/createreviewPage")
     public String createreviewPageView() {return "review/createreviewPage";}
 
-    @GetMapping("/board/boardList")
-    public String boardList(){return "board/boardList";}
+
 
 
 

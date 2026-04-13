@@ -32,10 +32,10 @@
     <div class="header-actions">
         <c:choose>
             <c:when test="${not empty loginUser}">
-                <a href="${pageContext.request.contextPath}/user/logout" class="btn-logout">로그아웃</a>
+                <a href="${pageContext.request.contextPath}/logout" class="btn-logout">로그아웃</a>
             </c:when>
             <c:otherwise>
-                <a href="${pageContext.request.contextPath}/user/login" class="btn-login">로그인</a>
+                <a href="${pageContext.request.contextPath}/login" class="btn-login">로그인</a>
             </c:otherwise>
         </c:choose>
     </div>
