@@ -2,7 +2,7 @@ spring:
   application:
     name: simplePetManager
   config:
-    import: ./config.yaml
+    import: classpath:config.yaml
   mvc:
     view:
       prefix: /WEB-INF/views/

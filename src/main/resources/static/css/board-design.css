@@ -1,0 +1,286 @@
+/* =====================================================
+   board-design.css  — 가게 목록 페이지 (boardList)
+   ===================================================== */
+
+/* ─── 전체 래퍼 ─────────────────────────────────────── */
+.bl-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+}
+
+/* ─── 검색바 ─────────────────────────────────────────── */
+.bl-search-section { margin-bottom: 20px; }
+
+.bl-search-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 6px 8px 6px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: border-color .15s, box-shadow .15s;
+}
+.bl-search-bar:focus-within {
+    border-color: #4a6cf7;
+    box-shadow: 0 2px 12px rgba(74,108,247,0.10);
+}
+
+.bl-select {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #888;
+    outline: none;
+    cursor: pointer;
+    padding: 6px 4px;
+    flex-shrink: 0;
+}
+
+.bl-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    padding: 6px 4px;
+    color: #222;
+    min-width: 0;
+}
+.bl-search-input::placeholder { color: #bbb; }
+
+.bl-btn-search {
+    padding: 9px 24px;
+    background: #4a6cf7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: background .15s;
+    flex-shrink: 0;
+}
+.bl-btn-search:hover { background: #3a5ce7; }
+
+/* ─── 카테고리 탭 ────────────────────────────────────── */
+.bl-category-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.bl-cat-tab {
+    padding: 8px 18px;
+    border: 1.5px solid #e0e0e0;
+    background: #fff;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    color: #666;
+    transition: all .15s;
+}
+.bl-cat-tab:hover  { border-color: #4a6cf7; color: #4a6cf7; }
+.bl-cat-tab.active { background: #4a6cf7; color: #fff; border-color: #4a6cf7; font-weight: 700; }
+
+/* ─── 목록 상단 메타 ─────────────────────────────────── */
+.bl-list-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.bl-result-info { font-size: 13px; color: #999; }
+.bl-result-info strong { color: #222; font-weight: 700; }
+
+.bl-btn-write {
+    padding: 8px 18px;
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: background .15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.bl-btn-write:hover { background: #444; color: #fff; }
+
+/* ─── 가게 카드 목록 ─────────────────────────────────── */
+.bl-post-list {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+}
+
+.bl-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.bl-post-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
+    transition: background .12s;
+}
+.bl-post-card:last-child { border-bottom: none; }
+.bl-post-card:hover { background: #fafbff; }
+
+/* 썸네일 */
+.bl-card-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+.bl-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bl-card-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: #f5f5f5;
+}
+
+/* 카드 왼쪽 텍스트 영역 */
+.bl-card-left { flex: 1; min-width: 0; }
+
+.bl-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+/* 배지 */
+.bl-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #f0f0f0;
+    color: #888;
+}
+.badge-hospital { background: #fde8e8; color: #ef4444; }
+.badge-hotel    { background: #ede8fd; color: #8b5cf6; }
+.badge-pharmacy { background: #e8fdf0; color: #059669; }
+
+.bl-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.4;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bl-store-address {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bl-store-address svg { flex-shrink: 0; color: #bbb; }
+
+.bl-card-bottom { display: flex; gap: 14px; }
+
+.bl-phone {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #bbb;
+}
+
+.bl-card-arrow {
+    font-size: 20px;
+    color: #ddd;
+    flex-shrink: 0;
+    transition: color .12s, transform .12s;
+}
+.bl-post-card:hover .bl-card-arrow { color: #4a6cf7; transform: translateX(3px); }
+
+/* ─── 페이지네이션 ───────────────────────────────────── */
+.bl-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.bl-pagination .page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1.5px solid #e8e8e8;
+    background: #fff;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+}
+.bl-pagination .page-btn:hover  { border-color: #4a6cf7; color: #4a6cf7; }
+.bl-pagination .page-btn.active { background: #4a6cf7; color: #fff; border-color: #4a6cf7; font-weight: 700; }
+.bl-pagination .page-btn:disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+.bl-pagination .page-btn.ellipsis {
+    border-color: transparent;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+/* ─── 반응형 ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .bl-wrap { padding: 20px 12px 60px; }
+    .bl-search-bar { flex-wrap: wrap; }
+    .bl-btn-search { width: 100%; }
+    .bl-post-card { padding: 14px 16px; gap: 12px; }
+    .bl-card-thumb { width: 52px; height: 52px; }
+    .bl-title { font-size: 14px; }
+}
