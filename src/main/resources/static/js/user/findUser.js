@@ -46,30 +46,29 @@ const nodes = {
  * 3. 기능 로직 (함수들)
  */
 
-// 입력창 및 상태 초기화 함수 (새로 추가)
+// [수정] 입력창 통합 초기화 함수: 모든 잠금을 풀고 인증 정보를 초기화합니다.
 const resetPwInputs = () => {
     state.isPwEmailVerified = false;
 
-    // 필드 잠금 해제
+    // 1. 모든 필드 잠금 해제 (아이디, 이메일, 인증번호)
     nodes.pwUserId.readOnly = false;
     nodes.pwPrefix.readOnly = false;
     nodes.pwDomain.disabled = false;
     nodes.pwDirect.readOnly = false;
     nodes.pwEmailCode.readOnly = false;
 
-    // 값 초기화 (선택 사항: 아이디와 이메일은 남겨두고 싶다면 pwEmailCode만 비우세요)
+    // 2. 값 초기화 (아이디와 이메일은 유지하고 인증번호만 비움)
     nodes.pwEmailCode.value = "";
 
-    // 버튼 다시 비활성화
+    // 3. 버튼 상태 복구
     if (nodes.btnPw) nodes.btnPw.disabled = true;
+    if (nodes.btnPwRequestAuth) nodes.btnPwRequestAuth.disabled = false;
 
-    // 메시지 초기화
+    // 4. 메시지 및 타이머 초기화
     if (nodes.pwEmailStatusMsg) {
         nodes.pwEmailStatusMsg.textContent = "";
         nodes.pwEmailStatusMsg.classList.add("d-none");
     }
-
-    // 타이머 중지 및 숨김
     if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
     nodes.pwTimerSpan.style.display = "none";
 
@@ -150,12 +149,12 @@ const startPwEmailTimer = (duration) => {
             clearInterval(state.pwEmailTimer);
             nodes.pwTimerSpan.textContent = "만료";
             alert("인증 시간이 만료되었습니다. 다시 요청해 주세요.");
-            resetPwInputs(); // 만료 시 초기화
+            resetPwInputs(); // 만료 시 통합 초기화
         }
     }, 1000);
 };
 
-// 인증번호 발송 요청
+// [수정] 인증번호 발송 요청: 성공 시 이메일 입력창을 모두 잠급니다.
 const requestPwEmailAuth = async () => {
     const email = getPwFullEmail();
     const userId = nodes.pwUserId.value.trim();
@@ -172,6 +171,13 @@ const requestPwEmailAuth = async () => {
 
         if (res.ok) {
             alert("인증번호가 발송되었습니다. 5분 이내에 입력해주세요.");
+
+            // 이메일 및 아이디 입력창 잠금 (중간 수정 방지)
+            nodes.pwUserId.readOnly = true;
+            nodes.pwPrefix.readOnly = true;
+            nodes.pwDomain.disabled = true;
+            nodes.pwDirect.readOnly = true;
+
             startPwEmailTimer(300);
         } else {
             const data = await res.json();
@@ -200,19 +206,15 @@ const verifyPwEmailCode = async () => {
             nodes.pwEmailStatusMsg.textContent = "이메일 인증이 완료되었습니다.";
             nodes.pwEmailStatusMsg.className = "small text-success mt-1 mb-2 text-start";
 
-            nodes.pwUserId.readOnly = true;
-            nodes.pwPrefix.readOnly = true;
-            nodes.pwDomain.disabled = true;
-            nodes.pwDirect.readOnly = true;
+            // 모든 입력창 최종 잠금
             nodes.pwEmailCode.readOnly = true;
 
             if (nodes.btnPw) nodes.btnPw.disabled = false;
             if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
             nodes.pwTimerSpan.style.display = "none";
         } else {
-            // 인증 실패 시 처리
-            alert("인증번호가 틀렸거나 만료되었습니다. 다시 입력해주세요.");
-            resetPwInputs(); // 입력창 다시 활성화 및 초기화
+            alert("인증번호가 틀렸거나 만료되었습니다. 다시 시도해주세요.");
+            resetPwInputs(); // 인증 실패 시 잠금 해제 및 초기화
         }
     } catch (e) { console.error("인증 확인 에러:", e); }
 };
@@ -239,7 +241,7 @@ const processFindPw = async () => {
         } else {
             const errorData = await res.json();
             alert(errorData.message || "아이디 또는 이메일 정보가 일치하지 않습니다.");
-            resetPwInputs(); // 정보 불일치 시 다시 입력할 수 있도록 초기화
+            resetPwInputs(); // 정보 불일치 시 다시 수정할 수 있도록 초기화
         }
     } catch (e) { console.error(e); }
 };
@@ -260,17 +262,17 @@ const init = () => {
     if (nodes.btnPwRequestAuth) nodes.btnPwRequestAuth.addEventListener("click", requestPwEmailAuth);
     if (nodes.btnPwVerifyCode) nodes.btnPwVerifyCode.addEventListener("click", verifyPwEmailCode);
 
+    // 아이디 실시간 유효성 체크 (영문/숫자만)
     if (nodes.pwUserId) {
         nodes.pwUserId.addEventListener("input", (e) => {
-            // 영문 대소문자와 숫자만 허용하는 정규식
             const regex = /^[a-zA-Z0-9]*$/;
             if (!regex.test(e.target.value)) {
-                // 허용되지 않은 문자(한글, 특수문자 등)가 들어오면 즉시 제거
                 e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
             }
         });
     }
 
+    // 인증번호 실시간 숫자 체크
     if (nodes.pwEmailCode) {
         nodes.pwEmailCode.addEventListener("input", (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, "");
