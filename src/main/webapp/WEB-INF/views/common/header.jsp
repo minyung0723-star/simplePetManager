@@ -24,9 +24,9 @@
     </div>
 
     <nav class="header-nav">
-        <a href="${pageContext.request.contextPath}/board/boardList">동물병원찾기</a>
-        <a href="${pageContext.request.contextPath}/board/boardList">동물호텔찾기</a>
-        <a href="${pageContext.request.contextPath}/board/boardList">동물약국찾기</a>
+        <a href="${pageContext.request.contextPath}/board/boardList?category=hospital">동물병원찾기</a>
+        <a href="${pageContext.request.contextPath}/board/boardList?category=hotel">동물호텔찾기</a>
+        <a href="${pageContext.request.contextPath}/board/boardList?category=pharmacy">동물약국찾기</a>
     </nav>
 
     <div class="header-actions">

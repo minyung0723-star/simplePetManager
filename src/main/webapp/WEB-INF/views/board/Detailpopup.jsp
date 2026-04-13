@@ -1,6 +1,6 @@
 
 <%@ page contentType="text/html; charset=UTF-8" %>
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <div id="popup" class="popup">
     <div class="popup-header">
         <div class="popup-handle"></div>
@@ -22,8 +22,8 @@
             <span id="storeAddress">${board.storeAddress}</span>
 
 
-            <button onclick="addBookmark(${user.userNumber}, ${board.storeId})">
-                즐겨찾기
+            <button class="btn-bookmark" onclick="toggleBookmark(${user.userNumber}, ${board.storeId})" title="즐겨찾기">
+                <i class="bi bi-star"></i>
             </button>
         </div>
 
@@ -78,4 +78,39 @@
             console.log("버튼이 활성화되었습니다."); // 브라우저 F12 콘솔에서 확인용
         }
     }
+
+    function addBookmark(userNumber, storeId) {
+        const btn = document.querySelector(".btn-bookmark");
+        btn.classList.toggle("active");
+
+        // 아이콘 토글 (빈 별 ↔ 채운 별)
+        const icon = btn.querySelector("i");
+        if (btn.classList.contains("active")) {
+            icon.className = "bi bi-star-fill"; // 채운 별
+        } else {
+            icon.className = "bi bi-star";      // 빈 별
+        }
+
+
+        function toggleBookmark(userNumber, storeId) {
+            fetch("/bookmark/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `userNumber=${userNumber}&storeId=${storeId}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const icon = document.getElementById("bookmarkIcon");
+                    if (data.bookmarked) {
+                        icon.className = "bi bi-star-fill"; // ★ 채운 별
+                        icon.style.color = "gold";
+                    } else {
+                        icon.className = "bi bi-star";      // ☆ 빈 별
+                        icon.style.color = "#ccc";
+                    }
+                })
+                .catch(err => console.error("즐겨찾기 오류:", err));
+        }
+    }
+
 </script>

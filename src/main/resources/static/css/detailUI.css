@@ -124,3 +124,24 @@
 body.popup-active .open-btn {
     display: none;
 }
+
+.btn-bookmark {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ccc;         /* 기본 색 (비활성) */
+    padding: 0;
+}
+
+.btn-bookmark:hover {
+    color: gold;         /* 호버 시 노란색 */
+}
+
+.btn-bookmark.active i {
+    color: gold;
+}
+
+.btn-bookmark.active i::before {
+    content: "\F586"; /* bi-star-fill 코드 */
+}
