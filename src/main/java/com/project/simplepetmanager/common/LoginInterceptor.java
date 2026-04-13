@@ -24,6 +24,21 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String uri = req.getRequestURI();
 
+        // 메인 페이지("/")에 접근할 때마다 비밀번호 수정 세션을 무조건 삭제
+        if (uri.equals("/") || uri.equals(req.getContextPath() + "/")) {
+            HttpSession session = req.getSession(false);
+            if (session != null) {
+                session.removeAttribute("verifiedUserId");
+            }
+        }
+
+        // [추가] 비밀번호 수정 페이지 진입 시 캐시 방지 헤더 설정 (뒤로가기 방어용)
+        if (uri.contains("/passwordEdit")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.setHeader("Pragma", "no-cache");
+            res.setDateHeader("Expires", 0);
+        }
+
         // 1. 정적 리소스 통과
         if (uri.endsWith(".js") || uri.endsWith(".css") ||
                 uri.endsWith(".png") || uri.endsWith(".jpg")) {

@@ -33,8 +33,18 @@ const initPage = () => {
         return false;
     }
 
+    // [추가] 뒤로가기 방지 로직 (브라우저 기록에 현재 상태 추가)
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function() {
+        // 뒤로가기 버튼을 누르면 무조건 메인으로 이동
+        location.href = state.contextPath + "/";
+    };
+
     if (nodes.targetUserId) {
         nodes.targetUserId.value = state.userId;
+    }
+    if (state.userId) {
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
     return true;
 };
