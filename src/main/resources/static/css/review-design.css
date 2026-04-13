@@ -121,6 +121,13 @@
     padding: 0;
 }
 
+/* 리뷰 카드 내 별점 래퍼 (review-list.js 에서 사용하는 div.review-star-rating) */
+.review-star-rating {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
+
 /* 읽기 전용 (리스트 화면용) */
 .review-star-rating-container.readonly {
     font-size: 1.5rem; /* 리스트용 크기 */

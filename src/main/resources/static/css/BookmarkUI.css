@@ -1,28 +1,25 @@
-{ margin: 0; padding: 0; box-sizing: border-box; }
+/* ===== 즐겨찾기 패널 카드 (3컬럼 오른쪽) ===== */
 .bookmark-panel {
-    position: absolute; /* 또는 fixed */
-    top: 130px;         /* 상단에서의 거리 (적절히 조절) */
-
-    /* 왼쪽(left) 설정을 지우거나 auto로 변경하고, 오른쪽(right)을 설정합니다 */
-    left: auto !important;
-    right: 130px;        /* 오른쪽 벽에서 20px 띄움 */
-
-    z-index: 1000;      /* 지도보다 위에 보이도록 설정 */
-
-    /* 기타 스타일들 (너비, 배경색 등) */
-    width: 300px;
-    background-color: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    max-height: 630px;
+    overflow: hidden;
+    box-sizing: border-box;
+    position: static;
 }
 
 .bookmark-panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 14px 16px;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
     border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
 }
 
 .bookmark-panel-header button {
@@ -31,90 +28,47 @@
     font-size: 16px;
     cursor: pointer;
     color: #888;
+    padding: 0;
 }
-
-.bookmark-tabs {
-    display: flex;
-    gap: 8px;
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 6px 0;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    background: #fff;
-    font-size: 13px;
-    cursor: pointer;
-    color: #666;
-}
-
-.tab-btn.active {
-    background: #b5c8e8;
-    border-color: #b5c8e8;
-    color: #fff;
-    font-weight: 600;
-}
+.bookmark-panel-header button:hover { color: #333; }
 
 .bookmark-list {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 16px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .bookmark-card {
     border: 1px solid #eee;
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px 12px;
     cursor: pointer;
     transition: box-shadow 0.2s;
 }
+.bookmark-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.bookmark-card-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.bookmark-card-address { font-size: 11px; color: #999; margin-bottom: 6px; }
+.bookmark-card-footer { font-size: 11px; color: #e57373; text-align: right; }
 
-.bookmark-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.bookmark-card-name {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 4px;
-}
-
-.bookmark-card-address {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 8px;
-}
-
-.bookmark-card-footer {
-    font-size: 12px;
-    color: #aaa;
-    text-align: right;
-}
-
+/* ===== 패널 닫혔을 때 열기 버튼 ===== */
+/* ※ !important 제거 — closeBookmarkPanel() 에서 display:flex 로 바꿀 수 있도록 */
 .open-bookmark-btn {
-    position: fixed;
-    bottom: 300px;   /* 하단에서 20px 띄움 */
-    right: 450px;    /* 우측에서 20px 띄움 */
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; /* 동그란 버튼 */
-    background-color: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    cursor: pointer;
-    display: flex;
+    display: none;   /* 초기값: 패널이 열려있으므로 숨김 */
     align-items: center;
     justify-content: center;
-    z-index: 1000;  /* 지도나 다른 요소보다 위에 오도록 */
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    cursor: pointer;
+    font-size: 18px;
+    color: #6750A4;
     transition: transform 0.2s;
+    margin-top: 8px;
 }
-
-.open-bookmark-btn:hover {
-    transform: scale(1.1); /* 마우스 올리면 살짝 커짐 */
-}
+.open-bookmark-btn:hover { transform: scale(1.1); }

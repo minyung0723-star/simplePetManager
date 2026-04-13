@@ -1,46 +1,70 @@
-
-.map-box {
-    position: relative;
-    width: 100%;
-    height: 500px;
+/* ===== body 리셋 (kakao-map.css 간섭 차단) ===== */
+body {
+    display: block !important;
+    height: auto !important;
+    background: #f5f6f8;
 }
 
+/* ===== 3컬럼 레이아웃 ===== */
+#detailLayout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 1400px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+}
+
+/* ===== 가운데 지도 ===== */
 #map {
-    width: 100%;
-    height: 100%;
-}
-
-/* 팝업 */
-.popup {
-    position: absolute;
-    top: 130px;
-    left: 430px;
-    width: 300px;
-
-    background: white;
+    flex: 1;
+    min-width: 0;
+    height: 630px;
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    padding: 16px;
-
-    z-index: 10;
-    display: none;
+    overflow: hidden;
 }
 
+/* ===== 왼쪽 패널 (상세 팝업) ===== */
+#leftPanel {
+    width: 280px;
+    flex-shrink: 0;
+}
 
+/* ===== 오른쪽 패널 (즐겨찾기) ===== */
+#rightPanel {
+    width: 260px;
+    flex-shrink: 0;
+}
 
-.popup.show {
+/* ===== 상세 팝업 카드 ===== */
+.popup {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    padding: 16px;
+    box-sizing: border-box;
+    max-height: 630px;
+    overflow-y: auto;
+    /* position/display 초기화: 3컬럼에선 static */
+    position: static;
     display: block;
 }
 
 .popup-img {
     width: 100%;
     border-radius: 10px;
+    margin-bottom: 10px;
+    object-fit: cover;
+    max-height: 160px;
+    display: block;
 }
 
 .popup-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    margin-bottom: 4px;
 }
 
 .popup-handle {
@@ -48,7 +72,7 @@
     height: 4px;
     background: #ddd;
     border-radius: 2px;
-    margin: 0 auto 12px;
+    margin: 0 auto 10px;
     cursor: pointer;
 }
 
@@ -58,90 +82,41 @@
     align-items: center;
     margin-bottom: 12px;
 }
+.popup-title h3 { font-size: 15px; font-weight: bold; margin: 0; }
+.popup-title a { font-size: 12px; color: #7a9fdb; text-decoration: none; white-space: nowrap; }
 
-.popup-title h3 {
-    font-size: 16px;
-    font-weight: bold;
-}
+.popup-info { display: flex; flex-direction: column; gap: 10px; }
 
-.popup-title a {
-    font-size: 12px;
-    color: #888;
-    text-decoration: none;
-}
+.popup-row { display: flex; gap: 10px; font-size: 13px; align-items: flex-start; }
+.popup-row .label { color: #888; min-width: 40px; flex-shrink: 0; }
 
-.popup-info {
-    margin-top: 12px;
+/* ===== 열기/닫기 버튼은 3컬럼에선 필요없으므로 숨김 ===== */
+.open-btn { display: none !important; }
+.popup-handle { display: none; }
+
+/* ===== 즐겨찾기 버튼 (팝업 내부) ===== */
+.popup-bookmark-row {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.popup-row {
-    display: flex;
-    gap: 12px;
-    font-size: 13px;
-    align-items: flex-start;
-}
-
-.popup-row .label {
-    color: #888;
-    min-width: 50px;
-}
-
-.popup-row a {
-    margin-left: auto;
-    color: #666;
-    font-size: 12px;
-    text-decoration: none;
-}
-
-/* 기본 상태: 버튼이 보임 */
-.open-btn {
-    /* 부모 요소(지도 컨테이너)를 기준으로 위치를 잡습니다 */
-    position: absolute;
-
-    /* 왼쪽 상단에서 얼마나 띄울지 결정합니다 */
-    top: 130px;   /* 위에서 20px 내려옴 */
-    left: 430px;  /* 왼쪽에서 20px 띄움 */
-
-    /* 지도나 다른 요소보다 위에 보이도록 z-index를 높입니다 */
-    z-index: 1000;
-    border-radius: 50%; /*동그란버튼*/
-    /* 버튼이 잘 보이도록 배경과 테두리를 추가합니다 */
-    background-color: white;
-    padding: 10px 10px;
-    border: 1px solid #ccc;
-
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    cursor: pointer;
-}
-
-.open-btn:hover {
-    transform: scale(1.1); /* 마우스 올리면 살짝 커짐 */
-}
-/* 팝업이 활성화(popup-active)된 상태일 때 버튼을 숨김 */
-body.popup-active .open-btn {
-    display: none;
+    align-items: center;
+    padding-top: 6px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
 }
 
 .btn-bookmark {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5rem;
-    color: #ccc;         /* 기본 색 (비활성) */
-    padding: 0;
+    font-size: 1.1rem;
+    color: #bbb;
+    padding: 4px 0;
+    width: 100%;
+    text-align: left;
 }
-
-.btn-bookmark:hover {
-    color: gold;         /* 호버 시 노란색 */
-}
-
-.btn-bookmark.active i {
-    color: gold;
-}
-
-.btn-bookmark.active i::before {
-    content: "\F586"; /* bi-star-fill 코드 */
-}
+.btn-bookmark:hover { color: gold; }
+.btn-bookmark.active i { color: gold; }
+.bookmark-label { font-size: 12px; color: #aaa; font-weight: 500; }
+.btn-bookmark:hover .bookmark-label { color: #888; }

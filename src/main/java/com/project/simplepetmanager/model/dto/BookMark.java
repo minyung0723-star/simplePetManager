@@ -10,8 +10,12 @@ import lombok.*;
 public class BookMark {
 
     private int storeId;
-    private int user_number;
-    private String StoreName;       // TODO: Store_name → 올바른 camelCase 필드명으로
-    private String StoreAddress;       // TODO: Store_address → 올바른 camelCase 필드명으로
-    private String StoreImage;       // TODO: store_image → 올바른 camelCase 필드명으로
+    private int userNumber;       // user_number → userNumber (camelCase 통일)
+    private String storeName;     // StoreName   → storeName
+    private String storeAddress;  // StoreAddress → storeAddress
+    private String storePhone;    // 추가
+    private String storeImage;    // StoreImage  → storeImage
+    private String category;      // 추가
+    private Double latitude;      // 추가 (지도 이동용)
+    private Double longitude;     // 추가 (지도 이동용)
 }
