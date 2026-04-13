@@ -2,6 +2,31 @@
 //  review-create.js  |  리뷰 작성 페이지 전용 스크립트
 // =====================================================
 
+// 병원 정보 가져와서 제목 바꾸기
+document.addEventListener("DOMContentLoaded", async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const storeId = urlParams.get('storeId');
+    if(!storeId) {
+        alert("병원 정보가 없습니다.");
+        history.back();
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/review/store/info?storeId=${storeId}`);
+        if (res.ok) {
+            const store = await res.json();
+            const hospitalNameElement = document.getElementById("hospitalName"); // JSP에 이 ID가 있어야 함!
+            if (hospitalNameElement) {
+                hospitalNameElement.innerText = store.storeName || "병원 정보";
+            }
+            document.title = `${store.storeName} - 리뷰 작성`;
+        }
+    } catch (e) {
+        console.error("병원 정보를 불러오지 못했습니다.", e);
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const container    = document.getElementById('review-star-rating-container');
     const fill         = document.getElementById('review-star-rating-fill');

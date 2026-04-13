@@ -32,7 +32,7 @@
                 <button type="button" id="bookmarkBtn"
                         onclick="toggleBookmark()"
                         class="btn btn-outline-secondary review-btn-circle review-bookmark-btn">
-                    <i class="bi bi-bookmark-fill"></i>
+                    <i class="bi-bookmark-fill"></i>
                 </button>
             </div>
         </section>
