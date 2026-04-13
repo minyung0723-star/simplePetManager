@@ -83,7 +83,7 @@ const handleLogin = async () => {
     const userId = nodes.userId.value.trim();
     const userPassword = nodes.userPw.value.trim();
 
-    //  체크박스 상태 확인 (정의되지 않은 변수 오류 해결)
+    //  체크박스 상태 확인
     const isRememberChecked = nodes.rememberMe ? nodes.rememberMe.checked : false;
 
     if (!userId || !userPassword) {
@@ -132,6 +132,17 @@ const init = () => {
     if (savedId && nodes.userId) {
         nodes.userId.value = savedId;
         if (nodes.rememberMe) nodes.rememberMe.checked = true;
+    }
+
+    // [추가] 아이디 입력 실시간 유효성 체크 (영문/숫자만 허용)
+    if (nodes.userId) {
+        nodes.userId.addEventListener("input", (e) => {
+            const regex = /^[a-zA-Z0-9]*$/;
+            if (!regex.test(e.target.value)) {
+                // 영문과 숫자가 아닌 문자는 즉시 제거
+                e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+            }
+        });
     }
 
     // 로고 클릭 이벤트

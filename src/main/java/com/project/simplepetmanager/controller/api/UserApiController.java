@@ -226,6 +226,18 @@ public class UserApiController {
             }
         }
 
+        else {
+            // 회원가입 시 중복체크로 썼던 로직을 반대로 활용합니다.
+            // 이메일이 중복(true)이라는 것은 DB에 해당 이메일이 존재한다는 뜻입니다.
+            boolean isEmailExists = userService.isEmailDuplicate(email);
+
+            if (!isEmailExists) {
+                // DB에 이메일이 없으면 발송 차단
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "등록되지 않은 이메일 주소입니다."));
+            }
+        }
+
         // 2. 중복이 아닐 때만 메일 발송
         emailCodeService.sendVerificationCode(email);
         return ResponseEntity.ok(Map.of("message", "인증번호 발송 완료"));

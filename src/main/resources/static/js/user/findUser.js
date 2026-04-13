@@ -46,32 +46,40 @@ const nodes = {
  * 3. 기능 로직 (함수들)
  */
 
-// [수정] 입력창 통합 초기화 함수: 모든 잠금을 풀고 인증 정보를 초기화합니다.
+// [통합 초기화] 아이디, 이메일, 인증번호 등 모든 입력을 리셋하고 포커스를 아이디로 이동
 const resetPwInputs = () => {
     state.isPwEmailVerified = false;
 
-    // 1. 모든 필드 잠금 해제 (아이디, 이메일, 인증번호)
+    // 모든 필드 값 초기화
+    nodes.pwUserId.value = "";
+    nodes.pwPrefix.value = "";
+    nodes.pwDirect.value = "";
+    nodes.pwEmailCode.value = "";
+
+    // 잠금 해제
     nodes.pwUserId.readOnly = false;
     nodes.pwPrefix.readOnly = false;
     nodes.pwDomain.disabled = false;
     nodes.pwDirect.readOnly = false;
     nodes.pwEmailCode.readOnly = false;
 
-    // 2. 값 초기화 (아이디와 이메일은 유지하고 인증번호만 비움)
-    nodes.pwEmailCode.value = "";
+    // 도메인 직접입력 필드 상태 복구
+    if (nodes.pwDomain.value !== "") {
+        nodes.pwDirect.classList.add('d-none');
+    }
 
-    // 3. 버튼 상태 복구
+    // 버튼 및 메시지 초기화
     if (nodes.btnPw) nodes.btnPw.disabled = true;
     if (nodes.btnPwRequestAuth) nodes.btnPwRequestAuth.disabled = false;
-
-    // 4. 메시지 및 타이머 초기화
     if (nodes.pwEmailStatusMsg) {
         nodes.pwEmailStatusMsg.textContent = "";
         nodes.pwEmailStatusMsg.classList.add("d-none");
     }
+
     if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
     nodes.pwTimerSpan.style.display = "none";
 
+    // 포커스를 아이디 입력창으로 이동
     nodes.pwUserId.focus();
 };
 
@@ -149,12 +157,12 @@ const startPwEmailTimer = (duration) => {
             clearInterval(state.pwEmailTimer);
             nodes.pwTimerSpan.textContent = "만료";
             alert("인증 시간이 만료되었습니다. 다시 요청해 주세요.");
-            resetPwInputs(); // 만료 시 통합 초기화
+            resetPwInputs();
         }
     }, 1000);
 };
 
-// [수정] 인증번호 발송 요청: 성공 시 이메일 입력창을 모두 잠급니다.
+// [수정] 인증번호 발송 요청: 정보가 없으면 아이디/이메일 모두 초기화
 const requestPwEmailAuth = async () => {
     const email = getPwFullEmail();
     const userId = nodes.pwUserId.value.trim();
@@ -166,13 +174,17 @@ const requestPwEmailAuth = async () => {
         const res = await fetch(state.contextPath + "/api/email-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userEmail: email, mode: "findPw" })
+            body: JSON.stringify({
+                userEmail: email,
+                userId: userId,
+                mode: "findPw"
+            })
         });
 
         if (res.ok) {
             alert("인증번호가 발송되었습니다. 5분 이내에 입력해주세요.");
 
-            // 이메일 및 아이디 입력창 잠금 (중간 수정 방지)
+            // 전송 성공 시 입력창 잠금
             nodes.pwUserId.readOnly = true;
             nodes.pwPrefix.readOnly = true;
             nodes.pwDomain.disabled = true;
@@ -180,10 +192,17 @@ const requestPwEmailAuth = async () => {
 
             startPwEmailTimer(300);
         } else {
+            // [핵심 변경] DB에 일치하는 정보가 없어 서버가 에러(400 등)를 보낸 경우
             const data = await res.json();
-            alert(data.message || "인증번호 발송에 실패했습니다.");
+            alert(data.message || "입력하신 아이디 또는 이메일 정보가 일치하지 않습니다.");
+
+            // 모든 입력창 초기화 (아이디 포함)
+            resetPwInputs();
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error("인증 요청 에러:", e);
+        alert("서버 통신 중 오류가 발생했습니다.");
+    }
 };
 
 // 인증번호 검증
@@ -196,7 +215,11 @@ const verifyPwEmailCode = async () => {
         const res = await fetch(state.contextPath + "/api/email-verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userEmail: email, emailCode: code, userId: nodes.pwUserId.value.trim() })
+            body: JSON.stringify({
+                userEmail: email,
+                emailCode: code,
+                userId: nodes.pwUserId.value.trim()
+            })
         });
 
         if (nodes.pwEmailStatusMsg) nodes.pwEmailStatusMsg.classList.remove("d-none");
@@ -206,7 +229,6 @@ const verifyPwEmailCode = async () => {
             nodes.pwEmailStatusMsg.textContent = "이메일 인증이 완료되었습니다.";
             nodes.pwEmailStatusMsg.className = "small text-success mt-1 mb-2 text-start";
 
-            // 모든 입력창 최종 잠금
             nodes.pwEmailCode.readOnly = true;
 
             if (nodes.btnPw) nodes.btnPw.disabled = false;
@@ -214,7 +236,7 @@ const verifyPwEmailCode = async () => {
             nodes.pwTimerSpan.style.display = "none";
         } else {
             alert("인증번호가 틀렸거나 만료되었습니다. 다시 시도해주세요.");
-            resetPwInputs(); // 인증 실패 시 잠금 해제 및 초기화
+            resetPwInputs();
         }
     } catch (e) { console.error("인증 확인 에러:", e); }
 };
@@ -241,7 +263,7 @@ const processFindPw = async () => {
         } else {
             const errorData = await res.json();
             alert(errorData.message || "아이디 또는 이메일 정보가 일치하지 않습니다.");
-            resetPwInputs(); // 정보 불일치 시 다시 수정할 수 있도록 초기화
+            resetPwInputs();
         }
     } catch (e) { console.error(e); }
 };
@@ -262,7 +284,6 @@ const init = () => {
     if (nodes.btnPwRequestAuth) nodes.btnPwRequestAuth.addEventListener("click", requestPwEmailAuth);
     if (nodes.btnPwVerifyCode) nodes.btnPwVerifyCode.addEventListener("click", verifyPwEmailCode);
 
-    // 아이디 실시간 유효성 체크 (영문/숫자만)
     if (nodes.pwUserId) {
         nodes.pwUserId.addEventListener("input", (e) => {
             const regex = /^[a-zA-Z0-9]*$/;
@@ -272,7 +293,6 @@ const init = () => {
         });
     }
 
-    // 인증번호 실시간 숫자 체크
     if (nodes.pwEmailCode) {
         nodes.pwEmailCode.addEventListener("input", (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, "");
