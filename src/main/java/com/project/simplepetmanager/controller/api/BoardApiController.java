@@ -1,4 +1,3 @@
 package com.project.simplepetmanager.controller.api;
 
-public class BoardApiController {
-}
+public class BoardApiController { }

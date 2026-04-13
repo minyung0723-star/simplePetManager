@@ -19,7 +19,7 @@ const nodes = {
     userPwCheck: document.getElementById("userPasswordCheck"),
     userName: document.getElementById("userName"),
 
-    // [수정됨] 이메일 분할 입력 필드들
+    // 이메일 분할 입력 필드들
     emailPrefix: document.getElementById("emailPrefix"),
     emailDomain: document.getElementById("emailDomain"),
     emailDirect: document.getElementById("emailDirect"),
@@ -40,7 +40,21 @@ const nodes = {
  * 3. 기능 로직
  */
 
-// [추가] 이메일 주소 합치기 헬퍼 함수
+// 아이디 한글/특수문자 입력 제한 함수 (추가)
+const handleUserIdInput = (e) => {
+    const originalValue = e.target.value;
+    // 영문 대소문자와 숫자만 허용 (한글, 공백, 특수문자 제거)
+    const cleanValue = originalValue.replace(/[^a-zA-Z0-9]/g, "");
+
+    if (originalValue !== cleanValue) {
+        e.target.value = cleanValue;
+    }
+    // 아이디 값이 바뀌면 중복 체크 상태 리셋
+    state.isIdChecked = false;
+    if (nodes.idMsg) nodes.idMsg.classList.add("d-none");
+};
+
+// 이메일 주소 합치기 헬퍼 함수
 const getFullEmail = () => {
     const prefix = nodes.emailPrefix.value.trim();
     const domainSelect = nodes.emailDomain.value;
@@ -50,7 +64,7 @@ const getFullEmail = () => {
     return (prefix && finalDomain) ? `${prefix}@${finalDomain}` : "";
 };
 
-// [추가] 도메인 직접 입력 토글 핸들러
+// 도메인 직접 입력 토글 핸들러
 const handleEmailDomainChange = () => {
     if (nodes.emailDomain.value === "") {
         nodes.emailDirect.classList.remove("d-none");
@@ -61,6 +75,7 @@ const handleEmailDomainChange = () => {
     }
 };
 
+// 아이디 중복 체크
 const checkIdDuplicate = async () => {
     const userId = nodes.userId.value.trim();
     if (!userId) {
@@ -89,6 +104,7 @@ const checkIdDuplicate = async () => {
     }
 };
 
+// 이메일 타이머
 const startEmailTimer = (duration) => {
     if (state.emailTimer) clearInterval(state.emailTimer);
     nodes.timerSpan.style.display = "block";
@@ -111,6 +127,7 @@ const startEmailTimer = (duration) => {
     }, 1000);
 };
 
+// 비밀번호 유효성 및 일치 체크
 const handlePasswordInput = () => {
     const pw = nodes.userPw.value;
     const check = nodes.userPwCheck.value;
@@ -138,9 +155,9 @@ const handlePasswordInput = () => {
     }
 };
 
-// [수정됨] 이메일 인증번호 발송 요청
+// 이메일 인증번호 발송 요청
 const requestEmailAuth = async () => {
-    const email = getFullEmail(); // 합쳐진 이메일 가져오기
+    const email = getFullEmail();
     if (!email) return alert("이메일 주소를 완성해 주세요.");
 
     try {
@@ -163,7 +180,7 @@ const requestEmailAuth = async () => {
     }
 };
 
-// [수정됨] 이메일 인증번호 검증
+// 이메일 인증번호 검증
 const verifyEmailCode = async () => {
     const email = getFullEmail();
     const code = nodes.emailCode.value.trim();
@@ -183,7 +200,6 @@ const verifyEmailCode = async () => {
             nodes.emailMsg.className = "text-success small mt-1 mb-3 text-start";
             nodes.emailMsg.textContent = "이메일 인증이 완료되었습니다.";
 
-            // 인증 성공 시 필드 잠금
             nodes.emailPrefix.readOnly = true;
             nodes.emailDomain.disabled = true;
             nodes.emailDirect.readOnly = true;
@@ -201,7 +217,7 @@ const verifyEmailCode = async () => {
     }
 };
 
-// [수정됨] 최종 회원가입 제출
+// 최종 회원가입 제출
 const handleRegister = async () => {
     const email = getFullEmail();
     const data = {
@@ -247,20 +263,30 @@ const init = () => {
             location.href = state.contextPath + "/";
         });
     }
+
+    // 아이디 관련 이벤트 (한글 입력 제한 추가)
+    if (nodes.userId) {
+        nodes.userId.addEventListener("input", handleUserIdInput);
+    }
     if (nodes.btnCheckId) nodes.btnCheckId.addEventListener("click", checkIdDuplicate);
+
+    // 비밀번호 관련
     if (nodes.userPw) nodes.userPw.addEventListener("input", handlePasswordInput);
     if (nodes.userPwCheck) nodes.userPwCheck.addEventListener("input", handlePasswordInput);
 
-    // [추가] 이메일 도메인 변경 리스너
+    // 이메일 도메인 변경
     if (nodes.emailDomain) nodes.emailDomain.addEventListener("change", handleEmailDomainChange);
 
+    // 인증 관련
     if (nodes.btnRequestAuth) nodes.btnRequestAuth.addEventListener("click", requestEmailAuth);
     if (nodes.btnVerifyCode) nodes.btnVerifyCode.addEventListener("click", verifyEmailCode);
     if (nodes.btnRegister) nodes.btnRegister.addEventListener("click", handleRegister);
 
+    // 비밀번호 토글
     const togglePw = document.getElementById("togglePw");
     if (togglePw) togglePw.addEventListener("click", togglePasswordVisibility);
 
+    // 인증번호 숫자만
     if (nodes.emailCode) nodes.emailCode.addEventListener("input", handleOnlyNumber);
 };
 

@@ -37,7 +37,6 @@ const nodes = {
     btnPwVerifyCode: document.getElementById("btnPwVerifyCode"),
     logoBtn: document.getElementById("logoBtn"),
     btnId: document.getElementById("btnProcessFindId"),
-    // ★ 중요: HTML의 비밀번호 찾기 버튼 ID와 일치시켜야 합니다.
     btnPw: document.getElementById("btnProcessFindPw"),
     btnResPw: document.getElementById("btnGoToFindPw"),
     btnResLogin: document.getElementById("btnGoToLogin")
@@ -46,6 +45,36 @@ const nodes = {
 /**
  * 3. 기능 로직 (함수들)
  */
+
+// 입력창 및 상태 초기화 함수 (새로 추가)
+const resetPwInputs = () => {
+    state.isPwEmailVerified = false;
+
+    // 필드 잠금 해제
+    nodes.pwUserId.readOnly = false;
+    nodes.pwPrefix.readOnly = false;
+    nodes.pwDomain.disabled = false;
+    nodes.pwDirect.readOnly = false;
+    nodes.pwEmailCode.readOnly = false;
+
+    // 값 초기화 (선택 사항: 아이디와 이메일은 남겨두고 싶다면 pwEmailCode만 비우세요)
+    nodes.pwEmailCode.value = "";
+
+    // 버튼 다시 비활성화
+    if (nodes.btnPw) nodes.btnPw.disabled = true;
+
+    // 메시지 초기화
+    if (nodes.pwEmailStatusMsg) {
+        nodes.pwEmailStatusMsg.textContent = "";
+        nodes.pwEmailStatusMsg.classList.add("d-none");
+    }
+
+    // 타이머 중지 및 숨김
+    if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
+    nodes.pwTimerSpan.style.display = "none";
+
+    nodes.pwUserId.focus();
+};
 
 // 탭 전환
 const switchTab = (type) => {
@@ -68,7 +97,7 @@ const handleDomainChange = (e, directNode) => {
     }
 };
 
-// 이메일 합치기 헬퍼 (비밀번호 찾기용)
+// 이메일 합치기 헬퍼
 const getPwFullEmail = () => {
     const prefix = nodes.pwPrefix.value.trim();
     const domainSelect = nodes.pwDomain.value;
@@ -106,7 +135,7 @@ const processFindId = async () => {
     } catch (e) { console.error(e); }
 };
 
-// 타이머 함수 (register.js와 동일한 UX)
+// 타이머 함수
 const startPwEmailTimer = (duration) => {
     if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
     nodes.pwTimerSpan.style.display = "block";
@@ -120,8 +149,8 @@ const startPwEmailTimer = (duration) => {
         if (--timeLeft < 0) {
             clearInterval(state.pwEmailTimer);
             nodes.pwTimerSpan.textContent = "만료";
-            nodes.pwEmailCode.value = "";
             alert("인증 시간이 만료되었습니다. 다시 요청해 주세요.");
+            resetPwInputs(); // 만료 시 초기화
         }
     }, 1000);
 };
@@ -138,7 +167,7 @@ const requestPwEmailAuth = async () => {
         const res = await fetch(state.contextPath + "/api/email-auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userEmail: email, mode: "findPw" }) // mode 전달로 중복체크 우회
+            body: JSON.stringify({ userEmail: email, mode: "findPw" })
         });
 
         if (res.ok) {
@@ -151,7 +180,7 @@ const requestPwEmailAuth = async () => {
     } catch (e) { console.error(e); }
 };
 
-// 인증번호 검증 및 찾기 버튼 활성화
+// 인증번호 검증
 const verifyPwEmailCode = async () => {
     const email = getPwFullEmail();
     const code = nodes.pwEmailCode.value.trim();
@@ -161,7 +190,7 @@ const verifyPwEmailCode = async () => {
         const res = await fetch(state.contextPath + "/api/email-verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userEmail: email, emailCode: code })
+            body: JSON.stringify({ userEmail: email, emailCode: code, userId: nodes.pwUserId.value.trim() })
         });
 
         if (nodes.pwEmailStatusMsg) nodes.pwEmailStatusMsg.classList.remove("d-none");
@@ -171,27 +200,24 @@ const verifyPwEmailCode = async () => {
             nodes.pwEmailStatusMsg.textContent = "이메일 인증이 완료되었습니다.";
             nodes.pwEmailStatusMsg.className = "small text-success mt-1 mb-2 text-start";
 
-            // 필드 잠금
             nodes.pwUserId.readOnly = true;
             nodes.pwPrefix.readOnly = true;
             nodes.pwDomain.disabled = true;
             nodes.pwDirect.readOnly = true;
             nodes.pwEmailCode.readOnly = true;
 
-            // ★ 비밀번호 찾기 버튼 활성화 ★
             if (nodes.btnPw) nodes.btnPw.disabled = false;
-
             if (state.pwEmailTimer) clearInterval(state.pwEmailTimer);
             nodes.pwTimerSpan.style.display = "none";
         } else {
-            state.isPwEmailVerified = false;
-            nodes.pwEmailStatusMsg.textContent = "인증번호가 틀렸거나 만료되었습니다.";
-            nodes.pwEmailStatusMsg.className = "small text-danger mt-1 mb-2 text-start";
+            // 인증 실패 시 처리
+            alert("인증번호가 틀렸거나 만료되었습니다. 다시 입력해주세요.");
+            resetPwInputs(); // 입력창 다시 활성화 및 초기화
         }
     } catch (e) { console.error("인증 확인 에러:", e); }
 };
 
-// 최종 비밀번호 찾기(검증) 처리
+// 최종 비밀번호 찾기 처리
 const processFindPw = async () => {
     if (!state.isPwEmailVerified) {
         return alert("이메일 인증을 먼저 완료해 주세요.");
@@ -205,16 +231,15 @@ const processFindPw = async () => {
         const res = await fetch(state.contextPath + "/api/verify-for-pw", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            // ★ 여기서 보낸 userId가 나중에 세션에 저장되어야 합니다.
             body: JSON.stringify({ userId: userId, userEmail: email }),
         });
 
         if (res.ok) {
-            // 이제 서버 세션에 verifiedUserId가 저장되었으므로 인터셉터가 통과시켜줍니다.
             location.href = state.contextPath + "/passwordEdit?userId=" + encodeURIComponent(userId);
         } else {
             const errorData = await res.json();
-            alert(errorData.message || "정보가 일치하지 않습니다.");
+            alert(errorData.message || "아이디 또는 이메일 정보가 일치하지 않습니다.");
+            resetPwInputs(); // 정보 불일치 시 다시 입력할 수 있도록 초기화
         }
     } catch (e) { console.error(e); }
 };
@@ -223,35 +248,35 @@ const processFindPw = async () => {
  * 4. 이벤트 바인딩 (init)
  */
 const init = () => {
-    // 공통 및 이동
     if (nodes.logoBtn) nodes.logoBtn.addEventListener("click", () => location.href = state.contextPath + "/");
     if (nodes.btnResLogin) nodes.btnResLogin.addEventListener("click", () => location.href = state.contextPath + "/login");
-
-    // 탭 및 모드 전환
     if (nodes.tabId) nodes.tabId.addEventListener("click", () => switchTab('id'));
     if (nodes.tabPw) nodes.tabPw.addEventListener("click", () => switchTab('pw'));
     if (nodes.btnResPw) nodes.btnResPw.addEventListener("click", () => switchTab('pw'));
-
-    // 도메인 변경
     if (nodes.idDomain) nodes.idDomain.addEventListener("change", (e) => handleDomainChange(e, nodes.idDirect));
     if (nodes.pwDomain) nodes.pwDomain.addEventListener("change", (e) => handleDomainChange(e, nodes.pwDirect));
-
-    // 실행 버튼
     if (nodes.btnId) nodes.btnId.addEventListener("click", processFindId);
     if (nodes.btnPw) nodes.btnPw.addEventListener("click", processFindPw);
-
-    // 인증 관련
     if (nodes.btnPwRequestAuth) nodes.btnPwRequestAuth.addEventListener("click", requestPwEmailAuth);
     if (nodes.btnPwVerifyCode) nodes.btnPwVerifyCode.addEventListener("click", verifyPwEmailCode);
 
-    // 입력 제한 (숫자만)
+    if (nodes.pwUserId) {
+        nodes.pwUserId.addEventListener("input", (e) => {
+            // 영문 대소문자와 숫자만 허용하는 정규식
+            const regex = /^[a-zA-Z0-9]*$/;
+            if (!regex.test(e.target.value)) {
+                // 허용되지 않은 문자(한글, 특수문자 등)가 들어오면 즉시 제거
+                e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+            }
+        });
+    }
+
     if (nodes.pwEmailCode) {
         nodes.pwEmailCode.addEventListener("input", (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, "");
         });
     }
 
-    // URL 모드 초기화
     const urlParams = new URLSearchParams(window.location.search);
     switchTab(urlParams.get('mode') === 'pw' ? 'pw' : 'id');
 };
