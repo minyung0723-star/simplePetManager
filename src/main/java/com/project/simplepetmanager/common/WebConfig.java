@@ -1,20 +1,27 @@
 package com.project.simplepetmanager.common;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer{
+
+    private final LoginInterceptor loginInterceptor;
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("classpath:/static/");
-
-        // /images/** 요청 → src/main/resources/static/images/ 폴더로 매핑
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("classpath:/static/images/");
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/favicon.ico",
+                        "/api/**"    // API 호출도 인터셉터에서 제외하거나 내부에서 처리
+                );
     }
-
 }

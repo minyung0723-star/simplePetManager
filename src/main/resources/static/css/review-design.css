@@ -1,0 +1,185 @@
+/* ===================================================================
+   1. 리뷰 레이아웃 (List & Wrapper)
+   =================================================================== */
+.review-wrapper {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.review-card {
+    border-bottom: 1px solid #F0F0F0;
+    padding: 30px 0;
+}
+
+.review-meta {
+    font-size: 0.85rem;
+    color: #ADB5BD;
+}
+
+.review-content {
+    color: #444;
+    line-height: 1.6;
+    margin-top: 8px;
+}
+
+/* 프로필 이미지 - 찌그러짐 방지 최적화 */
+.review-profile-img {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+/* ===================================================================
+   2. 리뷰 작성 페이지 (Create Review)
+   =================================================================== */
+.review-create-wrapper {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.review-textarea {
+    border: 2px solid #EEEEEE;
+    border-radius: 15px;
+    padding: 20px;
+    resize: none;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    width: 100%;
+}
+
+.review-textarea:focus {
+    border-color: #DDDDDD;
+    outline: none;
+    box-shadow: none;
+}
+
+.review-btn-submit {
+    background-color: #3377FF;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    color: white;
+    cursor: pointer;
+}
+
+.review-btn-submit:hover {
+    background-color: #2266EE;
+}
+
+/* ===================================================================
+   3. 별점 시스템 (Rating System) - !important 최소화 버전
+   =================================================================== */
+.review-star-rating-container {
+    position: relative;
+    display: inline-flex;
+    font-size: 3rem;
+    line-height: 1;
+    color: #ddd;
+    cursor: pointer;
+    user-select: none;
+    width: 5em;
+    overflow: hidden;
+}
+
+/* 바탕 & 채워지는 별 공통 정렬 */
+.review-star-rating-container .review-star-rating-empty,
+.review-star-rating-container .review-star-rating-fill {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+/* 노란색 별 레이어 */
+.review-star-rating-container .review-star-rating-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%; /* JS 조절 */
+    height: 100%;
+    overflow: hidden;
+    color: #ffc61a;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+/* 아이콘 개별 규격 고정 */
+.review-star-rating-container i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1em;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* 읽기 전용 (리스트 화면용) */
+.review-star-rating-container.readonly {
+    font-size: 1.5rem; /* 리스트용 크기 */
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ===================================================================
+   4. 기타 UI 요소 (Buttons)
+   =================================================================== */
+.review-btn-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-btn-write-review {
+    border-radius: 30px;
+    font-size: 0.9rem;
+    padding: 6px 18px;
+}
+
+/* ===================== 북마크 디자인 ===================== */
+/* 1. 공통 버튼 기반 스타일 */
+button.review-bookmark-btn {
+    background-color: transparent;
+    border: 2px solid #6750A4;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* 기본 상태 아이콘 (보라색 비어있는 아이콘) */
+button.review-bookmark-btn i.bi-bookmark-fill {
+    color: #6750A4;
+}
+
+/* JS가 버튼에 .inserted 클래스를 붙여줄 거야! */
+button.review-bookmark-btn.inserted {
+    background-color: #6750A4; /* 배경 보라색 가득! */
+}
+/* 등록된 상태 아이콘 (흰색 채워진 아이콘 반전!) */
+button.review-bookmark-btn.inserted i.bi-bookmark-fill {
+    color: #FFFFFF; /* 글자색 흰색으로 반전! */
+}
+
+/* 4. 마우스 올렸을 때 효과 */
+button.review-bookmark-btn:hover {
+    background-color: #dcd3ff; /* 연한 보라색 */
+}
+
+/* 등록된 상태일 땐 hover 효과를 조금 더 진하게 */
+button.review-bookmark-btn.inserted:hover {
+    background-color: #553f93;
+}

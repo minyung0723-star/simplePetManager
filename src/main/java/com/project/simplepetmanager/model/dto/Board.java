@@ -17,7 +17,7 @@ public class Board {
     private String storeAddress;
     private String category;
     private Double latitude;
-     private Double longitude;
+    private Double longitude;
 
     // ======= bookmark Variables ==========
     private int userNumber;

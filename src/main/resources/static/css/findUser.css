@@ -1,0 +1,134 @@
+/* findUser.css */
+
+/* 1. 최상위 레이아웃 및 카드 디자인 유지 */
+div.user-login-container {
+    background-color: #f4f6f9;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+div.user-login-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 2. 탭 메뉴 디자인 유지 */
+div.find-nav-tabs {
+    display: flex;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 25px;
+}
+
+div.find-nav-link {
+    flex: 1;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #888;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+div.find-nav-link.active {
+    color: #3b6ef5;
+    border-bottom: 2px solid #3b6ef5;
+    margin-bottom: -2px;
+}
+
+/* 3. 공통 그룹 정렬 및 높이 일치 (stretch 유지) */
+div.user-login-container div.find-email-group,
+div.user-login-container div.auth-group {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+/* 4. [수정 포인트] 모든 입력창 가로 너비 최적화
+   맨 위 단독 입력창(#idName, #pwUserId)이 가로로 꽉 차도록 width: 100%를 명시합니다.
+*/
+div.user-login-container input.user-login-input {
+    width: 100%; /* 단독 입력창은 100% 차지 */
+    height: 50px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* 그룹 내에 있는 입력창/셀렉트박스는 flex 비율을 우선합니다. */
+div.user-login-container div.find-email-group input.user-login-input,
+div.user-login-container div.find-email-group select.user-login-input,
+div.user-login-container div.auth-group input.user-login-input {
+    width: 0;
+    flex: 4;
+    margin-bottom: 0;
+}
+
+/* 5. 이메일 상세 비율 (유지) */
+div.user-login-container .email-at {
+    flex: 0.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div.user-login-container #sectionFindPw #pwEmailPrefix { flex: 2.5; }
+div.user-login-container #sectionFindPw #pwEmailDomain { flex: 2; }
+
+/* 6. 인증번호 입력칸 및 확인 버튼 높이/비율 (유지) */
+div.user-login-container div.auth-group div.position-relative {
+    display: flex;
+    align-items: stretch;
+    flex: 4;
+    position: relative;
+    height: 50px;
+}
+
+div.user-login-container div.auth-group div.position-relative input {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+div.user-login-container .btn-auth {
+    height: 50px;
+    flex: 1.2;
+    min-width: 0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    border-radius: 8px;
+}
+
+div.user-login-container #btnPwVerifyCode {
+    flex: 0.35;
+    min-width: 60px;
+    padding: 0 8px;
+}
+
+/* 7. 타이머 및 아이콘 위치 조정 */
+div.user-login-container #pwTimerSpan {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    z-index: 10;
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* 8. 메인 버튼 및 링크 */
+div.user-login-container .user-login-btn {
+    width: 100%;
+    height: 50px;
+    background-color: #3b6ef5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
