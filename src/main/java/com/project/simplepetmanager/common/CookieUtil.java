@@ -26,6 +26,11 @@ public class CookieUtil {
         res.addCookie(cookie);
     }
 
+    // remove() → delete()에 위임 (MyPageApiController에서 호출)
+    public void remove(HttpServletResponse res, String name){
+        delete(res, name);
+    }
+
     public String get(HttpServletRequest req, String name){ // 쿠키 요청해서 가져오기
         Cookie[] cookies = req.getCookies();
         if (cookies == null) return null;
