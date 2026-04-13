@@ -1,0 +1,122 @@
+/* ===== body 리셋 (kakao-map.css 간섭 차단) ===== */
+body {
+    display: block !important;
+    height: auto !important;
+    background: #f5f6f8;
+}
+
+/* ===== 3컬럼 레이아웃 ===== */
+#detailLayout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 1400px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+}
+
+/* ===== 가운데 지도 ===== */
+#map {
+    flex: 1;
+    min-width: 0;
+    height: 630px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* ===== 왼쪽 패널 (상세 팝업) ===== */
+#leftPanel {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+/* ===== 오른쪽 패널 (즐겨찾기) ===== */
+#rightPanel {
+    width: 260px;
+    flex-shrink: 0;
+}
+
+/* ===== 상세 팝업 카드 ===== */
+.popup {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    padding: 16px;
+    box-sizing: border-box;
+    max-height: 630px;
+    overflow-y: auto;
+    /* position/display 초기화: 3컬럼에선 static */
+    position: static;
+    display: block;
+}
+
+.popup-img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    object-fit: cover;
+    max-height: 160px;
+    display: block;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.popup-handle {
+    width: 40px;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin: 0 auto 10px;
+    cursor: pointer;
+}
+
+.popup-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.popup-title h3 { font-size: 15px; font-weight: bold; margin: 0; }
+.popup-title a { font-size: 12px; color: #7a9fdb; text-decoration: none; white-space: nowrap; }
+
+.popup-info { display: flex; flex-direction: column; gap: 10px; }
+
+.popup-row { display: flex; gap: 10px; font-size: 13px; align-items: flex-start; }
+.popup-row .label { color: #888; min-width: 40px; flex-shrink: 0; }
+
+/* ===== 열기/닫기 버튼은 3컬럼에선 필요없으므로 숨김 ===== */
+.open-btn { display: none !important; }
+.popup-handle { display: none; }
+
+/* ===== 즐겨찾기 버튼 (팝업 내부) ===== */
+.popup-bookmark-row {
+    display: flex;
+    align-items: center;
+    padding-top: 6px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
+}
+
+.btn-bookmark {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #bbb;
+    padding: 4px 0;
+    width: 100%;
+    text-align: left;
+}
+.btn-bookmark:hover { color: gold; }
+.btn-bookmark.active i { color: gold; }
+.bookmark-label { font-size: 12px; color: #aaa; font-weight: 500; }
+.btn-bookmark:hover .bookmark-label { color: #888; }

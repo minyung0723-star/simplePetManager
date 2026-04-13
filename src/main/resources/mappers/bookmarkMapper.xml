@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.simplepetmanager.model.mapper.BookmarkMapper">
+
+    <!-- 즐겨찾기 목록 조회 (stores JOIN) -->
+    <select id="getBookmarkListByUser" parameterType="int" resultType="com.project.simplepetmanager.model.dto.BookMark">
+        SELECT
+            b.user_number   AS userNumber,
+            s.store_id      AS storeId,
+            s.store_name    AS storeName,
+            s.store_address AS storeAddress,
+            s.store_phone   AS storePhone,
+            s.category,
+            s.latitude,
+            s.longitude,
+            s.store_image   AS storeImage
+        FROM bookmark b
+                 INNER JOIN stores s ON b.storeId = s.store_id
+        WHERE b.user_number = #{userNumber}
+        ORDER BY b.storeId DESC
+    </select>
+
+    <!-- 즐겨찾기 존재 여부 확인 -->
+    <select id="checkBookmarkExists" resultType="int">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE user_number = #{userNumber}
+          AND storeId = #{storeId}
+    </select>
+
+    <!-- 즐겨찾기 추가 -->
+    <insert id="insertBookmarkList">
+        INSERT INTO bookmark (user_number, storeId, prefer)
+        VALUES (#{userNumber}, #{storeId}, 1)
+    </insert>
+
+    <!-- 즐겨찾기 삭제 -->
+    <delete id="deleteBookmark">
+        DELETE FROM bookmark
+        WHERE user_number = #{userNumber}
+          AND storeId = #{storeId}
+    </delete>
+
+</mapper>

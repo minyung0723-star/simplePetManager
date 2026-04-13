@@ -1,0 +1,74 @@
+/* ===== 즐겨찾기 패널 카드 (3컬럼 오른쪽) ===== */
+.bookmark-panel {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    max-height: 630px;
+    overflow: hidden;
+    box-sizing: border-box;
+    position: static;
+}
+
+.bookmark-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+}
+
+.bookmark-panel-header button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+}
+.bookmark-panel-header button:hover { color: #333; }
+
+.bookmark-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bookmark-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+.bookmark-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.bookmark-card-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.bookmark-card-address { font-size: 11px; color: #999; margin-bottom: 6px; }
+.bookmark-card-footer { font-size: 11px; color: #e57373; text-align: right; }
+
+/* ===== 패널 닫혔을 때 열기 버튼 ===== */
+/* ※ !important 제거 — closeBookmarkPanel() 에서 display:flex 로 바꿀 수 있도록 */
+.open-bookmark-btn {
+    display: none;   /* 초기값: 패널이 열려있으므로 숨김 */
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    cursor: pointer;
+    font-size: 18px;
+    color: #6750A4;
+    transition: transform 0.2s;
+    margin-top: 8px;
+}
+.open-bookmark-btn:hover { transform: scale(1.1); }
