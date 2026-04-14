@@ -40,6 +40,8 @@ function initWithdrawModal() {
 
         if (data.success) {
             alert('탈퇴가 완료되었습니다.');
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userName");
             location.href = '/';
         } else {
             alert(data.message);
