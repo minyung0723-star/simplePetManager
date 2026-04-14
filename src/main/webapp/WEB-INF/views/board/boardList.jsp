@@ -14,19 +14,26 @@
 </head>
 <body>
 
+<%--
+     1. header.jsp 포함
+     (내부 body 태그에 class="d-flex flex-column min-vh-100"이 적용되어 있어야 함)
+--%>
 <%@ include file="../common/header.jsp" %>
 
-<%-- JS 초기값 (카테고리, 유저번호 등 서버값을 JS로 전달) --%>
+<%-- JS 초기값 데이터 --%>
 <div id="board-data"
      data-my-user-number="${myUserNumber}"
      data-category="${category}"
      data-context-path="${pageContext.request.contextPath}"
      style="display:none;"></div>
 
-<!-- ===================== 메인 레이아웃 ===================== -->
-<div class="bl-wrap">
+<%--
+     ✅ 핵심 수정 포인트:
+     기존 <div class="bl-wrap"> 대신 <main class="bl-wrap flex-grow-1"> 사용
+     flex-grow-1 클래스가 남는 화면 공간을 모두 채워 푸터를 아래로 밀어냅니다.
+--%>
+<main class="bl-wrap flex-grow-1">
 
-    <!-- ========== 검색바 ========== -->
     <div class="bl-search-section">
         <div class="bl-search-bar">
             <select class="bl-select" id="search-type">
@@ -40,7 +47,6 @@
         </div>
     </div>
 
-    <!-- ========== 카테고리 탭 ========== -->
     <div class="bl-category-tabs">
         <button class="bl-cat-tab ${'hospital' eq category ? 'active' : ''}" data-cat="hospital">🏥 동물병원</button>
         <button class="bl-cat-tab ${'hotel'    eq category ? 'active' : ''}" data-cat="hotel">🏨 동물호텔</button>
@@ -48,7 +54,6 @@
         <button class="bl-cat-tab ${(empty category) ? 'active' : ''}" data-cat="">전체</button>
     </div>
 
-    <!-- ========== 결과 요약 ========== -->
     <div class="bl-list-meta">
         <span class="bl-result-info">
             총 <strong>${total}</strong>건
@@ -56,7 +61,6 @@
         <a href="${pageContext.request.contextPath}/review/reviewPage" class="bl-btn-write">리뷰 목록</a>
     </div>
 
-    <!-- ========== 가게 카드 목록 ========== -->
     <div class="bl-post-list" id="post-list">
         <c:choose>
             <c:when test="${empty storeList}">
@@ -64,7 +68,6 @@
             </c:when>
             <c:otherwise>
                 <c:forEach var="store" items="${storeList}">
-                    <%-- 카드 클릭 → boardDetail 페이지로 storeId 전달 --%>
                     <div class="bl-post-card"
                          data-store-id="${store.storeId}"
                          onclick="goToDetail(${store.storeId})">
@@ -124,11 +127,9 @@
         </c:choose>
     </div>
 
-    <!-- ========== 페이지네이션 ========== -->
     <div class="bl-pagination" id="pagination"></div>
 
-</div><!-- /bl-wrap -->
-
+</main><%-- 2. footer.jsp 포함 --%>
 <%@ include file="../common/footer.jsp" %>
 
 <script>

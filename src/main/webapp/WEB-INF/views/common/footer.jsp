@@ -1,15 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<!--  bootstrap   -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
-<footer class="py-5">
-    <div class="container footer-container">
 
+<footer class="py-5 bg-light border-top">
+    <div class="container footer-container">
         <div class="footer-left d-flex">
             <div class="footer-logo">
                 <img src="${pageContext.request.contextPath}/images/petlogo.png" alt="로고">
             </div>
-
             <div>
                 <div class="footer-links">
                     <a href="#">서비스 이용약관</a>
@@ -33,8 +31,8 @@
                 (주말, 공휴일 제외)
             </div>
         </div>
-
     </div>
 </footer>
+
 </body>
 </html>

@@ -2,14 +2,16 @@
 <%@include file="../common/header.jsp"%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/review-design.css">
+
 <div class="container mt-4">
     <div class="review-create-wrapper">
         <div class="hospital-header d-flex justify-content-center align-items-center position-relative mb-4 pb-3 border-bottom">
             <h2 class="fw-bold mb-0" id="hospitalName">불러오는중..</h2>
-            <a href="reviewPage" class="text-secondary position-absolute end-0 top-0 fs-2" style="line-height: 1; text-decoration: none;">✕</a>
+            <a href="reviewPage" class="position-absolute end-0 top-0 fs-2" style="line-height: 1; text-decoration: none;">✕</a>
         </div>
 
-        <form id="reviewForm" enctype="multipart/form-data"> <div class="text-center py-4">
+        <form id="reviewForm" enctype="multipart/form-data">
+            <div class="text-center py-4">
             <div id="review-star-rating-container" class="review-star-rating-container">
                 <div class="review-star-rating-empty">
                     <i class="bi bi-star-fill"></i>
