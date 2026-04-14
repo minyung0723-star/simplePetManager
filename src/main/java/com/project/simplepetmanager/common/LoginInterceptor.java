@@ -23,68 +23,57 @@ public class LoginInterceptor implements HandlerInterceptor {
                              Object handler) throws Exception {
 
         String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
 
-        // 메인 페이지("/")에 접근할 때마다 비밀번호 수정 세션을 무조건 삭제
-        if (uri.equals("/") || uri.equals(req.getContextPath() + "/")) {
+        // 1. 비밀번호 찾기 인증 세션 관리 (메인 페이지 "/" 진입 시 인증 세션 파기)
+        if (uri.equals(contextPath + "/") || uri.equals("/")) {
             HttpSession session = req.getSession(false);
             if (session != null) {
                 session.removeAttribute("verifiedUserId");
             }
         }
 
-        // [추가] 비밀번호 수정 페이지 진입 시 캐시 방지 헤더 설정 (뒤로가기 방어용)
-        if (uri.contains("/passwordEdit")) {
+        // 2. 보안 페이지 캐시 방지 (비밀번호 수정, 회원정보 수정 등)
+        // 뒤로가기 버튼으로 인증 없이 페이지에 진입하는 것을 방지합니다.
+        if (uri.contains("/passwordEdit") || uri.contains("/myPageEdit")) {
             res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             res.setHeader("Pragma", "no-cache");
             res.setDateHeader("Expires", 0);
         }
 
-        // 1. 정적 리소스 통과
-        if (uri.endsWith(".js") || uri.endsWith(".css") ||
-                uri.endsWith(".png") || uri.endsWith(".jpg")) {
-            return true;
-        }
-
-        // 2. 인증 정보 확인
+        // 3. 토큰 확인 (로그인 여부 판단)
         String token = cookieUtil.get(req, "access_token");
         boolean isLoggedIn = (token != null && jwtUtil.isValidToken(token));
 
-        // 3. 비로그인 사용자 처리
-        if (!isLoggedIn) {
-            // (1) 리뷰 작성 페이지는 무조건 로그인 필요
-            if (uri.contains("/review/create")) {
-                res.sendRedirect(req.getContextPath() + "/login");
-                return false;
-            }
-
-            // (2) 비밀번호 수정 페이지: '인증 세션'과 '파라미터'가 일치할 때만 허용
-            if (uri.contains("/passwordEdit")) {
-                if (checkPasswordEditAccess(req)) {
-                    return true; // 인증된 비로그인 사용자만 통과
-                }
-                // 인증 안 된 사용자가 주소창 입력 시 로그인으로 차단
-                res.sendRedirect(req.getContextPath() + "/?error=forbidden");
-                return false;
-            }
-
-            return true; // 그 외 일반 페이지 허용
-        }
-
-        // 4. 로그인 된 사용자: 비밀번호 변경 페이지 권한 체크
-        if (uri.endsWith("/passwordEdit")) {
+        // 4. [특수 권한 체크] 비밀번호 수정 페이지 (/passwordEdit)
+        if (uri.contains("/passwordEdit")) {
             if (!checkPasswordEditAccess(req)) {
-                res.sendRedirect(req.getContextPath() + "/?error=forbidden");
+                // 이메일 인증 세션이 없거나 파라미터와 불일치할 경우 차단
+                res.sendRedirect(contextPath + "/?error=forbidden");
                 return false;
             }
+            // 권한이 있다면 유저 정보를 셋팅하여 JSP에서 사용할 수 있게 함
+            setLoginUserAttribute(req, token);
             return true;
         }
 
-        // 5. 로그인 된 사용자: 정보 세팅 및 중복 페이지 차단
-        return handleLoggedInUser(req, res, token, uri);
+        // 5. [중복 페이지 차단] 로그인 된 사용자가 로그인/회원가입/유저찾기 접근 시
+        if (isLoggedIn) {
+            if (uri.endsWith("/login") || uri.endsWith("/register") || uri.endsWith("/findUser")) {
+                res.sendRedirect(contextPath + "/?LoggedIn=true");
+                return false;
+            }
+            // 로그인 상태라면 공통적으로 유저 정보를 request에 셋팅 (헤더 표시용 등)
+            setLoginUserAttribute(req, token);
+        }
+
+        return true;
     }
 
     /**
-     * 비밀번호 변경 권한 검증: 세션의 ID와 URL의 userId 파라미터가 같아야 함
+     * 비밀번호 변경 권한 검증
+     * - 이메일 인증 성공 시 세션에 담긴 'verifiedUserId'와
+     * - 현재 URL의 'userId' 파라미터가 동일한지 대조합니다.
      */
     private boolean checkPasswordEditAccess(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
@@ -93,32 +82,20 @@ public class LoginInterceptor implements HandlerInterceptor {
         String verifiedId = (String) session.getAttribute("verifiedUserId");
         String paramId = req.getParameter("userId");
 
-        // 세션에 값이 있고, 그 값이 현재 페이지의 userId 파라미터와 같아야만 true
         return verifiedId != null && verifiedId.equals(paramId);
     }
 
     /**
-     * 로그인 사용자 세션 처리 및 접근 제한
+     * 로그인 사용자 정보를 Request Attribute에 저장
+     * - 중복 조회를 방지하며, JSP에서 ${loginUser}로 접근 가능하게 합니다.
      */
-    private boolean handleLoggedInUser(HttpServletRequest req,
-                                       HttpServletResponse res,
-                                       String token,
-                                       String uri) throws Exception {
-
-        String email = jwtUtil.getEmail(token);
-        User loginUser = userMapper.login(email);
-
-        if (loginUser != null) {
-            req.setAttribute("loginUser", loginUser);
-
-            if (uri.endsWith("/login") ||
-                    uri.endsWith("/register") ||
-                    uri.endsWith("/findUser")) {
-
-                res.sendRedirect(req.getContextPath() + "/?LoggedIn=true");
-                return false;
+    private void setLoginUserAttribute(HttpServletRequest req, String token) {
+        if (token != null && req.getAttribute("loginUser") == null) {
+            String email = jwtUtil.getEmail(token);
+            User loginUser = userMapper.login(email);
+            if (loginUser != null) {
+                req.setAttribute("loginUser", loginUser);
             }
         }
-        return true;
     }
 }

@@ -11,66 +11,79 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-// 만약에 @Configuration 이아니라 application.yml 에 쓴다면
-// 키이름은 SecurityConfig : 한 줄로 모든 세팅을 다해야하는데... 한 줄로는 세팅하는데 한계가 있을 때 사용하는 방법
-
-@Configuration // 설정 파일 세팅 = application.yml 비슷한 효과 application 처럼 한 줄로 설정이 되지 않아
-// 코드를 길 게 작성하여 프로젝트 환경 설정을 해야할 때 작성하는 어노테이션
-@EnableWebSecurity  // Spring Security 기능을 활성화 밑에 작성한 설정을 진짜로 사용하게끔 활성화 해줘
-// 회사와 개발자가 보안설정을 다수 할 수 있다. 어느 순간에는 잠시 보안을 비활성화 처리해야할 때는 @EnableWebSecurity  작성 안함
+@Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    // 파일 같은 경우 -> common 에서 수제 제작해서 사용할 것
 
     private final JwtFilter jwtFilter;
 
-    // 스프링 컨테이너에 보안팀으로 등록하는 역할
-    // SecurityFilterChain @Bean 설정을 하면 스프링에 기존 존재하는 보안팀과 우리 회사에서 만든 보안팀이 한 팀이되어
-    // 나의 프로젝트 지키겠다. 설정
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF = 보호 기능 끄기
-                // CSRF = 다른 사이트에서 몰래 요청 보내는 공격
-                // Spring Security 팀에는 CSRF 기본 세팅 -> JWT 방식은 쿠키 세션을 안쓰기 때문에 CSRF 자체가 의미 없으므로 끔
+                // 1. CSRF 방어 비활성화 (JWT는 무상태성이므로 불필요)
                 .csrf(csrf -> csrf.disable())
+
+                // 2. 세션 관리: STATELESS 설정 (서버에 세션을 생성하지 않음)
                 .sessionManagement(sm -> sm
-                        // 세션을 안만들고,
-                        // 기존 방식 : 로그인하면 서버가 세션 생성하여 기억 -> 서버 에서도 모든 유저 기억 -> 메모리 소모 보안 위험
-                        // 페스티벌에서 스태프들이 우리를 모두 외우지 않고
-                        // JWT 방식 : 서버가 아무것도 기억 안 함, 토큰으로만 판단
-                        // 입장 팔찌 기준으로 페스티벌에 접근 가능한 사람인지 판단하겠다.
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                /*  .authorizeHttpRequests(auth -> auth
-                          .requestMatchers( // 아래 주소는 로그인 토큰 없이 누구나 접근 가능한 경로
-                                  "/",
-                                  "/user/login",
-                                  "/user/register",
-                                  "/user/check-email",
-                                  "/user/send-code",
-                                  "/user/verify-code",
-                                  "/user/token/refresh",
-                                  "/user/profile-info",
-                                  "/board/**",
-                                  "/product/**",
-                                  "/css/**", "/js/**", "/images/**", "/uploads/**"
 
-                          ).permitAll()
+                // 3. 경로별 접근 권한 설정 (로그인 없이 허용할 항목들)
+                .authorizeHttpRequests(auth -> auth
+                        // [A] 공통 페이지 및 뷰(JSP) 컨트롤러 경로
+                        .requestMatchers(
+                                "/",                // 메인 페이지
+                                "/login",           // 로그인 페이지
+                                "/register",        // 회원가입 페이지
+                                "/findUser",        // 아이디/비밀번호 찾기 페이지
+                                "/board/**",        // 게시판 목록 및 상세 페이지 뷰
+                                "/api/hospital/detail" // 병원 상세 정보 페이지 뷰
+                        ).permitAll()
 
-                 */
-                .authorizeHttpRequests(auth -> auth // ㅇㅇㅇ
-                        .anyRequest().permitAll() // 일단 모두 전체 허용
+                        // [B] 회원 관련 API (비로그인 상태에서 수행되는 기능)
+                        .requestMatchers(
+                                "/api/login",           // 로그인 처리
+                                "/api/register",        // 회원가입 처리
+                                "/api/check-id",        // 아이디 중복 확인
+                                "/api/email-auth",      // 인증번호 발송 (가입/비번찾기 공용)
+                                "/api/email-verify",    // 인증번호 검증
+                                "/api/find-id",         // 아이디 찾기 로직
+                                "/api/verify-for-pw",   // 비밀번호 재설정 전 사용자 검증
+                                "/api/token/refresh"    // 토큰 만료 시 재발급 API
+                        ).permitAll()
+
+                        // [C] 게시판 및 리뷰 데이터 조회 API (비로그인 열람 허용)
+                        .requestMatchers(
+                                "/api/review/list",      // 특정 가게의 리뷰 목록 조회
+                                "/api/review/store/info" // 특정 가게 상세 데이터 조회
+                        ).permitAll()
+
+                        // [D] 정적 리소스 및 파일 업로드 경로
+                        .requestMatchers(
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/favicon.ico",
+                                "/uploads/**"           // 사용자가 업로드한 프로필 및 리뷰 이미지
+                        ).permitAll()
+
+                        // [E] 그 외 모든 요청
+                        // 현재 컨트롤러 내부에서 직접 로그인 체크를 하고 있으므로 .permitAll() 유지
+                        // 보안을 극대화하려면 나중에 .authenticated()로 변경 검토
+                        .anyRequest().permitAll()
                 )
-                // Controller 에서 클라이언트의 접근이 들어오면
-                // 무조건 로그인을 해야하는 경우에는 로그인 검증 필터를 최 우선으로 실행시키겠다 환경설정
+
+                // 4. JWT 필터를 ID/PW 인증 필터보다 앞에 배치
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        // 위에서 작성한 설정 내용을 최종적으로 완성한 모습을 반환하겠다.
+
         return http.build();
     }
 
-    // 클라이언트가 작성한 비밀번호를 스프링에서 만든 비밀번호 암호화 파일을 이용해서 읽을 수 없는 암호화처리 변환
+    // 비밀번호 암호화 빈 등록
+    // SecurityConfig.java 내부
+
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() { // 리턴 타입을 구체적으로 지정
         return new BCryptPasswordEncoder();
     }
 }
