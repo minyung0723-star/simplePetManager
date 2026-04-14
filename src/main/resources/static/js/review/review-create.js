@@ -2,6 +2,31 @@
 //  review-create.js  |  리뷰 작성 페이지 전용 스크립트
 // =====================================================
 
+// 병원 정보 가져와서 제목 바꾸기
+document.addEventListener("DOMContentLoaded", async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const storeId = urlParams.get('storeId');
+    if(!storeId) {
+        alert("병원 정보가 없습니다.");
+        history.back();
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/review/store/info?storeId=${storeId}`);
+        if (res.ok) {
+            const store = await res.json();
+            const hospitalNameElement = document.getElementById("hospitalName"); // JSP에 이 ID가 있어야 함!
+            if (hospitalNameElement) {
+                hospitalNameElement.innerText = store.storeName || "병원 정보";
+            }
+            document.title = `${store.storeName} - 리뷰 작성`;
+        }
+    } catch (e) {
+        console.error("병원 정보를 불러오지 못했습니다.", e);
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const container    = document.getElementById('review-star-rating-container');
     const fill         = document.getElementById('review-star-rating-fill');
@@ -15,17 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // ReviewController에서 서버 측 체크를 하더라도
     // 클라이언트 측에서도 이중으로 확인하는 것을 권장:
     //
-    // (async () => {
-    //     const res = await fetch('/mypage/info');
-    //     const data = await res.json();
-    //     if (!data.success) {
-    //         alert("로그인이 필요합니다.");
-    //         location.href = "/login";
-    //     }
-    // })();
+    (async () => {
+        const res = await fetch('/mypage/info');
+        const data = await res.json();
+        if (!data.success) {
+            alert("로그인이 필요합니다.");
+            location.href = "/login";
+        }
+    })();
 
 
-    // ==================== 글자 수 카운터 ====================
+    // ==================== 글자 수 카운터 ====================????????????????????????? (수정 완)
 
     // TODO_2 ___________________________________________
     // maxlength 불일치 버그 수정 필요
@@ -34,7 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // 199 또는 200 중 하나로 통일 필요 (JSP와 여기서 동시 수정)
     if (textarea) {
         textarea.addEventListener('input', (e) => {
-            charCount.innerText = e.target.value.length;
+            let content = e.target.value;
+
+            // 만약 200자를 넘어가면 강제로 잘라버리기 (안전장치)
+            if (content.length > 200) {
+                e.target.value = content.substring(0, 200);
+                content = e.target.value;
+            }
+
+            // 카운터 업데이트
+            charCount.innerText = content.length;
         });
     }
 
@@ -94,14 +128,14 @@ const submitReview = async () => {
         storeId:       parseInt(storeId),
         reviewContent: content,
         rating:        parseFloat(rating),
-        // TODO_3 ___________________________________________
+        // TODO_3 ___________________________________________ ??????????
         // userNumber 하드코딩 제거 필요
         // 현재: userNumber: 1  ← 이 줄 삭제
         // JWT 연동 후 서버(ReviewApiController)에서
         // loginUser.getUserNumber() 로 자동 세팅하므로
         // 프론트에서 userNumber를 보낼 필요 없음
         // → reviewData 객체에서 userNumber 키 자체를 삭제
-        userNumber: 1 // ← TODO_3 완료 후 이 줄 삭제
+
     };
 
     try {
@@ -121,6 +155,11 @@ const submitReview = async () => {
         //     location.href = "/login";
         //     return;
         // }
+        if (result === "unauthorized") {
+            alert("로그인이 필요합니다.");
+            location.href = "/login";
+            return;
+        }
 
         if (result === "success") {
             alert("리뷰 등록이 완료되었습니다!");

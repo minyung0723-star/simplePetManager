@@ -3,6 +3,80 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="boardMapper">
+<mapper namespace="com.project.simplepetmanager.model.mapper.BoardMapper">
+
+    <select id="selectStoreList" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT *
+        FROM stores
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'name'">
+                        AND store_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'address'">
+                        AND store_address LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (store_name  LIKE CONCAT('%', #{keyword}, '%')
+                        OR store_address LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countStores" resultType="int">
+        SELECT COUNT(*)
+        FROM stores
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'name'">
+                        AND store_name LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'address'">
+                        AND store_address LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (store_name  LIKE CONCAT('%', #{keyword}, '%')
+                        OR store_address LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+    <select id= "selectStoreById" resultType="com.project.simplepetmanager.model.dto.Board">
+        SELECT
+            s.store_id      AS storeId,
+            s.store_name    AS storeName,
+            s.store_phone   AS storePhone,
+            s.store_address AS storeAddress,
+            s.category,
+            s.latitude,
+            s.longitude,
+            s.store_image   AS storeImage,
+            b.user_number       AS userNumber  FROM stores s
+                                                            LEFT JOIN bookmark b ON s.store_id = b.storeId
+        WHERE s.store_id = #{storeId}
+
+
+    </select>
+    <!--
+        TODO : 가게 단건 조회 쿼리
+        id         : selectStoreById
+        파라미터   : storeId (int) → stores.store_id 와 매핑
+        resultType : com.project.simplepetmanager.model.dto.Board
+        반환 컬럼  : store_id → storeId, store_name → storeName,
+                     store_phone → storePhone, store_address → storeAddress,
+                     category, latitude, longitude, store_image → storeImage
+    -->
 
 </mapper>

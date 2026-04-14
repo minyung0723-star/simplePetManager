@@ -60,9 +60,9 @@ const loadReviews = async (storeId) => {
             //
             // [방법 B] 페이지 로드 시 /mypage/info 로 내 정보를 먼저 fetch
             //   → 아래처럼 loadReviews() 호출 전에 내 userNumber를 변수에 저장 후 비교
-            //   const myInfoRes = await fetch('/mypage/info');
-            //   const myInfo = await myInfoRes.json();
-            //   const myUserNumber = myInfo.success ? myInfo.userNumber : null;
+               const myInfoRes = await fetch('/mypage/info');
+               const myInfo = await myInfoRes.json();
+               const myUserNumber = myInfo.success ? myInfo.userNumber : null;
             //   그 후 review.userNumber === myUserNumber 로 조건 변경
 
             // 리뷰 목록 렌더링
@@ -78,7 +78,7 @@ const loadReviews = async (storeId) => {
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <div>
                                     <strong>${review.nickname || '익명'}</strong>
-                                    ${review.userNumber === 1 ? `
+                                    ${review.userNumber === myUserNumber ? `
                                         <button class="btn btn-sm btn-outline-danger ms-2"
                                                 onclick="deleteReview(${review.reviewId})">삭제</button>
                                     ` : ''}
@@ -134,17 +134,16 @@ window.deleteReview = async (reviewId) => {
         // TODO_2 ___________________________________________
         // 서버에서 "unauthorized" 또는 "forbidden" 응답 시 처리 로직 추가 필요
         // JWT 연동 완료 후 컨트롤러가 해당 값을 내려주면 아래처럼 처리:
-        // const result = await response.text();
-        // if (result === "unauthorized") {
-        //     alert("로그인이 필요합니다.");
-        //     location.href = "/login";
-        //     return;
-        // }
-        // if (result === "forbidden") {
-        //     alert("본인의 리뷰만 삭제할 수 있습니다.");
-        //     return;
-        // }
-
+         const result = await response.text();
+         if (result === "unauthorized") {
+             alert("로그인이 필요합니다.");
+             location.href = "/login";
+             return;
+         }
+         if (result === "forbidden") {
+             alert("본인의 리뷰만 삭제할 수 있습니다.");
+             return;
+         }
         if (response.ok) {
             alert("삭제되었습니다.");
             loadReviews(getStoreIdFromUrl());
@@ -162,34 +161,28 @@ window.checkUserLogin = () => {
     // TODO_3 ___________________________________________
     // const isLogined = true 하드코딩 제거 필요
     // /mypage/info API를 fetch 해서 로그인 여부 판단하는 방식으로 교체:
-    //
-    // window.checkUserLogin = async () => {
-    //     try {
-    //         const res = await fetch('/mypage/info');
-    //         const data = await res.json();
-    //
-    //         if (!data.success) {
-    //             if (confirm("로그인이 필요한 서비스입니다.")) {
-    //                 location.href = "/login";
-    //             }
-    //         } else {
-    //             // TODO_4 _______________________________________
-    //             // 경로를 /review/create 와 /review/createreviewPage 중 하나로 통일 필요
-    //             // ReviewController.java 의 매핑과 반드시 일치해야 함 (ReviewController TODO_5 참고)
-    //             location.href = `/review/createreviewPage?storeId=${getStoreIdFromUrl()}`;
-    //         }
-    //     } catch (e) {
-    //         console.error("로그인 상태 확인 실패:", e);
-    //     }
-    // };
+     window.checkUserLogin = async () => {
+        try {
+            const res = await fetch('/mypage/info');
+             const data = await res.json();
 
-    const isLogined = true; // ← TODO_3 완료 후 이 줄과 아래 블록 전체 삭제
+            if (!data.success) {
+                if (confirm("로그인이 필요한 서비스입니다.")) {
+                    location.href = "/login";
+                }
+            } else {
+                // TODO_4 _______________________________________
+                // 경로를 /review/create 와 /review/createreviewPage 중 하나로 통일 필요
+                // ReviewController.java 의 매핑과 반드시 일치해야 함 (ReviewController TODO_5 참고)
+                const urlParams = new URLSearchParams(window.location.search);
+                const storeId = urlParams.get('storeId');
+                location.href = `/review/create?storeId=${storeId}`;
+            }
+        } catch (e) {
+            console.error("로그인 상태 확인 실패:", e);
+        }
+    };
 
-    if (!isLogined) {
-        if (confirm("로그인이 필요한 서비스입니다.")) location.href = "/login";
-    } else {
-        location.href = `/review/createreviewPage?storeId=${getStoreIdFromUrl()}`;
-    }
 };
 
 
@@ -198,26 +191,41 @@ window.checkUserLogin = () => {
 const checkBookmarkStatus = async (storeId) => {
     try {
         const response = await fetch(`/api/review/bookmark/check?storeId=${storeId}`);
-        const isBookmarked = await response.json();
 
-        const btn = document.getElementById("bookmarkBtn");
-        const icon = btn.querySelector("i");
 
-        if (isBookmarked) {
-            btn.classList.add("inserted");
-            icon.classList.remove("bi-bookmark");
-            icon.classList.add("bi-bookmark-fill");
-        } else {
-            btn.classList.remove("inserted");
-            icon.classList.remove("bi-bookmark-fill");
-            icon.classList.add("bi-bookmark");
+
+        // 1. 응답이 정상인지 먼저 확인
+        if (!response.ok) return;
+
+        // 2. 일단 텍스트로 읽어보기
+        const resultText = await response.text();
+
+        // 3. 만약 서버가 "unauthorized"를 보냈다면 비로그인이니까 false 처리
+        if (resultText === "unauthorized") return;
+        try {
+            const isBookmarked = JSON.parse(resultText);
+            const btn = document.getElementById("bookmarkBtn");
+            const icon = btn.querySelector("i");
+
+            // 4. 아니라면 JSON으로 파싱 (결과가 true/false로 옴)
+            if (isBookmarked === true) { // 확실하게 true일 때만!
+                btn.classList.add("inserted");
+                icon.classList.remove("bi-bookmark");
+                icon.classList.add("bi-bookmark-fill");
+            } else {
+                btn.classList.remove("inserted");
+                icon.classList.remove("bi-bookmark-fill");
+                icon.classList.add("bi-bookmark");
+            }
+
+        } catch (parseError) {
+            console.error("데이터 형식이 올바르지 않습니다:", parseError);
         }
-
         // TODO_5 ___________________________________________
         // 비로그인 상태에서 /api/review/bookmark/check 가 "unauthorized" 를 반환할 경우
         // JSON 파싱 에러 발생 가능
         // isBookmarked 값이 boolean 이 아닐 때를 대비한 방어 로직 추가 권장:
-        // const isBookmarked = typeof result === 'boolean' ? result : false;
+        // const isBookmarked = typeof result === 'boolean' ? result : false; ????????????????
 
     } catch (e) {
         console.error("북마크 상태 확인 실패:", e);
@@ -245,11 +253,11 @@ window.toggleBookmark = async () => {
             // TODO_6 ___________________________________________
             // 서버에서 "unauthorized" 응답 시 처리 로직 추가 필요
             // JWT 연동 완료 후 아래 조건 추가:
-            // if (result === "unauthorized") {
-            //     alert("로그인이 필요합니다.");
-            //     location.href = "/login";
-            //     return;
-            // }
+            if (result === "unauthorized") {
+                alert("로그인이 필요합니다.");
+                location.href = "/login";
+                return;
+            }
 
             if (result === "inserted") {
                 btn.classList.add("inserted");

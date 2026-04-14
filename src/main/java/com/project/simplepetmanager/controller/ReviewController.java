@@ -2,23 +2,17 @@ package com.project.simplepetmanager.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
-// TODO_1 ___________________________________________
-//  로그인 체크를 위한 의존성 주입 추가 필요
-//  import com.project.simplepetmanager.common.CookieUtil;
-//  import com.project.simplepetmanager.common.JwtUtil;
-//  import jakarta.servlet.http.HttpServletRequest;
-//  import lombok.RequiredArgsConstructor;
+import com.project.simplepetmanager.common.CookieUtil;
+import com.project.simplepetmanager.common.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Controller
-// TODO_2 ___________________________________________
-//  @RequiredArgsConstructor 어노테이션 추가 필요 (생성자 주입 사용 시)
+@RequiredArgsConstructor
 public class ReviewController {
 
-    // TODO_3 ___________________________________________
-    //  필드 주입 추가 필요
-    //  private final JwtUtil    jwtUtil;
-    //  private final CookieUtil cookieUtil;
+      private final JwtUtil    jwtUtil;
+      private final CookieUtil cookieUtil;
 
     /**
      * 병원 상세 + 리뷰 목록 페이지 (비로그인도 열람 가능)
@@ -47,9 +41,15 @@ public class ReviewController {
      * }
      */
     @GetMapping("/review/create")
-    public String openCreatePage() {
+    public String openCreatePage(HttpServletRequest request) {
+        String token = cookieUtil.get(request, "access_token");
+        if(token == null || !jwtUtil.isValidToken(token)) {
+            return "redirect:/login"; // 비로그인 -> 로그인 페이지로 강제 이동
+        }
         return "review/createreviewPage";
     }
+
+
 
     // TODO_5 ___________________________________________
     //  /review/createreviewPage 경로도 추가 필요
@@ -59,5 +59,6 @@ public class ReviewController {
     //  둘 중 하나로 통일:
     //  a) JS에서 /review/create 로 변경
     //  b) 여기에 @GetMapping("/review/createreviewPage") 추가
+    // a로 변경!
 
 }

@@ -32,7 +32,7 @@
                 <button type="button" id="bookmarkBtn"
                         onclick="toggleBookmark()"
                         class="btn btn-outline-secondary review-btn-circle review-bookmark-btn">
-                    <i class="bi bi-bookmark-fill"></i>
+                    <i class="bi-bookmark-fill"></i>
                 </button>
             </div>
         </section>
@@ -43,9 +43,9 @@
             TODO_2 ___________________________________________
             리뷰 개수 표시 영역 추가 권장
             review-list.js 에서 .review-total-count 클래스를 찾아서 개수를 업데이트하고 있음
-            현재 해당 클래스를 가진 요소가 없어서 카운트가 표시되지 않음:
+            현재 해당 클래스를 가진 요소가 없어서 카운트가 표시되지 않음:--%>
             <span class="review-total-count text-muted me-3">리뷰(0)</span>
-            --%>
+
             <button type="button" onclick="checkUserLogin()"
                     class="btn btn-outline-primary review-btn-write-review shadow-sm">
                 <i class="bi bi-chat-dots me-1"></i> 리뷰 작성
@@ -57,7 +57,7 @@
             <div class="text-center py-5 text-muted">리뷰를 불러오는 중입니다...</div>
         </div>
 
-        <%--
+        <%-- !!!!!!!!!!!!!!!!!!!!!!
         TODO_3 ___________________________________________
         페이지네이션 추가 고려 (리뷰 수가 많아질 경우)
         현재는 전체 리뷰를 한 번에 로드하는 방식
