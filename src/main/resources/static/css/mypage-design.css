@@ -1,228 +1,219 @@
 /* =====================================================
-   mypage-design.css
-   마이페이지 전용 스타일 (리뷰 삭제 기능 포함)
+   1. 공통 레이아웃 및 초기화
    ===================================================== */
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222; }
 
-/* =====================================================
-   마이페이지 메인 컨테이너
-   ===================================================== */
-.mypage-container {
-    max-width: 1100px;
-    margin: 48px auto;
-    padding: 0 20px;
+body {
+    background-color: #f8f9fa !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
 }
 
-.mypage-container .mypage-title {
-    font-size: 22px;
+.mypage-container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.mypage-title {
+    font-size: 26px;
     font-weight: 700;
-    margin-bottom: 28px;
+    margin-bottom: 35px;
     color: #111;
 }
 
-/* 2열 그리드 레이아웃 */
-.mypage-container .mypage-grid {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 24px;
+/* 2열 그리드 설정 */
+.mypage-grid {
+    display: grid !important;
+    grid-template-columns: 300px 1fr !important;
+    gap: 25px;
     align-items: start;
 }
 
-/* =====================================================
-   프로필 카드 (왼쪽)
-   ===================================================== */
-.mypage-container .profile-card {
+/* 카드 공통 디자인 */
+.profile-card, .review-card, .mypage-edit-container {
     background: #fff;
-    border-radius: 16px;
-    padding: 40px 24px 32px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+}
+
+/* 리뷰 카드 높이 축소 (약 2cm) */
+.review-card {
+    padding: 35px 45px;
+    min-height: 460px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
 }
 
-.mypage-container .profile-avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    border: 2px solid #e8e8e8;
-    background: #d6e4f7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
+.review-card-title {
+    font-size: 19px;
     font-weight: 700;
-    color: #4a7abf;
-    overflow: hidden;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f8f8f8;
 }
 
-.mypage-container .profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.mypage-container .profile-name  { font-size: 18px; font-weight: 700; margin-top: 6px; }
-.mypage-container .profile-email { font-size: 13px; color: #888; }
-.mypage-container .profile-review-count { font-size: 14px; color: #666; margin-top: 4px; }
-
-/* =====================================================
-   작성한 리뷰 카드 (오른쪽)
-   ===================================================== */
-.mypage-container .review-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 32px 36px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
-}
-
-.mypage-container .review-card-title {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #111;
-}
-
-.mypage-container .review-item {
-    border: 1px solid #f0f0f0;
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    transition: box-shadow .2s;
-}
-
-.mypage-container .review-item:last-child { margin-bottom: 0; }
-.mypage-container .review-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-
-/* 리뷰 헤더: 업체명, 별점 */
-.mypage-container .review-item-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
-
-.mypage-container .review-place { display: flex; align-items: center; gap: 8px; }
-
-.mypage-container .review-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    background: #e8f4e8;
-    color: #2d7a3a;
-}
-.mypage-container .review-badge.hotel    { background: #e8f0fb; color: #2c5fb3; }
-.mypage-container .review-badge.pharmacy { background: #fff0e0; color: #b35c00; }
-
-.mypage-container .review-shop-name { font-size: 15px; font-weight: 700; color: #111; }
-.mypage-container .review-stars     { color: #f5a623; font-size: 16px; letter-spacing: 1px; }
-
-/* 리뷰 본문 */
-.mypage-container .review-content   { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; }
-
-/* 리뷰 푸터: 날짜 및 삭제 버튼 */
-.mypage-container .review-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-}
-
-.mypage-container .review-date { font-size: 12px; color: #bbb; }
-
-.mypage-container .btn-review-delete {
-    background: none;
-    border: none;
-    color: #ff5f5f;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 0;
-    text-decoration: underline;
-    transition: color 0.2s;
-}
-.mypage-container .btn-review-delete:hover { color: #d43f3f; }
-
-.mypage-container .review-empty { text-align: center; padding: 52px 0; color: #aaa; font-size: 14px; }
-
-/* =====================================================
-   하단 액션 버튼 (회원수정, 탈퇴)
-   ===================================================== */
-.mypage-container .bottom-actions {
+/* 메인 마이페이지 하단 버튼 우측 정렬 */
+.bottom-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 28px;
+    margin-top: 30px;
 }
 
-.mypage-container .btn-edit {
-    padding: 12px 28px;
-    background: #f5f5f5;
-    color: #222;
-    border: 1.5px solid #ddd;
-    border-radius: 10px;
+/* =====================================================
+   2. 회원정보 수정 페이지 (image_54e84a 정렬 교정)
+   ===================================================== */
+.mypage-edit-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 50px;
+}
+
+/* 프로필 섹션 수직 중앙 정렬 */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #eef2ff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.profile-img-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3b6ef5;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+/* 파일 선택 입력창 박스 교정 */
+.profile-img-input {
+    width: 100%;
+    max-width: 350px; /* 스크린샷보다 조금 더 넓게 조정 */
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* 수정 폼 입력창 스타일 */
+.mypage-edit-container .form-group { margin-bottom: 20px; }
+.mypage-edit-container .form-group label {
+    display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #444;
+}
+.mypage-edit-container .form-group input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #eee;
+    background-color: #f8f9fa;
+    font-size: 15px;
+}
+
+/* 수정 페이지 하단 버튼 */
+.btn-actions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    margin-top: 35px;
+}
+
+/* =====================================================
+   3. 회원탈퇴 모달 (image_54e80e 디자인 교정)
+   ===================================================== */
+.mypage-modal-overlay {
+    display: none;
+    position: fixed !important;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+.mypage-modal-overlay.open { display: flex !important; }
+
+.mypage-modal-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 28px;
+    width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+/* 모달 내 입력창 꽉 차게 교정 */
+.mypage-modal-box .form-group input {
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #eee;
+    background-color: #f8f9fa;
+    margin-top: 10px;
+}
+
+.modal-actions { display: flex; gap: 12px; margin-top: 25px; }
+.modal-actions button {
+    flex: 1;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+/* [핵심] 탈퇴하기 버튼 빨간색 강조 */
+.btn-modal-confirm {
+    background-color: #fa5252 !important;
+    color: #fff !important;
+}
+.btn-modal-confirm:hover { background-color: #e03131 !important; }
+
+.btn-modal-cancel {
+    background-color: #f1f3f5 !important;
+    color: #495057 !important;
+}
+
+/* =====================================================
+   4. 공통 버튼 스타일
+   ===================================================== */
+.btn-edit, .btn-withdraw, .btn-save, .btn-cancel {
+    padding: 12px 24px;
+    border-radius: 12px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
+    transition: 0.2s;
+    border: none;
+    text-align: center;
 }
-.mypage-container .btn-edit:hover { background: #e8e8e8; }
 
-.mypage-container .btn-withdraw {
-    padding: 12px 28px;
-    background: #fff;
-    color: #e53e3e;
-    border: 1.5px solid #e53e3e;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
-.mypage-container .btn-withdraw:hover { background: #e53e3e; color: #fff; }
-
-/* =====================================================
-   탈퇴 확인 모달
-   ===================================================== */
-.mypage-modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 9000;
-    align-items: center;
-    justify-content: center;
-}
-.mypage-modal-overlay.open { display: flex; }
-
-.mypage-modal-box {
-    background: #fff;
-    border-radius: 14px;
-    padding: 36px 32px;
-    width: 380px;
-    max-width: 95vw;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.14);
-}
-.mypage-modal-box .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-.mypage-modal-box .modal-desc  { font-size: 13px; color: #888; margin-bottom: 22px; }
-
-.mypage-modal-box .form-group         { margin-bottom: 16px; }
-.mypage-modal-box .form-group label   { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 7px; }
-.mypage-modal-box .form-group input   { width: 100%; padding: 11px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; }
-.mypage-modal-box .form-group input:focus { border-color: #222; }
-
-.mypage-modal-box .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-.mypage-modal-box .btn-cancel    { padding: 10px 22px; background: #f5f5f5; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.mypage-modal-box .btn-danger    { padding: 10px 22px; background: #e53e3e; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.mypage-modal-box .btn-danger:hover { background: #c53030; }
-
-/* =====================================================
-   반응형 설정
-   ===================================================== */
-@media (max-width: 700px) {
-    .mypage-container .mypage-grid { grid-template-columns: 1fr; }
-}
+.btn-edit { background: #f1f3f5; color: #495057; }
+.btn-withdraw { background: #fff; color: #fa5252; border: 1px solid #ffc9c9; }
+.btn-save { background: #111; color: #fff; }

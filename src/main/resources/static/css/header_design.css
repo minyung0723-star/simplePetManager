@@ -1,11 +1,19 @@
 /* =========================================
    1. 전역 설정 및 초기화
    ========================================= */
-body {
-    background-color: #f5f6f8;
+* {
+    box-sizing: border-box; /* 레이아웃 깨짐 방지의 핵심 */
     margin: 0;
     padding: 0;
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+body {
+    background-color: #f7f8fa;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #222;
+    line-height: 1.4;
 }
 
 /********************* 2. Header (헤더) *****************************/
@@ -19,7 +27,7 @@ body {
     border-bottom: 1px solid #f0f0f0;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* 모달보다는 낮게 설정 */
 }
 
 .header-left {
@@ -73,6 +81,8 @@ body {
     display: flex;
     gap: 8px;
     align-items: center;
+    flex: 1;
+    justify-content: flex-end;
 }
 
 /* 헤더 공통 버튼 */
@@ -95,6 +105,7 @@ footer {
     background: #ffffff !important;
     border-top: 1px solid #e8e8e8 !important;
     padding: 60px 0 !important;
+    margin-top: 80px; /* 컨텐츠와 겹치지 않게 여백 추가 */
 }
 
 .footer-container {
@@ -103,6 +114,7 @@ footer {
     align-items: flex-start;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 .footer-logo img {
@@ -131,7 +143,6 @@ footer {
 .customer-phone { font-size: 28px; font-weight: 700; color: #222; }
 
 /********************* 4. User Auth Common (인증 공통 뼈대) *****************************/
-/* 로그인, 회원가입, 찾기 페이지에서 공통으로 쓰는 카드 구조 */
 .user-login-container {
     max-width: 520px;
     margin: 100px auto;
@@ -152,10 +163,13 @@ footer {
 }
 
 .user-login-input {
+    width: 100%; /* 너비 명시 */
+    border: 1px solid #ddd;
     border-radius: 8px;
     height: 50px;
     font-size: 15px;
     margin-bottom: 12px;
+    padding: 0 15px;
 }
 
 .user-login-input:focus {
@@ -173,36 +187,31 @@ footer {
     font-weight: bold;
     width: 100%;
     border: none;
+    cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .user-login-btn:hover { background-color: #2f5ad1; }
 .user-login-btn:disabled { background-color: #ced4da; cursor: not-allowed; }
 
-/* login.css 또는 header_design.css 하단에 추가 */
-
 .user-login-links {
     font-size: 14px;
-    color: #888; /* 구분선 기본 색상 */
-    margin-top: 1.5rem; /* mt-4에 해당 */
+    color: #888;
+    margin-top: 1.5rem;
 }
 
-/* 링크 태그 공통 스타일 초기화 */
 .user-login-links a {
-    text-decoration: none; /* 밑줄 절대 없음 */
-    color: #666; /* 글자 색상 (진한 회색) */
-    cursor: default; /* 마우스 커서 화살표 유지 */
-    margin: 0 5px; /* 링크 간 간격 */
-    transition: color 0.2s; /* 부드러운 색상 변화 */
+    text-decoration: none;
+    color: #666;
+    margin: 0 5px;
+    transition: color 0.2s;
 }
 
-/* 구분선 스타일 */
 .user-login-links span {
-    color: #ccc; /* 구분선 색상 (연한 회색) */
+    color: #ccc;
     margin: 0 3px;
 }
 
-/* (선택 사항) 마우스를 올렸을 때 아주 살짝만 티나게 하고 싶다면 */
 .user-login-links a:hover {
-    color: #3b6ef5; /* 아주 살짝 파란색으로 변경 (완전히 안 바뀌게 하려면 이 블록 삭제) */
+    color: #3b6ef5;
 }
