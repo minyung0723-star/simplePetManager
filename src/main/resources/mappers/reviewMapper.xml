@@ -76,7 +76,7 @@
         현재: AND storeId = #{storeId}    ← camelCase
         DB 컬럼이 store_id 라면: AND store_id = #{storeId} 로 변경
         -->
-        AND store_id = #{storeId}
+        AND storeId = #{storeId}
     </select>
 
     <!-- 북마크 등록 -->
@@ -87,7 +87,7 @@
         현재: storeId  ← camelCase
         DB 컬럼이 store_id 라면: store_id 로 변경
         -->
-        INSERT INTO bookmark (user_number, store_id, prefer)
+        INSERT INTO bookmark (user_number, storeId, prefer)
         VALUES (#{userNumber}, #{storeId}, 1)
     </insert>
 
@@ -100,7 +100,7 @@
         TODO_4 와 동일하게 컬럼명 통일 필요
         AND storeId = #{storeId}  →  AND store_id = #{storeId}
         -->
-        AND store_id = #{storeId}
+        AND storeId = #{storeId}
     </delete>
 
     <!-- 병원(가게) 상세 정보 조회 -->
