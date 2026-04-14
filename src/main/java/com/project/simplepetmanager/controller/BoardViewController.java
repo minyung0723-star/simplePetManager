@@ -3,6 +3,7 @@ package com.project.simplepetmanager.controller;
 import com.project.simplepetmanager.common.CookieUtil;
 import com.project.simplepetmanager.common.JwtUtil;
 import com.project.simplepetmanager.model.dto.Board;
+import com.project.simplepetmanager.model.dto.BookMark;
 import com.project.simplepetmanager.model.dto.User;
 import com.project.simplepetmanager.model.service.BoardService;
 import com.project.simplepetmanager.model.service.BookmarkService;
@@ -81,8 +82,14 @@ public class BoardViewController {
                 User loginUser       = userService.getUserByEmail(jwtUtil.getEmail(token));
                 boolean isBookmarked = bookmarkService.confirmBookmark(
                         loginUser.getUserNumber(), storeId);
+
+                // 즐겨찾기 목록 조회 후 모델에 추가
+                // Bookmarkpopup.jsp 의 ${bookmarkList} 렌더링에 사용
+                List<BookMark> bookmarkList = bookmarkService.findBookMarkListByUser(loginUser.getUserNumber());
+
                 mav.addObject("loginUser",    loginUser);
                 mav.addObject("isBookmarked", isBookmarked);
+                mav.addObject("bookmarkList", bookmarkList);
             } catch (Exception e) {
                 // loginUser 를 model 에 넣지 않으면 JSP ${loginUser.userNumber} 가 빈 문자열로
                 // 렌더링되어 /api/bookmark/add 호출 시 userNumber="" → Spring 타입 변환 실패(400)

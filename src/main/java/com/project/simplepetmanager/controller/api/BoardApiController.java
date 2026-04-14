@@ -29,8 +29,8 @@ public class BoardApiController {
      */
     @PostMapping("/api/bookmark/add")
     public ResponseEntity<Map<String, Object>> toggleBookmark(
-            @RequestParam int userNumber,
-            @RequestParam int storeId) {
+            @RequestParam long userNumber,
+            @RequestParam long storeId){
 
         boolean isBookmarked = bookmarkService.confirmBookmark(userNumber, storeId);
 
@@ -51,15 +51,15 @@ public class BoardApiController {
     /** 즐겨찾기 삭제 */
     @DeleteMapping("/api/bookmark/delete")
     public ResponseEntity<String> deleteBookmark(
-            @RequestParam int userNumber,
-            @RequestParam int storeId) {
+            @RequestParam long userNumber,
+            @RequestParam long storeId) {
         bookmarkService.deleteBookmark(userNumber, storeId);
         return ResponseEntity.ok("즐겨찾기 삭제 완료");
     }
 
     /** 즐겨찾기 목록 조회 */
     @GetMapping("/api/bookmark/list")
-    public List<BookMark> getBookmarkList(@RequestParam int userNumber) {
+    public List<BookMark> getBookmarkList(@RequestParam long userNumber) {
         return bookmarkService.findBookMarkListByUser(userNumber);
     }
 }

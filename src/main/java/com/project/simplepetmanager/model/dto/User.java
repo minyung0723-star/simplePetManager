@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class User {
-    private Integer userNumber;         //회원번호
+    private Long userNumber;            //회원번호
     private String userId;              //회원아이디
     private String userPassword;        //회원비밀번호
     private String userName;            //회원이름
@@ -15,5 +15,4 @@ public class User {
     private LocalDateTime modifiedDate; //수정일
     private String profileImage;        //프로필이미지
     private String imageUrl;            //이미지경로
-
 }

@@ -129,7 +129,7 @@ window.deleteReview = async (reviewId) => {
     if (!confirm("정말 이 리뷰를 삭제하시겠습니까?")) return;
 
     try {
-        const response = await fetch(`/api/review/delete?reviewId=${reviewId}`, { method: 'POST' });
+        const response = await fetch(`/api/review/delete?reviewId=${reviewId}`, { method: 'DELETE' });
 
         // TODO_2 ___________________________________________
         // 서버에서 "unauthorized" 또는 "forbidden" 응답 시 처리 로직 추가 필요

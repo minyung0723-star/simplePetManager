@@ -6,7 +6,7 @@
 <mapper namespace="com.project.simplepetmanager.model.mapper.BookmarkMapper">
 
     <!-- 즐겨찾기 목록 조회 (stores JOIN) -->
-    <select id="getBookmarkListByUser" parameterType="int" resultType="com.project.simplepetmanager.model.dto.BookMark">
+    <select id="getBookmarkListByUser" parameterType="long" resultType="com.project.simplepetmanager.model.dto.BookMark">
         SELECT
             b.user_number   AS userNumber,
             s.store_id      AS storeId,
