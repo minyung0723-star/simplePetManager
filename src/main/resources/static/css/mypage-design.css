@@ -1,17 +1,14 @@
 /* =====================================================
    mypage-design.css
-   마이페이지(myPage-origin.jsp, myPageEdit-origin.jsp) 전용 스타일
-   공통 헤더/푸터 스타일은 header_design.css 에 있음
+   마이페이지 전용 스타일 (리뷰 삭제 기능 포함)
    ===================================================== */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222; }
 
 /* =====================================================
-   마이페이지 메인 (myPage-origin.jsp)
-   컨테이너명: mypage-container
+   마이페이지 메인 컨테이너
    ===================================================== */
-
 .mypage-container {
     max-width: 1100px;
     margin: 48px auto;
@@ -25,7 +22,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     color: #111;
 }
 
-/* 2열 그리드 */
+/* 2열 그리드 레이아웃 */
 .mypage-container .mypage-grid {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -33,7 +30,9 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     align-items: start;
 }
 
-/* 프로필 카드 (왼쪽) */
+/* =====================================================
+   프로필 카드 (왼쪽)
+   ===================================================== */
 .mypage-container .profile-card {
     background: #fff;
     border-radius: 16px;
@@ -49,7 +48,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    object-fit: cover;
     border: 2px solid #e8e8e8;
     background: #d6e4f7;
     display: flex;
@@ -65,13 +63,15 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
 }
 
 .mypage-container .profile-name  { font-size: 18px; font-weight: 700; margin-top: 6px; }
 .mypage-container .profile-email { font-size: 13px; color: #888; }
+.mypage-container .profile-review-count { font-size: 14px; color: #666; margin-top: 4px; }
 
-/* 리뷰 카드 (오른쪽) */
+/* =====================================================
+   작성한 리뷰 카드 (오른쪽)
+   ===================================================== */
 .mypage-container .review-card {
     background: #fff;
     border-radius: 16px;
@@ -97,6 +97,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
 .mypage-container .review-item:last-child { margin-bottom: 0; }
 .mypage-container .review-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
 
+/* 리뷰 헤더: 업체명, 별점 */
 .mypage-container .review-item-header {
     display: flex;
     align-items: center;
@@ -104,7 +105,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     margin-bottom: 8px;
 }
 
-.mypage-container .review-place   { display: flex; align-items: center; gap: 8px; }
+.mypage-container .review-place { display: flex; align-items: center; gap: 8px; }
 
 .mypage-container .review-badge {
     display: inline-block;
@@ -115,17 +116,43 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     background: #e8f4e8;
     color: #2d7a3a;
 }
-
 .mypage-container .review-badge.hotel    { background: #e8f0fb; color: #2c5fb3; }
 .mypage-container .review-badge.pharmacy { background: #fff0e0; color: #b35c00; }
 
 .mypage-container .review-shop-name { font-size: 15px; font-weight: 700; color: #111; }
 .mypage-container .review-stars     { color: #f5a623; font-size: 16px; letter-spacing: 1px; }
-.mypage-container .review-content   { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; }
-.mypage-container .review-date      { font-size: 12px; color: #bbb; }
-.mypage-container .review-empty     { text-align: center; padding: 52px 0; color: #aaa; font-size: 14px; }
 
-/* 하단 버튼 */
+/* 리뷰 본문 */
+.mypage-container .review-content   { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; }
+
+/* 리뷰 푸터: 날짜 및 삭제 버튼 */
+.mypage-container .review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.mypage-container .review-date { font-size: 12px; color: #bbb; }
+
+.mypage-container .btn-review-delete {
+    background: none;
+    border: none;
+    color: #ff5f5f;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 0;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+.mypage-container .btn-review-delete:hover { color: #d43f3f; }
+
+.mypage-container .review-empty { text-align: center; padding: 52px 0; color: #aaa; font-size: 14px; }
+
+/* =====================================================
+   하단 액션 버튼 (회원수정, 탈퇴)
+   ===================================================== */
 .mypage-container .bottom-actions {
     display: flex;
     justify-content: flex-end;
@@ -144,7 +171,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     cursor: pointer;
     text-decoration: none;
 }
-
 .mypage-container .btn-edit:hover { background: #e8e8e8; }
 
 .mypage-container .btn-withdraw {
@@ -157,10 +183,11 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     font-weight: 600;
     cursor: pointer;
 }
-
 .mypage-container .btn-withdraw:hover { background: #e53e3e; color: #fff; }
 
-/* 탈퇴 모달 */
+/* =====================================================
+   탈퇴 확인 모달
+   ===================================================== */
 .mypage-modal-overlay {
     display: none;
     position: fixed;
@@ -170,7 +197,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     align-items: center;
     justify-content: center;
 }
-
 .mypage-modal-overlay.open { display: flex; }
 
 .mypage-modal-box {
@@ -181,7 +207,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     max-width: 95vw;
     box-shadow: 0 8px 32px rgba(0,0,0,0.14);
 }
-
 .mypage-modal-box .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
 .mypage-modal-box .modal-desc  { font-size: 13px; color: #888; margin-bottom: 22px; }
 
@@ -196,94 +221,8 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
 .mypage-modal-box .btn-danger:hover { background: #c53030; }
 
 /* =====================================================
-   회원정보 수정 (myPageEdit-origin.jsp)
-   컨테이너명: mypage-edit-container
+   반응형 설정
    ===================================================== */
-
-.mypage-edit-container {
-    max-width: 480px;
-    margin: 56px auto;
-    padding: 0 20px 60px;
-}
-
-/* 프로필 사진 섹션 */
-.mypage-edit-container .profile-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-}
-
-.mypage-edit-container .profile-avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: #d6e4f7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 38px;
-    font-weight: 700;
-    color: #4a7abf;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid #e8e8e8;
-}
-
-.mypage-edit-container .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.mypage-edit-container .profile-img-label  { font-size: 13px; color: #4a7abf; cursor: pointer; font-weight: 600; }
-.mypage-edit-container .profile-img-input  { display: none; }
-
-.mypage-edit-container .divider        { border: none; border-top: 1px solid #e8e8e8; margin-bottom: 28px; }
-.mypage-edit-container .divider-bottom { border: none; border-top: 1px solid #e8e8e8; margin: 32px 0 24px; }
-
-/* 폼 */
-.mypage-edit-container .form-group             { margin-bottom: 20px; }
-.mypage-edit-container .form-group label       { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
-.mypage-edit-container .form-group input       { width: 100%; padding: 14px 16px; border: 1.5px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none; background: #fff; color: #222; }
-.mypage-edit-container .form-group input::placeholder { color: #bbb; }
-.mypage-edit-container .form-group input:focus { border-color: #4a7abf; }
-
-/* 메시지 */
-.mypage-edit-container .msg        { margin-top: 8px; font-size: 12px; padding: 8px 12px; border-radius: 6px; display: none; }
-.mypage-edit-container .msg.success { background: #f0fff4; color: #276749; display: block; }
-.mypage-edit-container .msg.error   { background: #fff5f5; color: #c53030; display: block; }
-
-.mypage-edit-container .global-msg         { margin-bottom: 16px; font-size: 13px; padding: 10px 14px; border-radius: 8px; display: none; }
-.mypage-edit-container .global-msg.success { background: #f0fff4; color: #276749; display: block; }
-.mypage-edit-container .global-msg.error   { background: #fff5f5; color: #c53030; display: block; }
-
-/* 버튼 */
-.mypage-edit-container .btn-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
-
-.mypage-edit-container .btn-cancel {
-    padding: 15px;
-    background: #f5f5f5;
-    color: #444;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.mypage-edit-container .btn-cancel:hover { background: #eaeaea; }
-
-.mypage-edit-container .btn-save {
-    padding: 15px;
-    background: #111;
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.mypage-edit-container .btn-save:hover { background: #333; }
-
-/* 반응형 */
 @media (max-width: 700px) {
     .mypage-container .mypage-grid { grid-template-columns: 1fr; }
 }

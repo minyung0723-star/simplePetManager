@@ -18,7 +18,6 @@
 
     <div class="mypage-grid">
 
-        <!-- 프로필 카드 (왼쪽) -->
         <div class="profile-card">
             <div class="profile-avatar">
                 <c:choose>
@@ -35,7 +34,6 @@
             <div class="profile-review-count">리뷰 ${fn:length(myReviews)}개</div>
         </div>
 
-        <!-- 작성한 리뷰 (오른쪽) -->
         <div class="review-card">
             <div class="review-card-title">작성한 리뷰</div>
 
@@ -67,23 +65,24 @@
                                 </span>
                             </div>
                             <div class="review-content">${review.review_content}</div>
-                            <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
+
+                            <div class="review-footer">
+                                <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
+                                <button type="button" class="btn-review-delete" onclick="deleteMyReview(${review.review_id})">삭제</button>
+                            </div>
                         </div>
                     </c:forEach>
                 </c:otherwise>
             </c:choose>
-
         </div>
     </div>
 
-    <!-- 하단 버튼 -->
     <div class="bottom-actions">
         <a href="${pageContext.request.contextPath}/mypage/myPageEdit" class="btn-edit">회원정보 수정</a>
         <button class="btn-withdraw" id="btn-withdraw-open">회원탈퇴</button>
     </div>
 </div>
 
-<!-- 탈퇴 확인 모달 -->
 <div class="mypage-modal-overlay" id="withdraw-modal">
     <div class="mypage-modal-box">
         <div class="modal-title">정말 탈퇴하시겠어요?</div>
@@ -101,7 +100,10 @@
 
 <%@ include file="../common/footer.jsp" %>
 
-<%-- 탈퇴 모달 이벤트만 담당하는 mypage.js --%>
+<script>
+    // JS 파일에서 사용할 전역 변수 설정
+    window.contextPath = '${pageContext.request.contextPath}';
+</script>
 <script src="${pageContext.request.contextPath}/js/mypage.js"></script>
 
 </body>

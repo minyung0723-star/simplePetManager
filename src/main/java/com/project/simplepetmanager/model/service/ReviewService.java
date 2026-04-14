@@ -59,15 +59,26 @@ public class ReviewService {
 
     // ===================== 리뷰 삭제 =====================
 
-    /** 리뷰 삭제 */
+    /** 리뷰 상세 조회 (삭제 전 본인 확인용) */
     public Review getReviewById(int reviewId) {
-        // Mapper를 통해 DB에서 리뷰 1건을 조회해와야 해
         return reviewMapper.getReviewById(reviewId);
     }
 
-    public String removeReview(int reviewId) {
-        int result = reviewMapper.deleteReview(reviewId);
-        return (result > 0) ? "success" : "fail";
+    /** * 리뷰 삭제
+     * loginUserNumber: 현재 로그인한 사용자의 고유 번호
+     */
+    public String removeReview(int reviewId, int loginUserNumber) {
+        // 1. DB에서 삭제할 리뷰를 미리 가져옵니다.
+        Review review = reviewMapper.getReviewById(reviewId);
+
+        // 2. 검증: 리뷰가 존재하고, 리뷰 작성자 번호와 로그인한 유저 번호가 같을 때만 삭제
+        if (review != null && review.getUserNumber() == loginUserNumber) {
+            int result = reviewMapper.deleteReview(reviewId);
+            return (result > 0) ? "success" : "fail";
+        }
+
+        // 3. 본인이 아니거나 리뷰가 없는 경우
+        return "unauthorized";
     }
 
     // ===================== 북마크 =====================

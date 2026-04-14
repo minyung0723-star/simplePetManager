@@ -115,7 +115,7 @@ public class ReviewApiController {
           }
 
         try {
-            return reviewService.removeReview(reviewId);
+            return reviewService.removeReview(reviewId,loginUser.getUserNumber());
         } catch (Exception e) {
             e.printStackTrace();
             return "fail";
