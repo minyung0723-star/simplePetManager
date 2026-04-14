@@ -44,10 +44,10 @@ public class MyPageViewController {
             return "redirect:/login";
         }
 
-       // List<Map<String, Object>> myReviews = reviewService.getReviewsByUserNumber(user.getUserNumber());
+       List<Map<String, Object>> myReviews = reviewService.getReviewsByUserNumber(user.getUserNumber());
 
         model.addAttribute("user",      user);
-      //  model.addAttribute("myReviews", myReviews);
+        model.addAttribute("myReviews", myReviews);
 
         return "mypage/myPage";
     }

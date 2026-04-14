@@ -52,16 +52,16 @@
 
     <select id="getReviewsByUserNumber" resultType="map">
         SELECT
-            r.review_id,
-            r.review_content,
-            r.rating,
-            r.created_date,
-            s.store_name AS storeName,
-            s.store_id   AS storeId
-        FROM reviews r
-        JOIN stores s ON r.store_id = s.store_id
-        WHERE r.user_number = #{userNumber}
-        ORDER BY r.created_date DESC
+            review_id,
+            review_content,
+            category       AS review_category,
+            rating         AS review_rating,
+            created_date,
+            store_name     AS shop_name,       -- 여기 s. 이나 review. 을 붙이지 마세요!
+            store_id       AS storeId
+        FROM reviews
+        WHERE user_number = #{userNumber}      -- 파라미터 이름만 정확히 기입
+        ORDER BY created_date DESC
     </select>
 
 
@@ -119,6 +119,7 @@
         INSERT INTO reviews (
             store_id,
             user_number,
+            store_name,
             category,
             review_content,
             rating,
@@ -126,6 +127,7 @@
         ) VALUES (
                      #{storeId},
                      #{userNumber},
+                     #{storeName},
                      #{category},
                      #{reviewContent},
                      #{rating},

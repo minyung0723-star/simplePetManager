@@ -72,6 +72,16 @@ public class ReviewApiController {
         review.setUserNumber(loginUser.getUserNumber());
 
         try {
+            // 3. ★ 핵심: 가게 이름(store_name) 주입 ★
+            // DB에 store_name이 NOT NULL이므로, 등록 전에 반드시 이름을 채워줘야 합니다.
+            Board storeInfo = reviewService.getStoreDetail(review.getStoreId());
+            if (storeInfo != null) {
+                review.setStoreName(storeInfo.getStoreName()); // Board 객체에서 이름을 가져와 Review에 세팅
+            } else {
+                // 혹시라도 가게 정보가 없으면 기본값이라도 넣어 에러 방지
+                review.setStoreName("알 수 없는 상호명");
+            }
+
             String result = reviewService.registerReview(review);
             return result;
         } catch (Exception e) {
