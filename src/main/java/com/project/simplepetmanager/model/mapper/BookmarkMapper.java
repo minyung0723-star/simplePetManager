@@ -48,4 +48,5 @@ public interface BookmarkMapper {
     void deleteBookmark(@Param("userNumber") int userNumber,
                         @Param("storeId")    int storeId);
 
+
 }

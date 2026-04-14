@@ -35,3 +35,4 @@ public class BookmarkService {
         return bookmarkMapper.checkBookmarkExists(userNumber, storeId) > 0;
     }
 }
+
