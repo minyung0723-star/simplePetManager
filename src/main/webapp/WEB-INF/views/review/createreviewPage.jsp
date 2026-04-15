@@ -12,25 +12,25 @@
 
         <form id="reviewForm" enctype="multipart/form-data">
             <div class="text-center py-4">
-            <div id="review-star-rating-container" class="review-star-rating-container">
-                <div class="review-star-rating-empty">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
+                <div id="review-star-rating-container" class="review-star-rating-container">
+                    <div class="review-star-rating-empty">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div id="review-star-rating-fill" class="review-star-rating-fill">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
                 </div>
-                <div id="review-star-rating-fill" class="review-star-rating-fill">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                </div>
+                <input type="hidden" name="rating" id="rating-value" value="0">
+                <div id="rating-display" class="fw-bold mt-2">0.0 점</div>
             </div>
-            <input type="hidden" name="rating" id="rating-value" value="0">
-            <div id="rating-display" class="fw-bold mt-2">0.0 점</div>
-        </div>
 
             <div class="py-2">
         <textarea name="reviewContent" id="reviewContent" class="form-control review-textarea"
@@ -50,6 +50,7 @@
 </div>
 
 <script src="${pageContext.request.contextPath}/js/review/review-common.js"></script>
+<script src="${pageContext.request.contextPath}/js/app-common.js"></script>
 <script src="${pageContext.request.contextPath}/js/review/review-create.js"></script>
 <script src="${pageContext.request.contextPath}/js/design.js"></script>
 <%@include file="../common/footer.jsp"%>

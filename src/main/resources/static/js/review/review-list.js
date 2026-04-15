@@ -49,21 +49,9 @@ const loadReviews = async (storeId) => {
                 totalCountElement.innerText = `리뷰(${data.length})`;
             }
 
-            // TODO_1 ___________________________________________
-            // 삭제 버튼 표시 조건이 하드코딩 (userNumber === 1) 으로 되어 있음
-            // 로그인한 유저의 userNumber를 서버에서 받아와서 비교해야 함
-            // 해결 방법 두 가지 중 선택:
-            //
-            // [방법 A] 리뷰 목록 API 응답에 "내 userNumber" 필드 추가
-            //   → getReviewList() 결과에 로그인 유저 번호를 함께 내려주도록
-            //     ReviewApiController 수정 필요
-            //
-            // [방법 B] 페이지 로드 시 /mypage/info 로 내 정보를 먼저 fetch
-            //   → 아래처럼 loadReviews() 호출 전에 내 userNumber를 변수에 저장 후 비교
-               const myInfoRes = await fetch('/mypage/info');
-               const myInfo = await myInfoRes.json();
-               const myUserNumber = myInfo.success ? myInfo.userNumber : null;
-            //   그 후 review.userNumber === myUserNumber 로 조건 변경
+            // 로그인 유저 번호 조회 (공통 유틸 사용)
+            const myInfo       = await fetchMyInfo();
+            const myUserNumber = myInfo.success ? myInfo.userNumber : null;
 
             // 리뷰 목록 렌더링
             container.innerHTML = data.map(review => `
@@ -134,16 +122,16 @@ window.deleteReview = async (reviewId) => {
         // TODO_2 ___________________________________________
         // 서버에서 "unauthorized" 또는 "forbidden" 응답 시 처리 로직 추가 필요
         // JWT 연동 완료 후 컨트롤러가 해당 값을 내려주면 아래처럼 처리:
-         const result = await response.text();
-         if (result === "unauthorized") {
-             alert("로그인이 필요합니다.");
-             location.href = "/login";
-             return;
-         }
-         if (result === "forbidden") {
-             alert("본인의 리뷰만 삭제할 수 있습니다.");
-             return;
-         }
+        const result = await response.text();
+        if (result === "unauthorized") {
+            alert("로그인이 필요합니다.");
+            location.href = "/login";
+            return;
+        }
+        if (result === "forbidden") {
+            alert("본인의 리뷰만 삭제할 수 있습니다.");
+            return;
+        }
         if (response.ok) {
             alert("삭제되었습니다.");
             loadReviews(getStoreIdFromUrl());
@@ -156,33 +144,23 @@ window.deleteReview = async (reviewId) => {
 
 // ==================== 로그인 체크 후 리뷰 작성 이동 ====================
 
-window.checkUserLogin = () => {
+// ==================== 로그인 체크 후 리뷰 작성 이동 ====================
 
-    // TODO_3 ___________________________________________
-    // const isLogined = true 하드코딩 제거 필요
-    // /mypage/info API를 fetch 해서 로그인 여부 판단하는 방식으로 교체:
-     window.checkUserLogin = async () => {
-        try {
-            const res = await fetch('/mypage/info');
-             const data = await res.json();
+window.checkUserLogin = async () => {
+    try {
+        const data = await fetchMyInfo();
 
-            if (!data.success) {
-                if (confirm("로그인이 필요한 서비스입니다.")) {
-                    location.href = "/login";
-                }
-            } else {
-                // TODO_4 _______________________________________
-                // 경로를 /review/create 와 /review/createreviewPage 중 하나로 통일 필요
-                // ReviewController.java 의 매핑과 반드시 일치해야 함 (ReviewController TODO_5 참고)
-                const urlParams = new URLSearchParams(window.location.search);
-                const storeId = urlParams.get('storeId');
-                location.href = `/review/create?storeId=${storeId}`;
+        if (!data.success) {
+            if (confirm("로그인이 필요한 서비스입니다.")) {
+                location.href = "/login";
             }
-        } catch (e) {
-            console.error("로그인 상태 확인 실패:", e);
+        } else {
+            const storeId = new URLSearchParams(window.location.search).get('storeId');
+            location.href = `/review/create?storeId=${storeId}`;
         }
-    };
-
+    } catch (e) {
+        console.error("로그인 상태 확인 실패:", e);
+    }
 };
 
 

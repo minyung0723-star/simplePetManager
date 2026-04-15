@@ -56,7 +56,7 @@
         }
     }
 
-    function toggleBookmark(btn) {
+    async function toggleBookmark(btn) {
         const userNumber = btn.dataset.userNumber;
         const storeId    = btn.dataset.storeId;
         const lat        = parseFloat(btn.dataset.lat) || 0;
@@ -68,40 +68,40 @@
         }
 
         <%-- 핵심: JSP는 <script> 안의 ${변수}도 EL로 해석한다 --%>
-        <%-- 템플릿 리터럴(`userNumber=${userNumber}`) 쓰면 --%>
-        <%-- JSP 렌더링 시 ${userNumber}를 EL로 치환 → 빈 문자열로 고정됨 --%>
         <%-- 반드시 문자열 연결(+) 방식으로 작성해야 JS 변수가 런타임에 평가됨 --%>
-        fetch("/api/bookmark/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "userNumber=" + userNumber + "&storeId=" + storeId
-        })
-            .then(res => res.json())
-            .then(data => {
-                const icon = document.getElementById("bookmarkIcon");
-                const btn  = document.getElementById("bookmarkBtn");
+        try {
+            const res  = await fetch("/api/bookmark/add", {
+                method:  "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body:    "userNumber=" + userNumber + "&storeId=" + storeId
+            });
+            const data = await res.json();
 
-                if (data.bookmarked) {
-                    icon.className   = "bi bi-star-fill";
-                    icon.style.color = "gold";
-                    btn.classList.add("active");
+            const icon = document.getElementById("bookmarkIcon");
+            const bookmarkBtn = document.getElementById("bookmarkBtn");
 
-                    const storeName    = document.getElementById("storeName")?.innerText    || "";
-                    const storeAddress = document.getElementById("storeAddress")?.innerText || "";
-                    if (typeof addBookmarkCard === "function") {
-                        addBookmarkCard(storeName, storeAddress, lat, lng);
-                    }
-                } else {
-                    icon.className   = "bi bi-star";
-                    icon.style.color = "";
-                    btn.classList.remove("active");
+            if (data.bookmarked) {
+                icon.className   = "bi bi-star-fill";
+                icon.style.color = "gold";
+                bookmarkBtn.classList.add("active");
 
-                    const storeName = document.getElementById("storeName")?.innerText || "";
-                    if (typeof removeBookmarkCard === "function") {
-                        removeBookmarkCard(storeName);
-                    }
+                const storeName    = document.getElementById("storeName")?.innerText    || "";
+                const storeAddress = document.getElementById("storeAddress")?.innerText || "";
+                if (typeof addBookmarkCard === "function") {
+                    addBookmarkCard(storeName, storeAddress, lat, lng);
                 }
-            })
-            .catch(err => console.error("즐겨찾기 오류:", err));
+            } else {
+                icon.className   = "bi bi-star";
+                icon.style.color = "";
+                bookmarkBtn.classList.remove("active");
+
+                const storeName = document.getElementById("storeName")?.innerText || "";
+                if (typeof removeBookmarkCard === "function") {
+                    removeBookmarkCard(storeName);
+                }
+            }
+        } catch (err) {
+            console.error("즐겨찾기 오류:", err);
+        }
     }
 </script>

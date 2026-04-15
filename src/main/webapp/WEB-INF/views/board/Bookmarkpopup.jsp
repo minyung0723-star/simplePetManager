@@ -155,37 +155,39 @@
     }
 
     /* ── 패널의 "삭제하기" 버튼 클릭 시 API 호출 후 카드 제거 ── */
-    function deleteBookmarkFromPanel(userNumber, storeId, el) {
-        fetch("/api/bookmark/delete?userNumber=" + userNumber + "&storeId=" + storeId, {
-            method: "DELETE"
-        })
-            .then(res => {
-                if (res.ok) {
-                    // 카드 DOM 제거
-                    const card = el.closest(".bookmark-card");
-                    const storeName = card?.querySelector(".bookmark-card-name")?.innerText || "";
-                    card?.remove();
+    async function deleteBookmarkFromPanel(userNumber, storeId, el) {
+        try {
+            const res = await fetch("/api/bookmark/delete?userNumber=" + userNumber + "&storeId=" + storeId, {
+                method: "DELETE"
+            });
 
-                    // 현재 보고 있는 가게와 같으면 별 아이콘도 비움
-                    const currentName = document.getElementById("storeName")?.innerText || "";
-                    if (storeName === currentName) {
-                        const icon = document.getElementById("bookmarkIcon");
-                        const btn  = document.getElementById("bookmarkBtn");
-                        if (icon) { icon.className = "bi bi-star"; icon.style.color = ""; }
-                        if (btn)  { btn.classList.remove("active"); }
-                    }
+            if (!res.ok) return;
 
-                    // 카드가 없으면 빈 상태 메시지 표시
-                    const list = document.getElementById("bookmarkList");
-                    if (list && list.querySelectorAll(".bookmark-card").length === 0) {
-                        list.innerHTML = `
-                        <div id="emptyBookmark" style="text-align:center; padding:32px 0; color:#bbb; font-size:13px;">
-                            <i class="bi bi-star" style="font-size:28px; display:block; margin-bottom:8px;"></i>
-                            즐겨찾기한 곳이 없어요
-                        </div>`;
-                    }
-                }
-            })
-            .catch(err => console.error("즐겨찾기 삭제 오류:", err));
+            // 카드 DOM 제거
+            const card      = el.closest(".bookmark-card");
+            const storeName = card?.querySelector(".bookmark-card-name")?.innerText || "";
+            card?.remove();
+
+            // 현재 보고 있는 가게와 같으면 별 아이콘도 비움
+            const currentName = document.getElementById("storeName")?.innerText || "";
+            if (storeName === currentName) {
+                const icon = document.getElementById("bookmarkIcon");
+                const btn  = document.getElementById("bookmarkBtn");
+                if (icon) { icon.className = "bi bi-star"; icon.style.color = ""; }
+                if (btn)  { btn.classList.remove("active"); }
+            }
+
+            // 카드가 없으면 빈 상태 메시지 표시
+            const list = document.getElementById("bookmarkList");
+            if (list && list.querySelectorAll(".bookmark-card").length === 0) {
+                list.innerHTML = `
+                <div id="emptyBookmark" style="text-align:center; padding:32px 0; color:#bbb; font-size:13px;">
+                    <i class="bi bi-star" style="font-size:28px; display:block; margin-bottom:8px;"></i>
+                    즐겨찾기한 곳이 없어요
+                </div>`;
+            }
+        } catch (err) {
+            console.error("즐겨찾기 삭제 오류:", err);
+        }
     }
 </script>

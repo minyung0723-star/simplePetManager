@@ -47,10 +47,16 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <c:forEach var="review" items="${myReviews}">
-                        <div class="review-item">
-                            <div class="review-item-header">
-                                <div class="review-place">
+                    <div class="review-list-scroll">
+                        <c:forEach var="review" items="${myReviews}">
+                            <div class="review-item"
+                                 data-shop="${review.shop_name}"
+                                 data-rating="${review.review_rating}"
+                                 data-date="${fn:substring(String.valueOf(review.created_date), 0, 10)}"
+                                 data-content="${review.review_content}"
+                                 onclick="openReviewDetail(this)">
+                                <div class="review-item-header">
+                                    <div class="review-place">
                                     <span class="review-badge
                                         <c:choose>
                                             <c:when test='${fn:containsIgnoreCase(review.review_category, "호텔")}'>hotel</c:when>
@@ -58,20 +64,24 @@
                                             <c:otherwise>hospital</c:otherwise>
                                         </c:choose>
                                     ">${review.review_category}</span>
-                                    <span class="review-shop-name">${review.shop_name}</span>
-                                </div>
-                                <span class="review-stars">
-                                    <c:forEach begin="1" end="${review.review_rating}" var="i">★</c:forEach><c:forEach begin="${review.review_rating + 1}" end="5" var="j">☆</c:forEach>
+                                        <span class="review-shop-name">${review.shop_name}</span>
+                                    </div>
+                                    <span class="review-stars">
+                                    <c:forEach begin="1" end="${review.review_rating}" var="i">★</c:forEach><c:forEach
+                                            begin="${review.review_rating + 1}" end="5" var="j">☆</c:forEach>
                                 </span>
-                            </div>
-                            <div class="review-content">${review.review_content}</div>
+                                </div>
+                                <div class="review-content">${review.review_content}</div>
 
-                            <div class="review-footer">
-                                <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
-                                <button type="button" class="btn-review-delete" onclick="deleteMyReview(${review.review_id})">삭제</button>
+                                <div class="review-footer">
+                                    <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
+                                    <button type="button" class="btn-review-delete"
+                                            onclick="event.stopPropagation(); deleteMyReview(${review.review_id})">삭제
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </c:forEach>
+                        </c:forEach>
+                    </div>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -80,6 +90,20 @@
     <div class="bottom-actions">
         <a href="${pageContext.request.contextPath}/mypage/myPageEdit" class="btn-edit">회원정보 수정</a>
         <button class="btn-withdraw" id="btn-withdraw-open">회원탈퇴</button>
+    </div>
+</div>
+
+<%-- 리뷰 상세 모달 --%>
+<div class="review-detail-overlay" id="review-detail-modal">
+    <div class="review-detail-box">
+        <button class="rdm-close" id="btn-rdm-close">&#x2715;</button>
+        <div class="rdm-header">
+            <span class="rdm-shop"  id="rdm-shop"></span>
+            <span class="rdm-stars" id="rdm-stars"></span>
+        </div>
+        <div class="rdm-date" id="rdm-date"></div>
+        <hr class="rdm-divider">
+        <div class="rdm-content" id="rdm-content"></div>
     </div>
 </div>
 
@@ -101,7 +125,6 @@
 <%@ include file="../common/footer.jsp" %>
 
 <script>
-    // JS 파일에서 사용할 전역 변수 설정
     window.contextPath = '${pageContext.request.contextPath}';
 </script>
 <script src="${pageContext.request.contextPath}/js/mypage.js"></script>

@@ -54,7 +54,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 24px;
-    align-items: start;
+    align-items: stretch; /* 두 카드 세로 높이 동일하게 */
 }
 
 
@@ -115,49 +115,148 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     color: #111;
 }
 
+/* 리뷰 4개 초과 시 세로 스크롤 */
+.mypage-container .review-list-scroll {
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+.mypage-container .review-list-scroll::-webkit-scrollbar       { width: 5px; }
+.mypage-container .review-list-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+.mypage-container .review-list-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.mypage-container .review-list-scroll::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* 리뷰 한 줄 레이아웃 */
 .mypage-container .review-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     border: 1px solid #f0f0f0;
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
     transition: box-shadow .2s;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .mypage-container .review-item:last-child { margin-bottom: 0; }
 .mypage-container .review-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
 
+/* header / place / footer → 한 줄 안에 배치되므로 기존 구조 유지하되 flex로 정렬 */
 .mypage-container .review-item-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    display: contents; /* 자식들이 review-item flex에 직접 참여 */
 }
 
-.mypage-container .review-place { display: flex; align-items: center; gap: 8px; }
+.mypage-container .review-place {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
 
 .mypage-container .review-badge {
     display: inline-block;
-    padding: 2px 10px;
+    padding: 2px 8px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
     background: #e8f4e8;
     color: #2d7a3a;
+    flex-shrink: 0;
 }
 .mypage-container .review-badge.hotel    { background: #e8f0fb; color: #2c5fb3; }
 .mypage-container .review-badge.pharmacy { background: #fff0e0; color: #b35c00; }
 
-.mypage-container .review-shop-name { font-size: 15px; font-weight: 700; color: #111; }
-.mypage-container .review-stars     { color: #f5a623; font-size: 16px; letter-spacing: 1px; }
-.mypage-container .review-content   { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; }
-
-.mypage-container .review-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
+.mypage-container .review-shop-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    flex-shrink: 0;
+}
+.mypage-container .review-stars {
+    color: #f5a623;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+.mypage-container .review-content {
+    font-size: 13px;
+    color: #444;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
-.mypage-container .review-date { font-size: 12px; color: #bbb; }
+/* =====================================================
+   리뷰 상세 모달
+   ===================================================== */
+.review-detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9100;
+    align-items: center;
+    justify-content: center;
+}
+.review-detail-overlay.open { display: flex; }
+
+.review-detail-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 36px;
+    width: 460px;
+    max-width: 95vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+    position: relative;
+}
+
+.review-detail-box .rdm-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none; border: none;
+    font-size: 22px; color: #aaa;
+    cursor: pointer; line-height: 1;
+}
+.review-detail-box .rdm-close:hover { color: #555; }
+
+.review-detail-box .rdm-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.review-detail-box .rdm-shop  { font-size: 17px; font-weight: 700; color: #111; }
+.review-detail-box .rdm-stars { color: #f5a623; font-size: 16px; letter-spacing: 1px; }
+.review-detail-box .rdm-date  { font-size: 12px; color: #bbb; margin-bottom: 16px; }
+
+.review-detail-box .rdm-divider {
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    margin: 10px 0 16px;
+}
+
+.review-detail-box .rdm-content {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* footer 항목들도 한 줄 안에 flex 아이템으로 */
+.mypage-container .review-footer {
+    display: contents;
+}
+
+.mypage-container .review-date {
+    font-size: 12px;
+    color: #bbb;
+    flex-shrink: 0;
+}
 
 .mypage-container .btn-review-delete {
     background: none;
@@ -166,9 +265,10 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;
-    padding: 4px 0;
+    padding: 0;
     text-decoration: underline;
     transition: color 0.2s;
+    flex-shrink: 0;
 }
 .mypage-container .btn-review-delete:hover { color: #d43f3f; }
 .mypage-container .review-empty { text-align: center; padding: 52px 0; color: #aaa; font-size: 14px; }

@@ -58,6 +58,3 @@ logging:
     org.mybatis: DEBUG                   # MyBatis
     java.sql: DEBUG                      # SQL 작성문
     java.sql.ResultSet: DEBUG           # SQL 사용에 따른 결과
-    root: info                           # 기본은 INFO
-    com.zaxxer.hikari: DEBUG            # MYSQL 연결상태
-    org.springframework.jdbc: DEBUG     # JDBC  

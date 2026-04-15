@@ -61,6 +61,7 @@
 </main>
 
 <script src="${pageContext.request.contextPath}/js/review/review-common.js"></script>
+<script src="${pageContext.request.contextPath}/js/app-common.js"></script>
 <script src="${pageContext.request.contextPath}/js/review/review-list.js"></script>
 
 <%@include file="../common/footer.jsp"%>
