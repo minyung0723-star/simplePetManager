@@ -15,11 +15,17 @@ RUN ./gradlew clean bootWar -x test
 FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 
-# 빌드된 war 파일 복사 (plain 파일 제외)
-COPY --from=build /home/gradle/src/build/libs/*[!plain].war app.war
+# 빌드된 파일 목록을 확인하고, 어떤 이름의 war든 app.war로 복사합니다.
+# 빌드된 결과물이 libs 폴더 안에 있는지 확인하고 app.war로 이름을 고정합니다.
+COPY --from=build /home/gradle/src/build/libs/*.war /app/app.war
 
-# 리눅스 환경에 맞는 업로드 폴더 생성
+# 실행 권한 부여
+RUN chmod +x /app/app.war
+
+# 임시 폴더 생성
 RUN mkdir -p /tmp/uploads/profile /tmp/uploads/board
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.war"]
+
+# 절대 경로를 사용하여 실행
+ENTRYPOINT ["java", "-jar", "/app/app.war"]
