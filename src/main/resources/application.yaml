@@ -30,8 +30,15 @@ spring:
       mail:
         smtp:
           auth: true
-          starttls:
+          ssl:
             enable: true
+            checkserveridentity: true
+            # 응답이 없을 때 무한 대기를 방지하기 위해 타임아웃을 꼭 넣으세요.
+            connectiontimeout: 5000
+            timeout: 5000
+            writetimeout: 5000
+            # 통신 과정을 로그로 확인하기 위해 추가 (배포 로그에 상세 내용이 찍힙니다)
+            debug: true
     port: 465 # 메일보낼 때 처음부터 암호화 처리를 해서 보내는게 아니라 정말로 메일이 가고 있을 때 암호화 처리를 진행
 mybatis:
   mapper-locations: classpath:mappers/**/*.xml
