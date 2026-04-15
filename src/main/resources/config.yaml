@@ -9,8 +9,8 @@ db:
   password: QxQCBJH3hz
 
 upload:
-  profile-path: C:/uploads/profile
-  board-path: C:/uploads/board
+  profile-path: tmp/uploads/profile
+  board-path: tmp/uploads/board
 
 mail:
   username: minyung0723@gmail.com  # email
