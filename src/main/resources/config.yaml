@@ -2,7 +2,6 @@
 #  url: jdbc:mysql://localhost:3306/petmanager_db
 #  username: root
 #  password: tjee1234
-
 db:
   url: jdbc:mysql://sql12.freesqldatabase.com:3306/sql12823141
   username: sql12823141
@@ -13,9 +12,11 @@ upload:
   board-path: tmp/uploads/board
 
 mail:
-  username: minyung0723@gmail.com  # email
-  password: hpzh jrox ormg clfs     #2차 비밀번호 활성화 -> 앱 비밀번호 설정하면 랜덤 16자리
+  username: minyung0723@gmail.com  # Brevo에 발신자로 등록한 이메일
+  password: hpzh jrox ormg clfs     # (기존 Gmail 앱비밀번호는 백업용으로 유지)
 
 jwt:
   config:
     secret: springboard-jwt-secret-key-2026-change-this-please!!
+
+BREVO_API_KEY: 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
