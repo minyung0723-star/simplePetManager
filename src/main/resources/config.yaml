@@ -14,7 +14,7 @@ upload:
 
 mail:
   username: minyung0723@gmail.com  # email
-  password: qifa rzwt cmtz rfoj     #2차 비밀번호 활성화 -> 앱 비밀번호 설정하면 랜덤 16자리
+  password: qifarzwtcmtzrfoj     #2차 비밀번호 활성화 -> 앱 비밀번호 설정하면 랜덤 16자리
 
 jwt:
   config:
