@@ -155,8 +155,8 @@
 }
 
 /* ===================== 북마크 디자인 ===================== */
-/* 1. 공통 버튼 기반 스타일 */
-button.review-bookmark-btn {
+/* 1. 기본 버튼 스타일 (아이디를 붙여 우선순위 확보) */
+#bookmarkBtn.review-bookmark-btn {
     background-color: transparent;
     border: 2px solid #6750A4;
     border-radius: 50%;
@@ -166,29 +166,32 @@ button.review-bookmark-btn {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-/* 기본 상태 아이콘 (보라색 비어있는 아이콘) */
-button.review-bookmark-btn i.bi-bookmark-fill {
+/* 2. 기본 상태 아이콘 색상 */
+#bookmarkBtn.review-bookmark-btn i {
     color: #6750A4;
 }
 
-/* JS가 버튼에 .inserted 클래스를 붙여줄 거야! */
-button.review-bookmark-btn.inserted {
-    background-color: #6750A4; /* 배경 보라색 가득! */
+/* 3. ✅ 북마크 등록 상태 (.inserted) */
+#bookmarkBtn.review-bookmark-btn.inserted {
+    background-color: #6750A4;
+    border-color: #6750A4;
 }
 
-/* 등록된 상태 아이콘 (흰색 채워진 아이콘 반전!) */
-button.review-bookmark-btn.inserted i.bi-bookmark-fill {
-    color: #FFFFFF; /* 글자색 흰색으로 반전! */
+/* 4. ✅ 등록된 상태의 아이콘 색상 (흰색 반전) */
+#bookmarkBtn.review-bookmark-btn.inserted i {
+    color: #FFFFFF;
 }
 
-/* 4. 마우스 올렸을 때 효과 */
-button.review-bookmark-btn:hover {
-    background-color: #dcd3ff; /* 연한 보라색 */
+/* 5. 마우스 올렸을 때 효과 */
+#bookmarkBtn.review-bookmark-btn:hover {
+    background-color: #dcd3ff;
 }
 
-/* 등록된 상태일 땐 hover 효과를 조금 더 진하게 */
-button.review-bookmark-btn.inserted:hover {
+/* 등록된 상태에서 올렸을 때 */
+#bookmarkBtn.review-bookmark-btn.inserted:hover {
     background-color: #553f93;
+    border-color: #553f93;
 }

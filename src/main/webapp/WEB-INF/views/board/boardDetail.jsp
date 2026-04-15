@@ -30,6 +30,13 @@
 </div>
 
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=695388472b1552749308a93b8da89e82"></script>
+<style>
+    detailLayout {
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 100px); /* 헤더/푸터 높이를 제외한 나머지 전체 */
+    }
+</style>
 <script>
     var lat = ${board.latitude != null ? board.latitude : 37.5665};
     var lng = ${board.longitude != null ? board.longitude : 126.9780};

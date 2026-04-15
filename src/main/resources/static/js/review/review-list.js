@@ -170,9 +170,8 @@ const checkBookmarkStatus = async (storeId) => {
     try {
         const response = await fetch(`/api/review/bookmark/check?storeId=${storeId}`);
 
-
-
         // 1. 응답이 정상인지 먼저 확인
+        if (response.status === 401) return; // 비로그인이면 조용히 종료
         if (!response.ok) return;
 
         // 2. 일단 텍스트로 읽어보기
@@ -188,12 +187,12 @@ const checkBookmarkStatus = async (storeId) => {
             // 4. 아니라면 JSON으로 파싱 (결과가 true/false로 옴)
             if (isBookmarked === true) { // 확실하게 true일 때만!
                 btn.classList.add("inserted");
-                icon.classList.remove("bi-bookmark");
-                icon.classList.add("bi-bookmark-fill");
-            } else {
-                btn.classList.remove("inserted");
                 icon.classList.remove("bi-bookmark-fill");
                 icon.classList.add("bi-bookmark");
+            } else {
+                btn.classList.remove("inserted");
+                icon.classList.remove("bi-bookmark");
+                icon.classList.add("bi-bookmark-fill");
             }
 
         } catch (parseError) {
@@ -217,20 +216,23 @@ window.toggleBookmark = async () => {
     const btn = document.getElementById("bookmarkBtn");
     const icon = btn.querySelector("i");
     const storeId = getStoreIdFromUrl();
+        try {
+            const response = await fetch('/api/review/bookmark/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ storeId: storeId })
+            });
 
-    try {
-        const response = await fetch('/api/review/bookmark/toggle', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ storeId: storeId })
-        });
-
-        if (response.ok) {
+            // ✅ 수정 포인트 1: response.ok를 따지기 전에 401 상태코드부터 가로챕니다.
+            if (response.status === 401) {
+                alert("로그인이 필요합니다.");
+                location.href = "/login";
+                return;
+            }
+            if (response.ok) {
             const result = await response.text();
 
-            // TODO_6 ___________________________________________
-            // 서버에서 "unauthorized" 응답 시 처리 로직 추가 필요
-            // JWT 연동 완료 후 아래 조건 추가:
+
             if (result === "unauthorized") {
                 alert("로그인이 필요합니다.");
                 location.href = "/login";
@@ -239,12 +241,12 @@ window.toggleBookmark = async () => {
 
             if (result === "inserted") {
                 btn.classList.add("inserted");
-                icon.classList.remove("bi-bookmark");
-                icon.classList.add("bi-bookmark-fill");
-            } else if (result === "deleted") {
-                btn.classList.remove("inserted");
                 icon.classList.remove("bi-bookmark-fill");
                 icon.classList.add("bi-bookmark");
+            } else if (result === "deleted") {
+                btn.classList.remove("inserted");
+                icon.classList.remove("bi-bookmark");
+                icon.classList.add("bi-bookmark-fill");
             }
         } else {
             alert("북마크 처리 중 오류가 발생했습니다.");
