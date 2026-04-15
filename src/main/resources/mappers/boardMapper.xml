@@ -56,18 +56,16 @@
 
     <select id="selectStoreById" resultType="com.project.simplepetmanager.model.dto.Board">
         SELECT
-            s.store_id      AS storeId,
-            s.store_name    AS storeName,
-            s.store_phone   AS storePhone,
-            s.store_address AS storeAddress,
-            s.category,
-            s.latitude,
-            s.longitude,
-            s.store_image   AS storeImage,
-            b.user_number   AS userNumber
-        FROM stores s
-                 LEFT JOIN bookmark b ON s.store_id = b.storeId
-        WHERE s.store_id = #{storeId}
+            store_id      AS storeId,
+            store_name    AS storeName,
+            store_phone   AS storePhone,
+            store_address AS storeAddress,
+            category,
+            latitude,
+            longitude,
+            store_image   AS storeImage
+        FROM stores
+        WHERE store_id = #{storeId}
     </select>
 
 </mapper>
