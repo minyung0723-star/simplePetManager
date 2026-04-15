@@ -19,4 +19,4 @@ jwt:
   config:
     secret: springboard-jwt-secret-key-2026-change-this-please!!
 
-BREVO_API_KEY: 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
+BREVO_API_KEY: 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
