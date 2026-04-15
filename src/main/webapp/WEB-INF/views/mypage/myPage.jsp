@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - SimplePetManager</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage-design.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/review-design.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 
@@ -66,10 +68,7 @@
                                     ">${review.review_category}</span>
                                         <span class="review-shop-name">${review.shop_name}</span>
                                     </div>
-                                    <span class="review-stars">
-                                    <c:forEach begin="1" end="${review.review_rating}" var="i">★</c:forEach><c:forEach
-                                            begin="${review.review_rating + 1}" end="5" var="j">☆</c:forEach>
-                                </span>
+                                    <span class="review-stars" data-star="${review.review_rating}"></span>
                                 </div>
                                 <div class="review-content">${review.review_content}</div>
 
@@ -127,7 +126,7 @@
 <script>
     window.contextPath = '${pageContext.request.contextPath}';
 </script>
+<script src="${pageContext.request.contextPath}/js/review/review-common.js"></script>
 <script src="${pageContext.request.contextPath}/js/mypage.js"></script>
-
 </body>
 </html>

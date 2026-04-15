@@ -174,35 +174,22 @@ const checkBookmarkStatus = async (storeId) => {
         if (response.status === 401) return; // 비로그인이면 조용히 종료
         if (!response.ok) return;
 
-        // 2. 일단 텍스트로 읽어보기
-        const resultText = await response.text();
+        // 2. JSON으로 파싱 (서버 응답: { "bookmarked": true/false })
+        const data = await response.json();
+        const isBookmarked = data.bookmarked === true;
 
-        // 3. 만약 서버가 "unauthorized"를 보냈다면 비로그인이니까 false 처리
-        if (resultText === "unauthorized") return;
-        try {
-            const isBookmarked = JSON.parse(resultText);
-            const btn = document.getElementById("bookmarkBtn");
-            const icon = btn.querySelector("i");
+        const btn  = document.getElementById("bookmarkBtn");
+        const icon = btn.querySelector("i");
 
-            // 4. 아니라면 JSON으로 파싱 (결과가 true/false로 옴)
-            if (isBookmarked === true) { // 확실하게 true일 때만!
-                btn.classList.add("inserted");
-                icon.classList.remove("bi-bookmark-fill");
-                icon.classList.add("bi-bookmark");
-            } else {
-                btn.classList.remove("inserted");
-                icon.classList.remove("bi-bookmark");
-                icon.classList.add("bi-bookmark-fill");
-            }
-
-        } catch (parseError) {
-            console.error("데이터 형식이 올바르지 않습니다:", parseError);
+        if (isBookmarked) {
+            btn.classList.add("inserted");
+            icon.classList.remove("bi-bookmark-fill");
+            icon.classList.add("bi-bookmark");
+        } else {
+            btn.classList.remove("inserted");
+            icon.classList.remove("bi-bookmark");
+            icon.classList.add("bi-bookmark-fill");
         }
-        // TODO_5 ___________________________________________
-        // 비로그인 상태에서 /api/review/bookmark/check 가 "unauthorized" 를 반환할 경우
-        // JSON 파싱 에러 발생 가능
-        // isBookmarked 값이 boolean 이 아닐 때를 대비한 방어 로직 추가 권장:
-        // const isBookmarked = typeof result === 'boolean' ? result : false; ????????????????
 
     } catch (e) {
         console.error("북마크 상태 확인 실패:", e);
@@ -216,28 +203,23 @@ window.toggleBookmark = async () => {
     const btn = document.getElementById("bookmarkBtn");
     const icon = btn.querySelector("i");
     const storeId = getStoreIdFromUrl();
-        try {
-            const response = await fetch('/api/review/bookmark/toggle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ storeId: storeId })
-            });
+    try {
+        const response = await fetch('/api/review/bookmark/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ storeId: storeId })
+        });
 
-            // ✅ 수정 포인트 1: response.ok를 따지기 전에 401 상태코드부터 가로챕니다.
-            if (response.status === 401) {
-                alert("로그인이 필요합니다.");
-                location.href = "/login";
-                return;
-            }
-            if (response.ok) {
-            const result = await response.text();
-
-
-            if (result === "unauthorized") {
-                alert("로그인이 필요합니다.");
-                location.href = "/login";
-                return;
-            }
+        // 수정 포인트 1: response.ok를 따지기 전에 401 상태코드부터 가로챕니다.
+        if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            location.href = "/login";
+            return;
+        }
+        if (response.ok) {
+            // 서버 응답: { "success": true, "result": "inserted" | "deleted" }
+            const data = await response.json();
+            const result = data.result;
 
             if (result === "inserted") {
                 btn.classList.add("inserted");
