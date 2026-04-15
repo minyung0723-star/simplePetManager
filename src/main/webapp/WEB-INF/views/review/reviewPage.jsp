@@ -34,7 +34,7 @@
                 <div class="d-flex gap-2">
                     <button type="button" id="bookmarkBtn"
                             onclick="toggleBookmark()"
-                            class="btn btn-outline-secondary review-btn-circle review-bookmark-btn">
+                            class="btn review-btn-circle review-bookmark-btn">
                         <i class="bi-bookmark-fill"></i>
                     </button>
                 </div>
