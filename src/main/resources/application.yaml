@@ -32,7 +32,7 @@ spring:
           auth: true
           starttls:
             enable: true
-    port: 587 # 메일보낼 때 처음부터 암호화 처리를 해서 보내는게 아니라 정말로 메일이 가고 있을 때 암호화 처리를 진행
+    port: 465 # 메일보낼 때 처음부터 암호화 처리를 해서 보내는게 아니라 정말로 메일이 가고 있을 때 암호화 처리를 진행
 mybatis:
   mapper-locations: classpath:mappers/**/*.xml
   configuration:
