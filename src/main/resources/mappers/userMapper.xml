@@ -80,7 +80,7 @@
     </update>
 
     <!-- 회원 탈퇴 -->
-    <delete id="deleteUser" parameterType="int">
+    <delete id="deleteUser" parameterType="long">
         DELETE FROM users
         WHERE user_number = #{userNumber}
     </delete>
