@@ -18,10 +18,10 @@ window.openReviewDetail = function(el) {
     const overlay = document.getElementById('review-detail-modal');
     if (!overlay) return;
 
-    const rating = parseInt(el.dataset.rating) || 0;
+    const rating = parseFloat(el.dataset.rating) || 0;
 
     document.getElementById('rdm-shop').textContent    = el.dataset.shop    || '';
-    document.getElementById('rdm-stars').textContent   = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    document.getElementById('rdm-stars').innerHTML     = generateStars(rating);
     document.getElementById('rdm-date').textContent    = el.dataset.date    || '';
     document.getElementById('rdm-content').textContent = el.dataset.content || '';
 
@@ -90,4 +90,10 @@ window.deleteMyReview = async function(reviewId) {
 document.addEventListener('DOMContentLoaded', () => {
     initReviewDetailModal();
     initWithdrawModal();
+
+    // 리뷰 목록 별점: data-star 속성 → generateStars() HTML로 초기화
+    document.querySelectorAll('.review-stars[data-star]').forEach(el => {
+        const rating = parseFloat(el.dataset.star) || 0;
+        el.innerHTML = generateStars(rating);
+    });
 });
