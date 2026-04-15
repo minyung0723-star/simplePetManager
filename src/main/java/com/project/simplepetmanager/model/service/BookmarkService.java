@@ -13,7 +13,7 @@ public class BookmarkService {
 
     private final BookmarkMapper bookmarkMapper;
 
-    public List<BookMark> findBookMarkListByUser(int userNumber) {
+    public List<BookMark> findBookMarkListByUser(long userNumber) {
         return bookmarkMapper.getBookmarkListByUser(userNumber);
     }
 
@@ -27,11 +27,11 @@ public class BookmarkService {
         }
     }
 
-    public void deleteBookmark(int userNumber, int storeId) {
+    public void deleteBookmark(long userNumber, long storeId) {
         bookmarkMapper.deleteBookmark(userNumber, storeId);
     }
 
-    public boolean confirmBookmark(int userNumber, int storeId) {
+    public boolean confirmBookmark(long userNumber, long storeId){
         return bookmarkMapper.checkBookmarkExists(userNumber, storeId) > 0;
     }
 }

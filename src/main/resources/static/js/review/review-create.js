@@ -35,11 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const textarea     = document.getElementById('reviewContent');
     const charCount    = document.getElementById('charCount');
 
-    // TODO_1 ___________________________________________
-    // 페이지 진입 시 로그인 상태 확인 로직 추가 필요
-    // ReviewController에서 서버 측 체크를 하더라도
-    // 클라이언트 측에서도 이중으로 확인하는 것을 권장:
-    //
+    // 페이지 진입 시 로그인 상태 확인
     (async () => {
         const res = await fetch('/mypage/info');
         const data = await res.json();
@@ -49,14 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })();
 
-
-    // ==================== 글자 수 카운터 ====================????????????????????????? (수정 완)
-
-    // TODO_2 ___________________________________________
-    // maxlength 불일치 버그 수정 필요
-    // createreviewPage.jsp 에서 maxlength="199" 인데
-    // 카운터 표시는 /200 으로 되어 있음
-    // 199 또는 200 중 하나로 통일 필요 (JSP와 여기서 동시 수정)
+    // ==================== 글자 수 카운터 ====================
+    // maxlength 200자로 통일 및 제어
     if (textarea) {
         textarea.addEventListener('input', (e) => {
             let content = e.target.value;
@@ -72,17 +62,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     // ==================== 별점 렌더링 ====================
-
     const renderStars = (score) => {
         const percentage = (score / 5) * 100;
         fill.style.width = `${percentage}%`;
     };
 
-
     // ==================== 별점 이벤트 ====================
-
     if (container) {
         // 마우스 이동 시 별점 미리보기
         container.addEventListener('mousemove', (e) => {
@@ -113,63 +99,112 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ==================== 리뷰 등록 ====================
-
 const submitReview = async () => {
-    const content  = document.getElementById('reviewContent').value;
-    const rating   = document.getElementById('rating-value').value;
+    // [에러 원인 수정] 함수 스코프 내에서 URL의 storeId를 직접 파싱하도록 추가
     const urlParams = new URLSearchParams(window.location.search);
-    const storeId  = urlParams.get('storeId') || 1;
+    const storeId = urlParams.get('storeId');
 
-    // 유효성 검사
-    if (rating == 0 || rating == "0.0") return alert("별점을 선택해 주세요!");
-    if (content.trim().length < 1)      return alert("리뷰 내용을 작성해 주세요!");
+    if (!storeId) {
+        alert("병원 정보가 없습니다.");
+        return;
+    }
+
+    const content  = document.getElementById('reviewContent').value.trim();
+    const rating   = parseFloat(document.getElementById('rating-value').value);
+
+    if (!rating || rating === 0) return alert('별점을 선택해 주세요!');
+    if (content.length < 1)      return alert('리뷰 내용을 작성해 주세요!');
 
     const reviewData = {
-        storeId:       parseInt(storeId),
+        storeId: parseInt(storeId, 10), // 서버 안전성을 위해 정수로 변환하여 전송
         reviewContent: content,
-        rating:        parseFloat(rating),
-        // TODO_3 ___________________________________________ ??????????
-        // userNumber 하드코딩 제거 필요
-        // 현재: userNumber: 1  ← 이 줄 삭제
-        // JWT 연동 후 서버(ReviewApiController)에서
-        // loginUser.getUserNumber() 로 자동 세팅하므로
-        // 프론트에서 userNumber를 보낼 필요 없음
-        // → reviewData 객체에서 userNumber 키 자체를 삭제
-
+        rating,
     };
 
     try {
-        const response = await fetch('/api/review/insert', {
-            method: 'POST',
+        const res  = await fetch('/api/review/insert', {
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(reviewData)
+            body:    JSON.stringify(reviewData),
         });
 
-        const result = await response.text();
-
-        // TODO_4 ___________________________________________
-        // 서버에서 "unauthorized" 응답 시 처리 로직 추가 필요
-        // JWT 연동 완료 후 아래 조건 추가:
-        // if (result === "unauthorized") {
-        //     alert("로그인이 필요합니다.");
-        //     location.href = "/login";
-        //     return;
-        // }
-        if (result === "unauthorized") {
-            alert("로그인이 필요합니다.");
-            location.href = "/login";
+        if (res.status === 401) {
+            alert('로그인이 필요합니다.');
+            location.href = '/login';
             return;
         }
 
-        if (result === "success") {
-            alert("리뷰 등록이 완료되었습니다!");
-            // TODO_5 ___________________________________________
-            // 리뷰 등록 완료 후 이동 경로 확인 필요
-            // 현재: /api/hospital/detail?storeId=... (ReviewController 매핑과 일치 확인)
-            // ReviewController에 해당 경로가 @GetMapping("/api/hospital/detail") 로 있으므로 현재는 정상
+        const data = await res.json();
+        if (data.success) {
+            alert('리뷰 등록이 완료되었습니다!');
             location.href = `/api/hospital/detail?storeId=${storeId}`;
+        } else {
+            alert(data.message || '등록에 실패했습니다.');
         }
-    } catch (error) {
-        console.error('Error:', error);
+    } catch (err) {
+        console.error('insertReview error:', err);
+        alert('서버 오류가 발생했습니다.');
+    }
+};
+
+/* ──────────────────────────────────
+   리뷰 수정
+────────────────────────────────── */
+const updateReview = async (reviewId) => {
+    const content  = document.getElementById('editReviewContent').value.trim();
+    const rating   = parseFloat(document.getElementById('editRatingValue').value);
+
+    if (!rating || rating === 0) return alert('별점을 선택해 주세요!');
+    if (content.length < 1)      return alert('리뷰 내용을 작성해 주세요!');
+
+    try {
+        const res = await fetch('/api/review/update', {
+            method:  'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ reviewId, reviewContent: content, rating }),
+        });
+
+        if (res.status === 401) { alert('로그인이 필요합니다.'); location.href = '/login'; return; }
+        if (res.status === 403) { alert('수정 권한이 없습니다.'); return; }
+        if (res.status === 404) { alert('존재하지 않는 리뷰입니다.'); return; }
+
+        const data = await res.json();
+        if (data.success) {
+            alert('리뷰가 수정되었습니다.');
+            location.reload();
+        } else {
+            alert(data.message || '수정에 실패했습니다.');
+        }
+    } catch (err) {
+        console.error('updateReview error:', err);
+        alert('서버 오류가 발생했습니다.');
+    }
+};
+
+/* ──────────────────────────────────
+   리뷰 삭제
+────────────────────────────────── */
+const deleteReview = async (reviewId) => {
+    if (!confirm('리뷰를 삭제하시겠습니까?')) return;
+
+    try {
+        const res = await fetch(`/api/review/delete?reviewId=${reviewId}`, {
+            method: 'DELETE',
+        });
+
+        if (res.status === 401) { alert('로그인이 필요합니다.'); location.href = '/login'; return; }
+        if (res.status === 403) { alert('삭제 권한이 없습니다.'); return; }
+        if (res.status === 404) { alert('이미 삭제된 리뷰입니다.'); return; }
+
+        const data = await res.json();
+        if (data.success) {
+            alert('리뷰가 삭제되었습니다.');
+            location.reload();
+        } else {
+            alert(data.message || '삭제에 실패했습니다.');
+        }
+    } catch (err) {
+        console.error('deleteReview error:', err);
+        alert('서버 오류가 발생했습니다.');
     }
 };

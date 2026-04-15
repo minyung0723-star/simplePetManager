@@ -12,78 +12,80 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReviewService {
 
     private final ReviewMapper reviewMapper;
 
-    // ===================== 리뷰 목록 =====================
+    // ===================== 리뷰 조회 =====================
 
     /** 특정 병원의 리뷰 목록 조회 */
+    @Transactional(readOnly = true)
     public List<Review> getReviewList(int storeId) {
         return reviewMapper.getReviewList(storeId);
     }
 
-    /**
-     * 마이페이지 - 내가 작성한 리뷰 목록 조회
-     * MyPageViewController 에서 호출
-     */
-    public List<Map<String, Object>> getReviewsByUserNumber(int userNumber) {
+    /** 마이페이지 - 내가 작성한 리뷰 목록 조회 */
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getReviewsByUserNumber(long userNumber) {
         return reviewMapper.getReviewsByUserNumber(userNumber);
+    }
+
+    /** 단건 리뷰 조회 */
+    @Transactional(readOnly = true)
+    public Review getReviewById(int reviewId) {
+        return reviewMapper.getReviewById(reviewId);
     }
 
     // ===================== 리뷰 등록 =====================
 
-    /** 리뷰 등록 */
-    public String registerReview(Review review) {
-        if (review.getStoreId() == null || review.getStoreId() == 0) {
-            review.setStoreId(1);
+    /**
+     * 리뷰 등록
+     * - storeId, userNumber, rating, category 기본값은 Controller에서 넘어온 값을 그대로 사용
+     * - 예외는 Controller 레벨에서 처리하도록 그대로 던짐 (서비스에서 catch·은폐 금지)
+     */
+    @Transactional
+    public void registerReview(Review review) {
+        if (review.getCategory() == null || review.getCategory().isBlank()) {
+            review.setCategory("일반");
         }
-        if (review.getUserNumber() == null || review.getUserNumber() == 0) {
-            review.setUserNumber(1);
-        }
-        if (review.getRating() == null) {
-            review.setRating(5.0);
-        }
-        if (review.getCategory() == null) {
-            review.setCategory("병원");
-        }
-        try {
-            reviewMapper.registerReview(review);
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
+        reviewMapper.registerReview(review);
+    }
+
+    // ===================== 리뷰 수정 =====================
+
+    /**
+     * 리뷰 수정
+     * - review에 reviewId, userNumber, reviewContent, rating, category 필수
+     * - WHERE review_id = ? AND user_number = ? 조건으로 본인 확인을 DB 레벨에서 처리
+     * @throws IllegalArgumentException 수정 대상이 없거나 본인 리뷰가 아닐 때
+     */
+    @Transactional
+    public void updateReview(Review review) {
+        int updated = reviewMapper.updateReview(review);
+        if (updated == 0) {
+            throw new IllegalArgumentException("수정할 리뷰가 없거나 수정 권한이 없습니다.");
         }
     }
 
     // ===================== 리뷰 삭제 =====================
 
-    /** 리뷰 상세 조회 (삭제 전 본인 확인용) */
-    public Review getReviewById(int reviewId) {
-        return reviewMapper.getReviewById(reviewId);
-    }
-
-    /** * 리뷰 삭제
-     * loginUserNumber: 현재 로그인한 사용자의 고유 번호
+    /**
+     * 리뷰 삭제
+     * - 본인 리뷰인지 Controller에서 확인 후 호출
+     * @throws IllegalArgumentException 삭제 대상이 없을 때
      */
-    public String removeReview(int reviewId, int loginUserNumber) {
-        // 1. DB에서 삭제할 리뷰를 미리 가져옵니다.
-        Review review = reviewMapper.getReviewById(reviewId);
-
-        // 2. 검증: 리뷰가 존재하고, 리뷰 작성자 번호와 로그인한 유저 번호가 같을 때만 삭제
-        if (review != null && review.getUserNumber() == loginUserNumber) {
-            int result = reviewMapper.deleteReview(reviewId);
-            return (result > 0) ? "success" : "fail";
+    @Transactional
+    public void removeReview(int reviewId) {
+        int deleted = reviewMapper.deleteReview(reviewId);
+        if (deleted == 0) {
+            throw new IllegalArgumentException("삭제할 리뷰가 없습니다.");
         }
-
-        // 3. 본인이 아니거나 리뷰가 없는 경우
-        return "unauthorized";
     }
 
     // ===================== 북마크 =====================
 
     /** 북마크 토글 (등록/해제) */
+    @Transactional
     public String toggleBookmark(long userNumber, long storeId) {
         int count = reviewMapper.checkBookmark(userNumber, storeId);
         if (count == 0) {
@@ -96,13 +98,15 @@ public class ReviewService {
     }
 
     /** 북마크 상태 확인 */
-    public int checkBookmark(long userNumber, long storeId) {
-        return reviewMapper.checkBookmark(userNumber, storeId);
+    @Transactional(readOnly = true)
+    public boolean isBookmarked(long userNumber, long storeId) {
+        return reviewMapper.checkBookmark(userNumber, storeId) > 0;
     }
 
     // ===================== 병원 정보 =====================
 
     /** 병원(가게) 상세 정보 조회 */
+    @Transactional(readOnly = true)
     public Board getStoreDetail(int storeId) {
         return reviewMapper.getStoreDetail(storeId);
     }

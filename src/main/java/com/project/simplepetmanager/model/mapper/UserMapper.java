@@ -39,5 +39,5 @@ public interface UserMapper {
     int updateProfileImage(Map<String, Object> param);
 
     // 회원 탈퇴
-    int deleteUser(int userNumber);
+    int deleteUser(long userNumber);
 }
