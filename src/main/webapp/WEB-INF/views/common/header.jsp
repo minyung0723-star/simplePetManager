@@ -11,14 +11,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header_design.css">
 
     <style>
-        /* 기본 레이아웃 보정:
-           브라우저마다 다를 수 있는 최소 높이를 100%로 고정해
-           푸터가 항상 화면 하단에 위치하도록 보조합니다.
-        */
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
+
     </style>
 </head>
 
