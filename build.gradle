@@ -24,7 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     // mybatis
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 
     //반드시 JSP 설정관련 모듈 추가해야한다!!
     // Spring ~ SpringBoot 는 JSP 사용 좋아하지 않기 때문에
@@ -66,7 +67,6 @@ dependencies {
     annotationProcessor'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     // mysql db
     runtimeOnly 'com.mysql:mysql-connector-j'
