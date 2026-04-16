@@ -210,11 +210,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* 2줄까지만 보여줌 */
-    -webkit-box-orient: vertical;
-    white-space: normal;   /* ✅ nowrap을 normal로 꼭 바꿔야 해! */
-    word-break: break-all;
+    display: block;
     cursor: pointer;
 }
 

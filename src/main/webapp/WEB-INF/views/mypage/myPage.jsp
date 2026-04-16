@@ -70,16 +70,18 @@
                                     </div>
                                     <span class="review-stars" data-star="${review.review_rating}"></span>
                                 </div>
-                                <div class="review-content"
-                                        id="review-text-${review.review_id}">
-                                        ${review.review_content}
+                                <div class="review-content" id="review-text-${review.review_id}">
+                                    <c:choose>
+                                        <%-- 글자 수가 30자보다 크면 30자까지 자르고 ... 추가 --%>
+                                        <c:when test="${fn:length(review.review_content) > 30}">
+                                            ${fn:substring(review.review_content, 0, 30)}...
+                                        </c:when>
+                                        <%-- 30자 이하일 때는 원문 그대로 출력 --%>
+                                        <c:otherwise>
+                                            ${review.review_content}
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
-                                    <c:if test="${fn:length(review.review_content) > 30}">
-                                        <button type="button" class="btn-more-view"
-                                                onclick="event.stopPropagation(); toggleMyPageReview(${review.review_id}, event)">
-                                            더보기
-                                        </button>
-                                    </c:if>
                                 <div class="review-footer">
                                     <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
                                     <button type="button" class="btn-review-delete"

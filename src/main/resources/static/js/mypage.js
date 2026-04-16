@@ -28,20 +28,6 @@ window.openReviewDetail = function(el) {
     overlay.classList.add('open');
 };
 
-// 마이페이지 리뷰 더보기/접기 토글 함수
-function toggleMyPageReview(reviewId,e) {
-    const content = document.getElementById(`review-text-${reviewId}`);
-    const btn = e.target; // 클릭된 버튼 요소 가져오기
-
-    if (content.classList.contains('expanded')) {
-        content.classList.remove('expanded');
-        btn.innerText = '더보기';
-    } else {
-        content.classList.add('expanded');
-        btn.innerText = '접기';
-    }
-}
-
 /* ── 탈퇴 모달 ── */
 function initWithdrawModal() {
     const modal   = document.getElementById('withdraw-modal');
