@@ -83,7 +83,13 @@
         var moveLatLng = new kakao.maps.LatLng(lat, lng);
         map.setCenter(moveLatLng);
         map.setLevel(3);
+
+        //마커 이동
+         var markerPosition = new kakao.maps.LatLng(lat, lng);
+         var marker = new kakao.maps.Marker({ position: markerPosition });
+            marker.setMap(map);
     }
+
 
     /* ── 즐겨찾기 추가 시 패널에 카드 실시간 추가 ── */
     function addBookmarkCard(storeName, storeAddress, lat, lng) {
