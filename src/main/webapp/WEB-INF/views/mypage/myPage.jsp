@@ -70,8 +70,16 @@
                                     </div>
                                     <span class="review-stars" data-star="${review.review_rating}"></span>
                                 </div>
-                                <div class="review-content">${review.review_content}</div>
-
+                                <div class="review-content"
+                                        id="review-text-${review.review_id}">
+                                        ${review.review_content}
+                                </div>
+                                    <c:if test="${fn:length(review.review_content) > 30}">
+                                        <button type="button" class="btn-more-view"
+                                                onclick="event.stopPropagation(); toggleMyPageReview(${review.review_id}, event)">
+                                            더보기
+                                        </button>
+                                    </c:if>
                                 <div class="review-footer">
                                     <div class="review-date">${fn:substring(String.valueOf(review.created_date), 0, 10)}</div>
                                     <button type="button" class="btn-review-delete"

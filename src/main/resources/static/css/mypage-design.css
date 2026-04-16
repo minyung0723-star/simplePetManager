@@ -136,9 +136,27 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     padding: 10px 16px;
     margin-bottom: 8px;
     transition: box-shadow .2s;
-    white-space: nowrap;
     overflow: hidden;
 }
+
+/* ✅ 더보기 클릭 시 전체 보여주기 위한 클래스 추가 */
+.mypage-container .review-content.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+}
+
+/* ✅ 더보기 버튼 스타일 추가 */
+.btn-more-view {
+    border: none;
+    background: none;
+    color: #3377FF;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+}
+
 .mypage-container .review-item:last-child { margin-bottom: 0; }
 .mypage-container .review-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
 
@@ -192,7 +210,11 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f7f8fa; color: #222
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 2줄까지만 보여줌 */
+    -webkit-box-orient: vertical;
+    white-space: normal;   /* ✅ nowrap을 normal로 꼭 바꿔야 해! */
+    word-break: break-all;
     cursor: pointer;
 }
 
