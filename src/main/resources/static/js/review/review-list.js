@@ -53,58 +53,39 @@ const loadReviews = async (storeId) => {
             const myInfo       = await fetchMyInfo();
             const myUserNumber = myInfo.success ? myInfo.userNumber : null;
 
-            // ✅ 리뷰 목록 렌더링 (더보기 로직 반영)
-            container.innerHTML = data.map(review => {
-                const rawContent = review.reviewContent || '내용이 없는 리뷰입니다.';
-                const limit = 30;
-
-                // 글자수 체크 후 '더보기' 버튼 구성
-                let displayContent = rawContent;
-                let moreBtn = "";
-
-                if (rawContent.length > limit) {
-                    displayContent = rawContent.substring(0, limit) + "...";
-                    // 텍스트 내 백틱과 줄바꿈 처리 (JS 에러 방지)
-                    const escapedContent = rawContent.replace(/`/g, '\\`').replace(/\n/g, '<br>');
-                    moreBtn = `
-                        <button type="button" class="btn-more-view" 
-                                onclick="expandReviewContent(${review.reviewId}, \`${escapedContent}\`)">
-                            더보기
-                        </button>`;
-                }
-
-                return `
-                    <article class="review-card border-bottom p-3 mb-3">
-                        <div class="d-flex align-items-start">
-                            <div class="flex-shrink-0 me-3">
-                                <img src="${review.profileImage || '/images/user.png'}"
-                                     onerror="this.onerror=null; this.src='/images/user.png';"
-                                     class="review-profile-img" alt="프로필">
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <div>
-                                        <strong>${review.nickname || '익명'}</strong>
-                                        ${review.userNumber === myUserNumber ? `
-                                            <button class="btn btn-sm btn-outline-danger ms-2"
-                                                    onclick="deleteReview(${review.reviewId})">삭제</button>
-                                        ` : ''}
-                                    </div>
-                                    <span class="review-meta text-muted small">
-                                        ${review.createdDate?.split('T')[0] || '날짜 없음'}
-                                    </span>
-                                </div>
-                                <div class="review-star-rating mb-2">
-                                    ${generateStars(review.rating)}
-                                </div>
-                                <p class="review-content mb-0" id="review-content-${review.reviewId}">
-                                    ${displayContent} ${moreBtn}
-                                </p>
-                            </div>
+            // 리뷰 목록 렌더링
+            container.innerHTML = data.map(review => `
+                <article class="review-card border-bottom p-3 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0 me-3">
+                            <img src="${review.profileImage || '/images/user.png'}"
+                                 onerror="this.onerror=null; this.src='/images/user.png';"
+                                 class="review-profile-img" alt="프로필">
                         </div>
-                    </article>
-                `;
-            }).join('');
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <div>
+                                    <strong>${review.nickname || '익명'}</strong>
+                                    ${review.userNumber === myUserNumber ? `
+                                        <button class="btn btn-sm btn-outline-danger ms-2"
+                                                onclick="deleteReview(${review.reviewId})">삭제</button>
+                                    ` : ''}
+                                    <!-- TODO_1 참고: review.userNumber === 1 → review.userNumber === myUserNumber 로 교체 -->
+                                </div>
+                                <span class="review-meta text-muted small">
+                                    ${review.createdDate?.split('T')[0] || '날짜 없음'}
+                                </span>
+                            </div>
+                            <div class="review-star-rating mb-2">
+                                ${generateStars(review.rating)}
+                            </div>
+                            <p class="review-content mb-0">
+                                ${review.reviewContent || '내용이 없는 리뷰입니다.'}
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
 
         } else {
             // 리뷰 0개
@@ -117,14 +98,6 @@ const loadReviews = async (storeId) => {
         console.error("데이터 로드 중 에러 발생:", e);
         const container = document.getElementById("review-container");
         if (container) container.innerHTML = "리뷰를 불러오는 중 오류가 발생했습니다.";
-    }
-};
-
-// ✅ 더보기 클릭 시 전체 내용을 보여주는 화살표 함수
-window.expandReviewContent = (reviewId, fullContent) => {
-    const contentBox = document.getElementById(`review-content-${reviewId}`);
-    if (contentBox) {
-        contentBox.innerHTML = fullContent; // 전체 내용으로 교체 (더보기 버튼은 자연스럽게 사라짐)
     }
 };
 
